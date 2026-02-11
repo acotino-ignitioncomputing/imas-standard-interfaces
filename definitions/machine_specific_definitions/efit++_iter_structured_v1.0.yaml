@@ -1,0 +1,6 @@
+include: # list of relative paths to interface definitions
+- ../ids_specific_definitions/efit++_magnetics_v1.0.yaml
+- ../ids_specific_definitions/efit++_pf_active_v1.0.yaml
+- ../ids_specific_definitions/efit++_pf_passive_v1.0.yaml
+- ../ids_specific_definitions/efit++_tf_v1.0.yaml
+- ../ids_specific_definitions/efit++_wall_v1.0.yaml

@@ -1,0 +1,8 @@
+ids:
+- pf_passive:
+    required:
+    - loop.name
+    - loop.element.turns_with_sign
+    - loop.element.geometry.geometry_type:
+        allowed_values: [1,2,5]
+    - loop.current

@@ -1,0 +1,4 @@
+ids:
+- tf:
+    required:
+    - b_field_phi_vacuum_r.data
