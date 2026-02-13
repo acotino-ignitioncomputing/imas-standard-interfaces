@@ -1,5 +1,5 @@
 ids:
-- pf_passive:
+  pf_passive:
     required:
     - loop.name
     - loop.element.turns_with_sign

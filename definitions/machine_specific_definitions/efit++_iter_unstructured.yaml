@@ -1,5 +1,5 @@
 ids:
-- magnetics:
+  magnetics:
     required:
     - b_field_pol_probe.name
     - b_field_pol_probe.position.r
@@ -20,7 +20,7 @@ ids:
     - diamagnetic_flux.data
     - ids_proporties.homogeneous_time:
       allowed_values: [0,1]
-- pf_active:
+  pf_active:
     required:
     - coil.name
     - coil.element.turns_with_sign
@@ -29,17 +29,17 @@ ids:
     - circuit.connections
     - circuit.current.data
     - supply.name
-- pf_passive:
+  pf_passive:
     required:
     - loop.name
     - loop.element.turns_with_sign
     - loop.element.geometry.geometry_type:
         allowed_values: [1,2,5]
     - loop.current
-- tf:
+  tf:
     required:
     - b_field_phi_vacuum_r.data
-- wall:
+  wall:
     required:
     - description_2d.limiter.unit.outline.r
     - description_2d.limiter.unit.outline.z

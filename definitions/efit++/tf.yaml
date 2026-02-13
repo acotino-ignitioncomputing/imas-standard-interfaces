@@ -1,5 +1,5 @@
 ids:
-- tf:
+  tf:
     required:
     - b_field_phi_vacuum_r.data
     - ids_proporties.homogeneous_time:

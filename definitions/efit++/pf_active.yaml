@@ -1,5 +1,5 @@
 ids:
-- pf_active:
+  pf_active:
     required:
     - coil.name
     - coil.element.turns_with_sign

@@ -1,5 +1,5 @@
 ids:
-- magnetics:
+  magnetics:
     required:
     - b_field_pol_probe.name
     - b_field_pol_probe.position.r

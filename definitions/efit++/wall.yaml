@@ -1,5 +1,5 @@
 ids:
-- wall:
+  wall:
     required:
     - description_2d.limiter.unit.outline.r
     - description_2d.limiter.unit.outline.z
