@@ -1,26 +1,2 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
-
-# Virtual environments
-.venv
-
-# Documentation build artifacts
-site/
-.mkdocs_cache/
-
-# Generated documentation files
-docs/schemas/
-docs/static/
-*.html
-
-# MkDocs mike versioning
-versions.json
-
-# Pixi environment files
-.pixi/
-docs/schemas/coil-current.html
+# IDE files
+.vscode/

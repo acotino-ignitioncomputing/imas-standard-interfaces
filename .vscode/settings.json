@@ -1,9 +1,0 @@
-{
-  "python.defaultInterpreterPath": "./.pixi/envs/default/python.exe",
-  "python.terminal.activateEnvironment": false,
-  "python.testing.pytestEnabled": true,
-  "python.testing.unittestEnabled": false,
-  "python.testing.pytestArgs": ["tests"],
-  "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "python.testing.pytestPath": "./.pixi/envs/default/Scripts/pytest.exe"
-}
