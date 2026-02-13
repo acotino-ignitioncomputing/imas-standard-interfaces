@@ -1,0 +1,23 @@
+ids:
+  magnetics:
+    required:
+    - b_field_pol_probe.name
+    - b_field_pol_probe.position.r
+    - b_field_pol_probe.position.phi
+    - b_field_pol_probe.position.z
+    - b_field_pol_probe.poloidal_angle
+    - b_field_pol_probe.toroidal_angle
+    - b_field_pol_probe.area
+    - b_field_pol_probe.length
+    - b_field_pol_probe.turns
+    - b_field_pol_probe.field.data
+    - flux_loop.name
+    - flux_loop.position.r
+    - flux_loop.position.phi
+    - flux_loop.position.z
+    - flux_loop.flux.data
+    - ip.data
+    - diamagnetic_flux.data
+    - ids_proporties.homogeneous_time:
+      allowed_values: [0,1]
+    
