@@ -4,7 +4,7 @@ ids:
     - coil.name
     - coil.element.turns_with_sign
     - coil.element.geometry.geometry_type:
-        allowed_values: [1,2,5]
+      allowed_values: [1,2,5]
     - circuit.connections
     - circuit.current.data
     - supply.name

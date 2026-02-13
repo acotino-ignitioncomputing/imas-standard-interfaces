@@ -25,20 +25,26 @@ ids:
     - coil.name
     - coil.element.turns_with_sign
     - coil.element.geometry.geometry_type:
-        allowed_values: [1,2,5]
+      allowed_values: [1,2,5]
     - circuit.connections
     - circuit.current.data
     - supply.name
+    - ids_proporties.homogeneous_time:
+      allowed_values: [0,1]
   pf_passive:
     required:
     - loop.name
     - loop.element.turns_with_sign
     - loop.element.geometry.geometry_type:
-        allowed_values: [1,2,5]
+      allowed_values: [1,2,5]
     - loop.current
+    - ids_proporties.homogeneous_time:
+      allowed_values: [0,1]
   tf:
     required:
     - b_field_phi_vacuum_r.data
+    - ids_proporties.homogeneous_time:
+      allowed_values: [0,1]
   wall:
     required:
     - description_2d.limiter.unit.outline.r
