@@ -1,0 +1,50 @@
+netcdf pf_passive {
+
+dimensions:
+    loop_i = 2;
+    loop.element_i = 3;
+    time = 4;
+
+variables:
+    
+    int ids_properties.homogeneous_time;
+    string loop.name(loop_i);
+    double loop.element.turns_with_sign(loop_i, loop.element_i);
+    int loop.element.geometry.geometry_type(loop_i, loop.element_i);
+
+    double loop.element.geometry.rectangle.r(loop_i, loop.element_i);
+    double loop.element.geometry.rectangle.z(loop_i, loop.element_i);
+    double loop.element.geometry.rectangle.width(loop_i, loop.element_i);
+    double loop.element.geometry.rectangle.height(loop_i, loop.element_i);
+
+    double loop.element.geometry.annulus.r(loop_i, loop.element_i);
+    double loop.element.geometry.annulus.z(loop_i, loop.element_i);
+    double loop.element.geometry.annulus.radius_inner(loop_i, loop.element_i);
+    double loop.element.geometry.annulus.radius_outer(loop_i, loop.element_i);
+    
+    double loop.current(loop_i);
+
+    double time(time);
+
+data:
+    ids_properties.homogeneous_time = 0;
+    loop.name = "VES_1", "VES_2", "VES_3";
+    loop.element.turns_with_sign = 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
+    loop.element.geometry.geometry_type = 2, 2, 2, 5, 5, 5;
+
+    // Last three entries of four variables below should be empty
+    loop.element.geometry.rectangle.r =  5.1, 4.1, 4.6, 0.0, 0.0, 0.0; 
+    loop.element.geometry.rectangle.z = 3.8, 2.8, 2.8,0.0, 0.0, 0.0;
+    loop.element.geometry.rectangle.width = 0.41, 0.60, 0.49, 0.0, 0.0, 0.0;
+    loop.element.geometry.rectangle.height = 0.13, 0.61, 0.50, 0.0, 0.0, 0.0;
+
+    loop.element.geometry.annulus.r = _, _, _, 2.6, 2.6, 3.0; 
+    loop.element.geometry.annulus.z = _, _, _, 8.2, 7.0, 7.6;
+    loop.element.geometry.annulus.radius_inner = _, _, _, 0.12, 0.21, 0.11;
+    loop.element.geometry.annulus.radius_outer =  _, _, _, 1.3, 2.1, 1.8;
+
+    loop.current = 89, 87, 84;
+
+    time = 0.021, 0.089, 0.10, 0.16;
+
+}
