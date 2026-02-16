@@ -8,7 +8,7 @@ The Linux tool `ncgen` can be used to generate netCDF datasets from these
 CDL-files:
 
 ```bash
-ncgen -k 4 -o output_file.nc valid_pf_passive.cdl
+ncgen -k 3 -o output_file.nc valid_pf_passive.cdl
 ```
 
-where the flag  `-k 4` indicates the usage of the netCDF-4 format.
+where the flag `-k 3` indicates the usage of the netCDF classic format.

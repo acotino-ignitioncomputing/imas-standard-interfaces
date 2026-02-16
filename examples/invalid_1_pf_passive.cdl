@@ -28,7 +28,6 @@ variables: // Missing variable loop.element.turns_with_sign
 data:
     ids_properties.homogeneous_time = 0;
     loop.name = "VES_1", "VES_2", "VES_3";
-    loop.element.turns_with_sign = 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
     loop.element.geometry.geometry_type = 2, 2, 2, 5, 5, 5;
 
     loop.element.geometry.rectangle.r =  5.1, 4.1, 4.6, _, _, _;
