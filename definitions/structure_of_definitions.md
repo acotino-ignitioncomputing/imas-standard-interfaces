@@ -1,8 +1,8 @@
 # Structure of interface definitions
 
 This document outlines the structure of interface definitions that describe
-input datasets for simulation code using IMAS. These definitions are written in
-YAML and use references to the IDS's in the IMAS Data Dictionary.
+input and output datasets for simulation code using IMAS. These definitions are
+written in YAML and use references to the IDS's in the IMAS Data Dictionary.
 
 In each file at least one of the following two top level mapping keys must be
 present:
@@ -36,7 +36,7 @@ values are allowed to be present in the data array.
 
 ```yaml
 ids:
-- pf_passive:
+  pf_passive:
     required: # sequence of IDS paths
     - loop.name
     - loop.element.turns_with_sign
