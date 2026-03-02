@@ -1,0 +1,51 @@
+ids:
+  magnetics:
+    required:
+    - b_field_pol_probe.name
+    - b_field_pol_probe.position.r
+    - b_field_pol_probe.position.phi
+    - b_field_pol_probe.position.z
+    - b_field_pol_probe.poloidal_angle
+    - b_field_pol_probe.toroidal_angle
+    - b_field_pol_probe.area
+    - b_field_pol_probe.length
+    - b_field_pol_probe.turns
+    - b_field_pol_probe.field.data
+    - flux_loop.name
+    - flux_loop.position.r
+    - flux_loop.position.phi
+    - flux_loop.position.z
+    - flux_loop.flux.data
+    - ip.data
+    - diamagnetic_flux.data
+    - ids_proporties.homogeneous_time:
+      allowed_values: [0,1]
+  pf_active:
+    required:
+    - coil.name
+    - coil.element.turns_with_sign
+    - coil.element.geometry.geometry_type:
+      allowed_values: [1,2,5]
+    - circuit.connections
+    - circuit.current.data
+    - supply.name
+    - ids_proporties.homogeneous_time:
+      allowed_values: [0,1]
+  pf_passive:
+    required:
+    - loop.name
+    - loop.element.turns_with_sign
+    - loop.element.geometry.geometry_type:
+      allowed_values: [1,2,5]
+    - loop.current
+    - ids_proporties.homogeneous_time:
+      allowed_values: [0,1]
+  tf:
+    required:
+    - b_field_phi_vacuum_r.data
+    - ids_proporties.homogeneous_time:
+      allowed_values: [0,1]
+  wall:
+    required:
+    - description_2d.limiter.unit.outline.r
+    - description_2d.limiter.unit.outline.z
