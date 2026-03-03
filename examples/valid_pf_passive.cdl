@@ -1,4 +1,7 @@
-netcdf pf_passive {
+netcdf pf_passive { // This file describes a small netCDF dataset containing
+// dummy data from an pf_passive IDS.
+// This dataset  is valid based on the interface definition 
+// "efit++/pf_passive.yaml" in the folder "definitions" of this repository.
 
 dimensions:
     loop_i = 2;
@@ -32,6 +35,10 @@ data:
     loop.element.turns_with_sign = 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
     loop.element.geometry.geometry_type = 2, 2, 2, 5, 5, 5;
 
+    // Note the empty values in the data arrays below: the DD implies that each
+    // element can have only one shape at a time, such that only one set of 
+    // variables related to a shape may have data at a particular entry while 
+    // the other variables must be empty at that entry. 
     loop.element.geometry.rectangle.r =  5.1, 4.1, 4.6, _, _, _;
     loop.element.geometry.rectangle.z = 3.8, 2.8, 2.8, _, _, _;
     loop.element.geometry.rectangle.width = 0.41, 0.60, 0.49, _, _, _;
