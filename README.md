@@ -9,7 +9,6 @@ formats.
 standard_interfaces/
 ├── definitions/
 │   ├── efit++/
-│   └── non-iron-core tokamak/
 └── examples/
 ```
 

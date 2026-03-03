@@ -1,6 +1,6 @@
 include: # list of relative paths to interface definitions
-- ../efit++/magnetics.yaml
-- ../efit++/pf_active.yaml
-- ../efit++/pf_passive.yaml
-- ../efit++/tf.yaml
-- ../efit++/wall.yaml
+- magnetics.yaml
+- pf_active.yaml
+- pf_passive.yaml
+- tf.yaml
+- wall.yaml
