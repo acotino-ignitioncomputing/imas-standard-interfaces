@@ -1,6 +1,22 @@
-dd_version: 4.1.0
-ids:
+id: https://imas.iter.org/schemas/wall
+name: wall
+description: Interface definition for the wall IDS
+version: "4.1.0"
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imas: https://imas.iter.org/schemas/
+
+imports:
+  - linkml:types
+
+classes:
   wall:
-    required:
-    - description_2d.limiter.unit.outline.r
-    - description_2d.limiter.unit.outline.z
+    description: Wall IDS interface definition
+    attributes:
+      description_2d.limiter.unit.outline.r:
+        description: Radial coordinates of the wall limiter outline
+        required: true
+      description_2d.limiter.unit.outline.z:
+        description: Vertical coordinates of the wall limiter outline
+        required: true

@@ -1,24 +1,80 @@
-dd_version: 4.1.0
-ids:
+id: https://imas.iter.org/schemas/magnetics
+name: magnetics
+description: Interface definition for the magnetics IDS
+version: "4.1.0"
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imas: https://imas.iter.org/schemas/
+
+imports:
+  - linkml:types
+
+classes:
   magnetics:
-    required:
-    - b_field_pol_probe.name
-    - b_field_pol_probe.position.r
-    - b_field_pol_probe.position.phi
-    - b_field_pol_probe.position.z
-    - b_field_pol_probe.poloidal_angle
-    - b_field_pol_probe.toroidal_angle
-    - b_field_pol_probe.area
-    - b_field_pol_probe.length
-    - b_field_pol_probe.turns
-    - b_field_pol_probe.field.data
-    - flux_loop.name
-    - flux_loop.position.r
-    - flux_loop.position.phi
-    - flux_loop.position.z
-    - flux_loop.flux.data
-    - ip.data
-    - diamagnetic_flux.data
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-    
+    description: Magnetics IDS interface definition
+    attributes:
+      b_field_pol_probe.name:
+        description: Name of the poloidal field probe
+        required: true
+      b_field_pol_probe.position.r:
+        description: Radial position of the poloidal field probe
+        required: true
+      b_field_pol_probe.position.phi:
+        description: Toroidal angle position of the poloidal field probe
+        required: true
+      b_field_pol_probe.position.z:
+        description: Vertical position of the poloidal field probe
+        required: true
+      b_field_pol_probe.poloidal_angle:
+        description: Poloidal angle of the poloidal field probe
+        required: true
+      b_field_pol_probe.toroidal_angle:
+        description: Toroidal angle of the poloidal field probe
+        required: true
+      b_field_pol_probe.area:
+        description: Area of the poloidal field probe
+        required: true
+      b_field_pol_probe.length:
+        description: Length of the poloidal field probe
+        required: true
+      b_field_pol_probe.turns:
+        description: Number of turns of the poloidal field probe
+        required: true
+      b_field_pol_probe.field.data:
+        description: Measured field data of the poloidal field probe
+        required: true
+      flux_loop.name:
+        description: Name of the flux loop
+        required: true
+      flux_loop.position.r:
+        description: Radial position of the flux loop
+        required: true
+      flux_loop.position.phi:
+        description: Toroidal angle position of the flux loop
+        required: true
+      flux_loop.position.z:
+        description: Vertical position of the flux loop
+        required: true
+      flux_loop.flux.data:
+        description: Measured flux data of the flux loop
+        required: true
+      ip.data:
+        description: Plasma current data
+        required: true
+      diamagnetic_flux.data:
+        description: Diamagnetic flux data
+        required: true
+      ids_properties.homogeneous_time:
+        description: Homogeneous time flag for the IDS
+        required: true
+        range: HomogeneousTimeEnum
+
+enums:
+  HomogeneousTimeEnum:
+    description: Allowed values for homogeneous_time
+    permissible_values:
+      0:
+        description: Non-homogeneous time
+      1:
+        description: Homogeneous time

@@ -1,7 +1,32 @@
-dd_version: 4.1.0
-ids:
+id: https://imas.iter.org/schemas/tf
+name: tf
+description: Interface definition for the tf IDS
+version: "4.1.0"
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imas: https://imas.iter.org/schemas/
+
+imports:
+  - linkml:types
+
+classes:
   tf:
-    required:
-    - b_field_phi_vacuum_r.data
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
+    description: Toroidal field IDS interface definition
+    attributes:
+      b_field_phi_vacuum_r.data:
+        description: Vacuum toroidal field times major radius data
+        required: true
+      ids_properties.homogeneous_time:
+        description: Homogeneous time flag for the IDS
+        required: true
+        range: HomogeneousTimeEnum
+
+enums:
+  HomogeneousTimeEnum:
+    description: Allowed values for homogeneous_time
+    permissible_values:
+      0:
+        description: Non-homogeneous time
+      1:
+        description: Homogeneous time

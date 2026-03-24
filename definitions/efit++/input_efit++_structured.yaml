@@ -1,6 +1,16 @@
-include: # list of relative paths to interface definitions
-- magnetics.yaml
-- pf_active.yaml
-- pf_passive.yaml
-- tf.yaml
-- wall.yaml
+id: https://imas.iter.org/schemas/input_efit_structured
+name: input_efit_structured
+description: Structured input interface definition for EFIT++
+version: "4.1.0"
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imas: https://imas.iter.org/schemas/
+
+imports:
+  - linkml:types
+  - magnetics
+  - pf_active
+  - pf_passive
+  - tf
+  - wall

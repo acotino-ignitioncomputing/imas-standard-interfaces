@@ -1,11 +1,52 @@
-dd_version: 4.1.0
-ids:
+id: https://imas.iter.org/schemas/pf_passive
+name: pf_passive
+description: Interface definition for the pf_passive IDS
+version: "4.1.0"
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imas: https://imas.iter.org/schemas/
+
+imports:
+  - linkml:types
+
+classes:
   pf_passive:
-    required:
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
-    - loop.current
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
+    description: PF passive structures IDS interface definition
+    attributes:
+      loop.name:
+        description: Name of the passive loop
+        required: true
+      loop.element.turns_with_sign:
+        description: Turns with sign of the loop element
+        required: true
+      loop.element.geometry.geometry_type:
+        description: Geometry type of the loop element
+        required: true
+        range: GeometryTypeEnum
+      loop.current:
+        description: Current in the passive loop
+        required: true
+      ids_properties.homogeneous_time:
+        description: Homogeneous time flag for the IDS
+        required: true
+        range: HomogeneousTimeEnum
+
+enums:
+  GeometryTypeEnum:
+    description: Allowed geometry types (outline, rectangle, annulus)
+    permissible_values:
+      1:
+        description: Outline
+      2:
+        description: Rectangle
+      5:
+        description: Annulus
+
+  HomogeneousTimeEnum:
+    description: Allowed values for homogeneous_time
+    permissible_values:
+      0:
+        description: Non-homogeneous time
+      1:
+        description: Homogeneous time
