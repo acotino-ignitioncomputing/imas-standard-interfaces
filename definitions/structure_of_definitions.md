@@ -2,124 +2,127 @@
 
 This document outlines the structure of interface definitions that describe
 input and output datasets for simulation code using IMAS. These definitions are
-written in YAML and use references to the IDS's in the IMAS Data Dictionary.
+written in YAML following the [LinkML](https://linkml.io/) schema language and
+use references to the IDS's in the IMAS Data Dictionary.
 
-In each file at least one of the following two top level mapping keys must be
-present:
+## LinkML schema structure
 
-- [`ids`](#specifying-ids-paths)
-- [`include`](#including-other-definitions)
+Each definition file is a LinkML schema with the following top-level keys:
 
-## Specifying IDS paths
+| Key           | Description                                                  |
+|---------------|--------------------------------------------------------------|
+| `id`          | A unique URI identifying the schema                          |
+| `name`        | A short name for the schema                                  |
+| `description` | A human-readable description of the schema                   |
+| `version`     | The IMAS Data Dictionary version the definition targets      |
+| `prefixes`    | Namespace prefix declarations used in the schema             |
+| `imports`     | A list of other schemas or LinkML built-ins to import        |
+| `classes`     | Definitions of IDS classes with their required attributes    |
+| `enums`       | Definitions of enumerated value sets used by attributes      |
 
-The mapping with key `ids` maps to a sequence of nested mappings, where the key
-of each of these mappings is the name of an IDS in the [IMAS Data
-Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.html
-) and the value is a mapping with key `required`.
+## Specifying IDS paths as classes and attributes
 
-Each mapping with key `required` maps to a sequence of IDS paths that must be
-present in the dataset and whose data array must be non-empty. These paths
-follow the [IMAS netCDF naming
+Each IDS is represented as a **class** under the `classes` key. The class name
+corresponds to the name of an IDS in the [IMAS Data
+Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.html).
+
+The required IDS paths are specified as **attributes** of the class. Each
+attribute name follows the [IMAS netCDF naming
 convention](https://imas-python.readthedocs.io/en/stable/netcdf/conventions.html)
-where the forward slashes ( `/`) in the corresponding  Data Dictionary path are
+where the forward slashes (`/`) in the corresponding Data Dictionary path are
 replaced by periods (`.`).
 
-If there are no further constraints on the data array of an IDS path then it is
-encoded as a `string`. In case there are extra constraints imposed on the data
-array, then the IDS path is encoded as a mapping whose values are these
-constraints.
+Each attribute has the following properties:
 
-Currently, the only constraint implemented is `allowed_values`, indicating which
-values are allowed to be present in the data array.
+| Property      | Description                                                  |
+|---------------|--------------------------------------------------------------|
+| `description` | A human-readable description of the attribute                |
+| `required`    | Set to `true` to indicate the path must be present and non-empty |
+| `range`       | (Optional) References an enum to constrain allowed values    |
 
 **Example 1**
 
 ```yaml
-ids:
+id: https://imas.iter.org/schemas/pf_passive
+name: pf_passive
+description: Interface definition for the pf_passive IDS
+version: "4.1.0"
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imas: https://imas.iter.org/schemas/
+
+imports:
+  - linkml:types
+
+classes:
   pf_passive:
-    required: # sequence of IDS paths
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5] # Only outline, rectangle and annulus are allowed
-    - loop.current
+    description: PF passive structures IDS interface definition
+    attributes:
+      loop.name:
+        description: Name of the passive loop
+        required: true
+      loop.element.turns_with_sign:
+        description: Turns with sign of the loop element
+        required: true
+      loop.element.geometry.geometry_type:
+        description: Geometry type of the loop element
+        required: true
+        range: GeometryTypeEnum
+      loop.current:
+        description: Current in the passive loop
+        required: true
+
+enums:
+  GeometryTypeEnum:
+    description: Allowed geometry types (outline, rectangle, annulus)
+    permissible_values:
+      1:
+        description: Outline
+      2:
+        description: Rectangle
+      5:
+        description: Annulus
 ```
 
-## Including other definitions
+## Constraining allowed values with enums
 
-The mapping with key `include` maps to a sequence of relative file paths, where
-each path points to a YAML-file having the same structure as described in this
-document.
+When an IDS path has a restricted set of allowed values, these are expressed
+using the LinkML `enums` construct. An enum is defined under the top-level
+`enums` key and referenced from an attribute via the `range` property.
 
-Including YAML-files in this fashion is equivalent to concatenating the lists of
-the mappings with keys `include` and `ids`. See the two examples below, where
-the first example uses only this include statement and the second example lists the
-IDS paths in each of the files under the include-key. These are
-equivalent interface definitions according to this document.
+Each enum contains a `permissible_values` mapping where the keys are the
+allowed values and each value can have a `description`.
+
+## Importing other definitions
+
+The LinkML `imports` key replaces the previous `include` mechanism. It maps to
+a list of schema references to import. Importing a schema is equivalent to
+merging its classes, enums, and other definitions into the current schema.
+
+The special import `linkml:types` brings in the LinkML built-in type
+definitions and should be included in every schema.
+
+To import other definition files, list them by name (without the `.yaml`
+extension) in the `imports` list.
 
 ### Example 2
 
 ```yaml
-include: # sequence of relative paths to interface definitions
-- efit++/magnetics.yaml
-- efit++/pf_active.yaml
-- efit++/pf_passive.yaml
-- efit++/tf.yaml
-- efit++/wall.yaml
-```
+id: https://imas.iter.org/schemas/input_efit_structured
+name: input_efit_structured
+description: Structured input interface definition for EFIT++
+version: "4.1.0"
 
-### Example 3
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imas: https://imas.iter.org/schemas/
 
-```yaml
-ids:
-  magnetics:
-    required:
-    - b_field_pol_probe.name
-    - b_field_pol_probe.position.r
-    - b_field_pol_probe.position.phi
-    - b_field_pol_probe.position.z
-    - b_field_pol_probe.poloidal_angle
-    - b_field_pol_probe.toroidal_angle
-    - b_field_pol_probe.area
-    - b_field_pol_probe.length
-    - b_field_pol_probe.turns
-    - b_field_pol_probe.field.data
-    - flux_loop.name
-    - flux_loop.position.r
-    - flux_loop.position.phi
-    - flux_loop.position.z
-    - flux_loop.flux.data
-    - ip.data
-    - diamagnetic_flux.data
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-  pf_active:
-    required:
-    - coil.name
-    - coil.element.turns_with_sign
-    - coil.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
-    - circuit.connections
-    - circuit.current.data
-    - supply.name
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-  pf_passive:
-    required:
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
-    - loop.current
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-  tf:
-    required:
-    - b_field_phi_vacuum_r.data
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-  wall:
-    required:
-    - description_2d.limiter.unit.outline.r
-    - description_2d.limiter.unit.outline.z
+imports:
+  - linkml:types
+  - magnetics
+  - pf_active
+  - pf_passive
+  - tf
+  - wall
 ```
