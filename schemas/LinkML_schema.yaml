@@ -1,0 +1,93 @@
+# LinkML schema for IMAS interface definitions
+# Captures the rules described in definitions/structure_of_definitions.md
+# Validates YAML files such as those in definitions/efit++/
+
+id: https://github.com/iterorganization/imas-standard-interfaces/schemas/LinkML_schema
+name: LinkML_schema
+title: IMAS Interface Definition Schema
+description: >-
+  Schema for interface definitions that describe input and output datasets for
+  simulation code using IMAS. These definitions are written in YAML and use
+  references to the IDSs in the IMAS Data Dictionary.
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+
+
+default_range: string
+
+imports:
+  - linkml:types
+
+classes:
+  InterfaceDefinition:
+    description: >-
+      A top-level interface definition document. At least one of `ids` or
+      `include` must be present.
+    tree_root: true
+    attributes:
+      dd_version:
+        description: >-
+          The version of the IMAS Data Dictionary that this definition targets.
+        required: false
+        pattern: "^[0-9]{1,}\\.[0-9]{1,}\\.[0-9]{1,}"
+      ids:
+        description: >-
+          Contains a list of class 'IDSClass', holding the IDS name, the
+          required paths and (optionally) the constraints applied to certain
+          paths.
+        multivalued: true
+        range: IDSClass
+        inlined: true
+        required: false
+      include:
+        description: >-
+          A sequence of relative file paths, where each path points to a
+          YAML-file having the same structure as this document. Including files
+          is equivalent to concatenating the `ids` and `include` lists from the
+          referenced files.
+        multivalued: true
+        required: false
+    rules:
+      - postconditions:
+          any_of:
+            - slot_conditions:
+                ids:
+                  required: true
+            - slot_conditions:
+                include:
+                  required: true
+        description: >-
+          At least one of `ids` or `include` must be present in each definition
+          file. Both may be present simultaneously.
+
+  IDSClass:
+    description: >-
+      This class holds the IDS name, the required paths and (optionally) the
+      constraints applied to certain paths.
+    attributes:
+      ids_name: 
+        description: >-
+          Name of the IDS
+      required_paths:
+        description: >-
+          IDS paths that need to be present in the dataset
+        required: true
+        multivalued: true
+      constraints:
+        description: >-
+          Constraints applied to IDS paths
+        required: false
+        multivalued: true
+        range: PathConstraint
+
+  PathConstraint:
+    attributes:
+      path:
+        required: true
+      allowed_values:
+        description: >-
+          Data array at this IDS path must only consist of the listed values.
+        required: false
+        multivalued: true
+        range: integer
