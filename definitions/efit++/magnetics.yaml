@@ -1,7 +1,7 @@
 dd_version: 4.1.0
 ids:
-  magnetics:
-    required:
+  - ids_name: magnetics
+    required_paths:
     - b_field_pol_probe.name
     - b_field_pol_probe.position.r
     - b_field_pol_probe.position.phi
@@ -19,6 +19,8 @@ ids:
     - flux_loop.flux.data
     - ip.data
     - diamagnetic_flux.data
-    - ids_proporties.homogeneous_time:
+
+    constraints:
+    - path: ids_proporties.homogeneous_time
       allowed_values: [0,1]
     

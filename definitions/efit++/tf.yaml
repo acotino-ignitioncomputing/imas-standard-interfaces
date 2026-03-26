@@ -1,7 +1,9 @@
 dd_version: 4.1.0
 ids:
-  tf:
-    required:
+  - ids_name: tf
+    required_paths:
     - b_field_phi_vacuum_r.data
-    - ids_proporties.homogeneous_time:
+
+    constraints:
+    - path: ids_proporties.homogeneous_time
       allowed_values: [0,1]

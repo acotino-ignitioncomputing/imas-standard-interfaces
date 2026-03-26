@@ -1,6 +1,6 @@
 dd_version: 4.1.0
 ids:
-  wall:
-    required:
+  - ids_name: wall
+    required_paths:
     - description_2d.limiter.unit.outline.r
     - description_2d.limiter.unit.outline.z
