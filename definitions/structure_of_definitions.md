@@ -3,6 +3,8 @@
 This document outlines the structure of interface definitions that describe
 input and output datasets for simulation code using IMAS. These definitions are
 written in YAML and use references to the IDS's in the IMAS Data Dictionary.
+The structure of these definitions is formally described by the LinkML schema
+`schemas/LinkML_schema.yaml`.
 
 In each file at least one of the following two top level mapping keys must be
 present:
@@ -10,39 +12,60 @@ present:
 - [`ids`](#specifying-ids-paths)
 - [`include`](#including-other-definitions)
 
+Optionally, a `dd_version` key may be present at the top level, specifying the
+version of the IMAS Data Dictionary that the definition targets (e.g.
+`4.1.0`).
+
 ## Specifying IDS paths
 
-The mapping with key `ids` maps to a sequence of nested mappings, where the key
-of each of these mappings is the name of an IDS in the [IMAS Data
-Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.html
-) and the value is a mapping with key `required`.
+The key `ids` maps to a sequence of IDS entries. Each entry is a mapping with
+the following keys:
 
-Each mapping with key `required` maps to a sequence of IDS paths that must be
-present in the dataset and whose data array must be non-empty. These paths
-follow the [IMAS netCDF naming
+- `ids_name`: The name of an IDS in the [IMAS Data
+  Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.html).
+- `required_paths`: A sequence of IDS paths that must be present in the dataset
+  and whose data array must be non-empty.
+- `constraints` (optional): A sequence of constraints applied to specific IDS
+  paths.
+
+### Required paths
+
+Each entry in `required_paths` is a string representing an IDS path. These
+paths follow the [IMAS netCDF naming
 convention](https://imas-python.readthedocs.io/en/stable/netcdf/conventions.html)
-where the forward slashes ( `/`) in the corresponding  Data Dictionary path are
+where the forward slashes (`/`) in the corresponding Data Dictionary path are
 replaced by periods (`.`).
 
-If there are no further constraints on the data array of an IDS path then it is
-encoded as a `string`. In case there are extra constraints imposed on the data
-array, then the IDS path is encoded as a mapping whose values are these
-constraints.
+### Constraints
 
-Currently, the only constraint implemented is `allowed_values`, indicating which
-values are allowed to be present in the data array.
+Each entry in `constraints` describes which constraints are enforced on the data
+array of the specified IDS path. Currently, only a constraint on the allowed
+values in the data array is defined, such that the keys for this mapping are
 
-**Example 1**
+- `path`: The IDS path to which the constraint applies. This path must be
+  present in the dataset.
+- `allowed_values`: A list of values that are allowed to be present
+  in the data array at this IDS path. When specified, the data array must only
+  consist of the listed values.
+
+  Note: as it is demanded that the IDS path in `path` is present in the dataset,
+  it is allowed to omit this path in the sequence `required_paths`.
+
+### Example 1
 
 ```yaml
 ids:
-  pf_passive:
-    required: # sequence of IDS paths
+  - ids_name: pf_passive
+    required_paths: # sequence of IDS paths
     - loop.name
     - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5] # Only outline, rectangle and annulus are allowed
     - loop.current
+
+    constraints:
+    - path: loop.element.geometry.geometry_type
+      allowed_values: [2,3,5,6] # Only rectangle, oblique, annulus and thick_line are allowed
+    - path: ids_proporties.homogeneous_time
+      allowed_values: [0,1]
 ```
 
 ## Including other definitions
@@ -54,7 +77,7 @@ document.
 Including YAML-files in this fashion is equivalent to concatenating the lists of
 the mappings with keys `include` and `ids`. See the two examples below, where
 the first example uses only this include statement and the second example lists the
-IDS paths in each of the files under the include-key. These are
+IDS entries for each of the files under the include-key. These are
 equivalent interface definitions according to this document.
 
 ### Example 2
@@ -72,8 +95,8 @@ include: # sequence of relative paths to interface definitions
 
 ```yaml
 ids:
-  magnetics:
-    required:
+  - ids_name: magnetics
+    required_paths:
     - b_field_pol_probe.name
     - b_field_pol_probe.position.r
     - b_field_pol_probe.position.phi
@@ -91,35 +114,47 @@ ids:
     - flux_loop.flux.data
     - ip.data
     - diamagnetic_flux.data
-    - ids_proporties.homogeneous_time:
+
+    constraints:
+    - path: ids_proporties.homogeneous_time
       allowed_values: [0,1]
-  pf_active:
-    required:
+
+  - ids_name: pf_active
+    required_paths:
     - coil.name
     - coil.element.turns_with_sign
-    - coil.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
     - circuit.connections
     - circuit.current.data
     - supply.name
-    - ids_proporties.homogeneous_time:
+
+    constraints:
+    - path: coil.element.geometry.geometry_type
+      allowed_values: [2,3,5,6]
+    - path: ids_proporties.homogeneous_time
       allowed_values: [0,1]
-  pf_passive:
-    required:
+
+  - ids_name: pf_passive
+    required_paths:
     - loop.name
     - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
     - loop.current
-    - ids_proporties.homogeneous_time:
+
+    constraints:
+    - path: loop.element.geometry.geometry_type
+      allowed_values: [2,3,5,6]
+    - path: ids_proporties.homogeneous_time
       allowed_values: [0,1]
-  tf:
-    required:
+
+  - ids_name: tf
+    required_paths:
     - b_field_phi_vacuum_r.data
-    - ids_proporties.homogeneous_time:
+
+    constraints:
+    - path: ids_proporties.homogeneous_time
       allowed_values: [0,1]
-  wall:
-    required:
+
+  - ids_name: wall
+    required_paths:
     - description_2d.limiter.unit.outline.r
     - description_2d.limiter.unit.outline.z
 ```

@@ -88,6 +88,6 @@ classes:
       allowed_values:
         description: >-
           Data array at this IDS path must only consist of the listed values.
-        required: false
+        required: true
         multivalued: true
         range: integer
