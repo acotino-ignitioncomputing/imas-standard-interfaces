@@ -1,0 +1,111 @@
+# LinkML schema for IMAS interface definitions
+# Captures the rules described in definitions/structure_of_definitions.md
+# Validates YAML files such as those in definitions/efit++/
+
+id: https://github.com/iterorganization/imas-standard-interfaces/schemas/interface_definition
+name: interface_definition
+title: IMAS Interface Definition Schema
+description: >-
+  Schema for interface definitions that describe input and output datasets for
+  simulation code using IMAS. These definitions are written in YAML and use
+  references to the IDSs in the IMAS Data Dictionary.
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imas_if: https://github.com/iterorganization/imas-standard-interfaces/schemas/interface_definition/
+
+default_prefix: imas_if
+default_range: string
+
+imports:
+  - linkml:types
+
+classes:
+
+  InterfaceDefinition:
+    description: >-
+      A top-level interface definition document. At least one of `ids` or
+      `include` must be present.
+    tree_root: true
+    attributes:
+      dd_version:
+        description: >-
+          The version of the IMAS Data Dictionary that this definition targets.
+        range: string
+        required: false
+      ids:
+        description: >-
+          A mapping of IDS names to their requirements. Each key is the name of
+          an IDS in the IMAS Data Dictionary and the value specifies the
+          required paths within that IDS.
+        range: IDSRequirements
+        inlined: true
+        required: false
+      include:
+        description: >-
+          A sequence of relative file paths, where each path points to a
+          YAML-file having the same structure as this document. Including files
+          is equivalent to concatenating the `ids` and `include` lists from the
+          referenced files.
+        range: string
+        multivalued: true
+        required: false
+    rules:
+      - postconditions:
+          any_of:
+            - slot_conditions:
+                ids:
+                  required: true
+            - slot_conditions:
+                include:
+                  required: true
+        description: >-
+          At least one of `ids` or `include` must be present in each definition
+          file. Both may be present simultaneously.
+
+  IDSRequirements:
+    description: >-
+      A mapping from IDS names to their path requirements. Each key is the name
+      of an IDS in the IMAS Data Dictionary (e.g. pf_passive, magnetics, tf)
+      and the value specifies the required IDS paths. This class allows
+      additional properties to accommodate arbitrary IDS names as keys.
+    class_uri: linkml:Any
+
+  IDSPathRequirements:
+    description: >-
+      The requirements for a single IDS. Contains a required key mapping to a
+      sequence of IDS paths.
+    attributes:
+      required:
+        description: >-
+          A sequence of IDS paths that must be present in the dataset and whose
+          data array must be non-empty. Paths follow the IMAS netCDF naming
+          convention where forward slashes in the Data Dictionary path are
+          replaced by periods. Each entry is either a plain string (no
+          constraints on the data array) or a mapping from the IDS path to its
+          constraints.
+        multivalued: true
+        required: true
+        any_of:
+          - range: string
+          - range: IDSPathConstraint
+
+  IDSPathConstraint:
+    description: >-
+      An IDS path with additional constraints on its data array. The key is the
+      IDS path and the value contains the constraints. This class allows
+      additional properties to accommodate arbitrary IDS path names as keys.
+    class_uri: linkml:Any
+
+  AllowedValuesConstraint:
+    description: >-
+      A constraint specifying which values are allowed to be present in the
+      data array of an IDS path.
+    attributes:
+      allowed_values:
+        description: >-
+          A list of values that are allowed to be present in the data array.
+          When specified, only the listed values are permitted.
+        range: integer
+        multivalued: true
+        required: true
