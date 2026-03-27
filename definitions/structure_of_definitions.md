@@ -2,124 +2,180 @@
 
 This document outlines the structure of interface definitions that describe
 input and output datasets for simulation code using IMAS. These definitions are
-written in YAML and use references to the IDS's in the IMAS Data Dictionary.
+written in YAML and validated against the Pydantic model `InterfaceDefinition`
+in `schemas/pydantic_schema.py`. They use references to the IDS's in the IMAS
+Data Dictionary.
 
-In each file at least one of the following two top level mapping keys must be
-present:
+## Top-level keys
 
-- [`ids`](#specifying-ids-paths)
-- [`include`](#including-other-definitions)
+Each YAML file may contain the following top-level keys:
+
+- `dd_version` *(optional)*: A string specifying the version of the IMAS Data
+  Dictionary to target (e.g. `"4.1.0"`).
+- `include` *(optional)*: A list of relative file paths to other interface
+  definitions to include. See [Including other definitions](#including-other-definitions).
+- One or more **IDS names** (e.g. `magnetics`, `pf_active`, `wall`, etc.): Each
+  maps to a nested structure of required IDS paths. See
+  [Specifying IDS paths](#specifying-ids-paths).
+
+At least one IDS name or `include` must be present for the definition to be
+meaningful.
 
 ## Specifying IDS paths
 
-The mapping with key `ids` maps to a sequence of nested mappings, where the key
-of each of these mappings is the name of an IDS in the [IMAS Data
-Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.html
-) and the value is a mapping with key `required`.
+Each IDS is specified as a top-level key whose name matches an IDS in the
+[IMAS Data Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.html).
+Its value is a nested mapping that mirrors the hierarchical structure of the IDS.
 
-Each mapping with key `required` maps to a sequence of IDS paths that must be
-present in the dataset and whose data array must be non-empty. These paths
-follow the [IMAS netCDF naming
-convention](https://imas-python.readthedocs.io/en/stable/netcdf/conventions.html)
-where the forward slashes ( `/`) in the corresponding  Data Dictionary path are
-replaced by periods (`.`).
+The nested mapping follows the recursive type `IDS_PATH`, defined as:
 
-If there are no further constraints on the data array of an IDS path then it is
-encoded as a `string`. In case there are extra constraints imposed on the data
-array, then the IDS path is encoded as a mapping whose values are these
-constraints.
+```
+IDS_PATH = Dict[str, None | IDS_PATH | list[int]]
+```
 
-Currently, the only constraint implemented is `allowed_values`, indicating which
-values are allowed to be present in the data array.
+Each key in the mapping is a node name from the IDS path. The value can be:
 
-**Example 1**
+- **`null`/empty** — Indicates that this path is required and its data array
+  must be non-empty. In YAML, this is written by leaving the value empty
+  (e.g. `name:` or using flow style `{data:}`).
+- **A nested mapping** (`IDS_PATH`) — Indicates further nesting into the IDS
+  structure.
+- **A list of integers** (e.g. `[0,1]` or `[1,2,5]`) — Constrains which values
+  are allowed in the data array at this path.
+
+### Example 1: Single IDS
 
 ```yaml
-ids:
-  pf_passive:
-    required: # sequence of IDS paths
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5] # Only outline, rectangle and annulus are allowed
-    - loop.current
+dd_version: 4.1.0
+
+pf_passive:
+  loop:
+    name:
+    element:
+      turns_with_sign:
+      geometry:
+        geometry_type: [2,3,5,6]  # rectangle, oblique, annulus and thick line are allowed
+    current:
+  ids_proporties:
+    homogeneous_time: [0,1]
+```
+
+In this example:
+- `loop.name`, `loop.element.turns_with_sign`, and `loop.current` are required
+  paths with no value constraints (empty/null values).
+- `loop.element.geometry.geometry_type` is required and constrained to the
+  values `2`, `3`, `5` or `6`.
+- `ids_proporties.homogeneous_time` is required and constrained to the values
+  `0` or `1`.
+
+### Example 2: Flow style for simple sub-structures
+
+When a node has only a few children, YAML flow style can be used for brevity:
+
+```yaml
+dd_version: 4.1.0
+
+magnetics:
+  b_field_pol_probe:
+    name:
+    position: {r:, phi:, z:}
+    poloidal_angle:
+    toroidal_angle:
+    area:
+    length:
+    turns:
+    field: {data:}
+  flux_loop:
+    name:
+    position: {r:, phi:, z:}
+    flux: {data:}
+  ip: {data:}
+  diamagnetic_flux: {data:}
+  ids_proporties:
+    homogeneous_time: [0,1]
 ```
 
 ## Including other definitions
 
-The mapping with key `include` maps to a sequence of relative file paths, where
-each path points to a YAML-file having the same structure as described in this
-document.
+The `include` key maps to a list of relative file paths, where each path points
+to a YAML file having the same structure as described in this document.
 
-Including YAML-files in this fashion is equivalent to concatenating the lists of
-the mappings with keys `include` and `ids`. See the two examples below, where
-the first example uses only this include statement and the second example lists the
-IDS paths in each of the files under the include-key. These are
-equivalent interface definitions according to this document.
-
-### Example 2
-
-```yaml
-include: # sequence of relative paths to interface definitions
-- efit++/magnetics.yaml
-- efit++/pf_active.yaml
-- efit++/pf_passive.yaml
-- efit++/tf.yaml
-- efit++/wall.yaml
-```
+Including files is equivalent to merging their contents: combining the IDS path
+mappings from all included files into a single interface definition.
 
 ### Example 3
 
 ```yaml
-ids:
-  magnetics:
-    required:
-    - b_field_pol_probe.name
-    - b_field_pol_probe.position.r
-    - b_field_pol_probe.position.phi
-    - b_field_pol_probe.position.z
-    - b_field_pol_probe.poloidal_angle
-    - b_field_pol_probe.toroidal_angle
-    - b_field_pol_probe.area
-    - b_field_pol_probe.length
-    - b_field_pol_probe.turns
-    - b_field_pol_probe.field.data
-    - flux_loop.name
-    - flux_loop.position.r
-    - flux_loop.position.phi
-    - flux_loop.position.z
-    - flux_loop.flux.data
-    - ip.data
-    - diamagnetic_flux.data
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-  pf_active:
-    required:
-    - coil.name
-    - coil.element.turns_with_sign
-    - coil.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
-    - circuit.connections
-    - circuit.current.data
-    - supply.name
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-  pf_passive:
-    required:
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
-    - loop.current
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-  tf:
-    required:
-    - b_field_phi_vacuum_r.data
-    - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
-  wall:
-    required:
-    - description_2d.limiter.unit.outline.r
-    - description_2d.limiter.unit.outline.z
+include:  # list of relative paths to interface definitions
+- magnetics.yaml
+- pf_active.yaml
+- pf_passive.yaml
+- tf.yaml
+- wall.yaml
+```
+
+
+The above include is equivalent to specifying all IDS paths directly in a single
+file:
+
+### Example 4: Equivalent expanded form
+
+```yaml
+dd_version: 4.1.0
+
+magnetics:
+  b_field_pol_probe:
+    name:
+    position: {r:, phi:, z:}
+    poloidal_angle:
+    toroidal_angle:
+    area:
+    length:
+    turns:
+    field: {data:}
+  flux_loop:
+    name:
+    position: {r:, phi:, z:}
+    flux: {data:}
+  ip: {data:}
+  diamagnetic_flux: {data:}
+  ids_proporties:
+    homogeneous_time: [0,1]
+
+pf_active:
+  coil:
+    name:
+    element:
+      turns_with_sign:
+      geometry:
+        geometry_type: [1,2,5]
+  circuit:
+    connections:
+    current: {data:}
+  supply:
+    name:
+  ids_proporties:
+    homogeneous_time: [0,1]
+
+pf_passive:
+  loop:
+    name:
+    element:
+      turns_with_sign:
+      geometry:
+        geometry_type: [1,2,5]
+    current:
+  ids_proporties:
+    homogeneous_time: [0,1]
+
+tf:
+  b_field_phi_vacuum_r: {data:}
+  ids_proporties:
+    homogeneous_time: [0,1]
+
+wall:
+  description_2d:
+    limiter:
+      unit:
+        outline: {r:, z:}
 ```
