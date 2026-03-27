@@ -9,5 +9,5 @@ ids:
     constraints:
     - path: loop.element.geometry.geometry_type
       allowed_values: [2,3,5,6]
-    - path: ids_proporties.homogeneous_time
+    - path: ids_properties.homogeneous_time
       allowed_values: [0,1]

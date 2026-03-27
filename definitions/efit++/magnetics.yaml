@@ -21,6 +21,6 @@ ids:
     - diamagnetic_flux.data
 
     constraints:
-    - path: ids_proporties.homogeneous_time
+    - path: ids_properties.homogeneous_time
       allowed_values: [0,1]
     
