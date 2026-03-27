@@ -20,5 +20,5 @@ ids:
     - ip.data
     - diamagnetic_flux.data
     - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
+        allowed_values: [0,1]
     

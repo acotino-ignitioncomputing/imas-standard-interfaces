@@ -5,7 +5,7 @@ ids:
     - loop.name
     - loop.element.turns_with_sign
     - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
+        allowed_values: [2,3,5,6]
     - loop.current
     - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
+        allowed_values: [0,1]
