@@ -2,7 +2,13 @@
 
 This document outlines the structure of interface definitions that describe
 input and output datasets for simulation code using IMAS. These definitions are
-written in YAML and use references to the IDS's in the IMAS Data Dictionary.
+written in YAML and  are validated against the Pydantic model
+`InterfaceDefinition` in `schemas/pydantic_schema.py`. They use references to the
+IDS's in the IMAS Data Dictionary.
+
+The Data Dictionary version is denoted in the optional top-level key:
+
+- `dd_version`
 
 In each file at least one of the following two top level mapping keys must be
 present:
@@ -24,15 +30,15 @@ convention](https://imas-python.readthedocs.io/en/stable/netcdf/conventions.html
 where the forward slashes ( `/`) in the corresponding  Data Dictionary path are
 replaced by periods (`.`).
 
-If there are no further constraints on the data array of an IDS path then it is
-encoded as a `string`. In case there are extra constraints imposed on the data
-array, then the IDS path is encoded as a mapping whose values are these
+If there are no further constraints on the data array of an IDS path then the
+path is encoded as a `string`. In case there are extra constraints imposed on
+the data array, the IDS path is encoded as a mapping whose values are these
 constraints.
 
 Currently, the only constraint implemented is `allowed_values`, indicating which
 values are allowed to be present in the data array.
 
-**Example 1**
+### Example 1
 
 ```yaml
 ids:
@@ -41,7 +47,7 @@ ids:
     - loop.name
     - loop.element.turns_with_sign
     - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5] # Only outline, rectangle and annulus are allowed
+        allowed_values: [2,3,5,6]  # rectangle, oblique, annulus and thick line are allowed
     - loop.current
 ```
 
@@ -92,32 +98,32 @@ ids:
     - ip.data
     - diamagnetic_flux.data
     - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
+        allowed_values: [0,1]
   pf_active:
     required:
     - coil.name
     - coil.element.turns_with_sign
     - coil.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
+        allowed_values: [2,3,5,6]
     - circuit.connections
     - circuit.current.data
     - supply.name
     - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
+        allowed_values: [0,1]
   pf_passive:
     required:
     - loop.name
     - loop.element.turns_with_sign
     - loop.element.geometry.geometry_type:
-      allowed_values: [1,2,5]
+        allowed_values: [2,3,5,6]
     - loop.current
     - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
+        allowed_values: [0,1]
   tf:
     required:
     - b_field_phi_vacuum_r.data
     - ids_proporties.homogeneous_time:
-      allowed_values: [0,1]
+        allowed_values: [0,1]
   wall:
     required:
     - description_2d.limiter.unit.outline.r
