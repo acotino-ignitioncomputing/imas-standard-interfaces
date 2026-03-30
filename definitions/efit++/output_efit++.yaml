@@ -1,0 +1,80 @@
+dd_version: 4.1.0
+
+equilibrium:
+  time:
+  vacuum_toroidal_field:
+    r0:
+    b0:
+  ids_properties:
+    homogeneous_time: [1]
+  code:
+    name:
+    output_flag:
+  time_slice:
+    profiles_1d:
+      psi:
+      phi:
+      pressure:
+      f:
+      dpressure_dpsi:
+      f_df_dpsi:
+      j_tor:
+      q:
+      r_inboard:
+      r_outboard:
+      elongation:
+      triangularity_upper:
+      triangularity_lower:
+      volume:
+      rho_volume_norm:
+    boundary:
+      type:
+      outline: {r:, z:}
+      psi_norm:
+      geometric_axis: {r:, z:}
+      minor_radius:
+      elongation:
+      triangularity:
+      triangularity_upper:
+      triangularity_lower:
+      x_point: {r:, z:}
+      strike_point: {r:, z:}
+      active_limiter_point: {r:, z:}
+    global_quantities:
+      beta_pol:
+      beta_tor:
+      beta_normal:
+      ip:
+      li_3:
+      volume:
+      area:
+      psi_axis:
+      psi_boundary:
+      magnetic_axis: {r:, z:, b_field_tor:}
+      q_axis:
+      q_95:
+      q_min:
+        value:
+      energy_mhd:
+    profiles_2d:
+      grid_type:
+        name:
+        index:
+        description:
+      grid:
+        dim1:
+        dim2:
+      psi:
+      j_tor:
+    convergence:
+      grad_shafranov_deviation_expression:
+        index:
+      iterations_n:
+      grad_shafranov_deviation_value:
+    constraints:
+      diamagnetic_flux: {measured:, weight:, reconstructed:, chi_squared:}
+      ip: {measured:, weight:, reconstructed:, chi_squared:}
+      bpol_probe: {measured:, weight:, reconstructed:, chi_squared:}
+      flux_loop: {measured:, weight:, reconstructed:, chi_squared:}
+      pf_current: {measured:, weight:, reconstructed:, chi_squared:}
+      pf_passive_current: {measured:, weight:, reconstructed:, chi_squared:}
