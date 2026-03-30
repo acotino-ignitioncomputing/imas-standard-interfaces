@@ -29,7 +29,7 @@ Its value is a nested mapping that mirrors the hierarchical structure of the IDS
 
 The nested mapping follows the recursive type `IDS_PATH`, defined as:
 
-```
+```python
 IDS_PATH = Dict[str, None | IDS_PATH | list[int]]
 ```
 
@@ -61,6 +61,7 @@ pf_passive:
 ```
 
 In this example:
+
 - `loop.name`, `loop.element.turns_with_sign`, and `loop.current` are required
   paths with no value constraints (empty/null values).
 - `loop.element.geometry.geometry_type` is required and constrained to the
@@ -114,7 +115,6 @@ include:  # list of relative paths to interface definitions
 - wall.yaml
 ```
 
-
 The above include is equivalent to specifying all IDS paths directly in a single
 file:
 
@@ -148,7 +148,7 @@ pf_active:
     element:
       turns_with_sign:
       geometry:
-        geometry_type: [1,2,5]
+        geometry_type: [2,3,5,6]
   circuit:
     connections:
     current: {data:}
@@ -163,7 +163,7 @@ pf_passive:
     element:
       turns_with_sign:
       geometry:
-        geometry_type: [1,2,5]
+        geometry_type: [2,3,5,6]
     current:
   ids_proporties:
     homogeneous_time: [0,1]
