@@ -36,7 +36,7 @@ if __name__ == "__main__":
     import yaml
     from pathlib import Path
 
-    folder = Path(__file__).parent / "definitions" / "efit++"
+    folder = Path(__file__).parents[1] / "definitions" / "efit++"
 
     for file_path in sorted(folder.glob("*.yaml")):
         print(f"\nValidating {file_path.name}...")
