@@ -1,6 +1,7 @@
 """Pydantic v2 model for IMAS interface definition YAML files."""
 
 from pydantic import BaseModel, ConfigDict, model_validator
+from imas import IDSFactory
 
 
 class PathConstraints(BaseModel):
@@ -30,6 +31,27 @@ class InterfaceDefinition(BaseModel):
     def check_non_empty_definition(self):
         if self.include is None and self.ids is None:
             raise ValueError("At least one IDS or include-path must be provided")
+        return self
+
+    # Only allow IDS names that are in the Data Dictionary
+    @model_validator(mode="after")
+    def check_ids_name(self):
+        ids_names_list = IDSFactory(self.dd_version).ids_names()
+
+        # Skip this check if no IDS's are provided
+        if self.ids is None:
+            return self
+
+        for ids_name in self.ids.keys():
+            if ids_name not in ids_names_list:
+                message = f"IDS name '{ids_name}' is not in Data Dictionary"
+                message += (
+                    f" version {self.dd_version}"
+                    if self.dd_version is not None
+                    else " (version not provided)"
+                )
+                raise ValueError(message)
+        return self
 
 
 if __name__ == "__main__":
