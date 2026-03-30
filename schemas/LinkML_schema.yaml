@@ -69,6 +69,7 @@ classes:
       ids_name: 
         description: >-
           Name of the IDS
+        range: AllowedIDSNames
       required_paths:
         description: >-
           IDS paths that need to be present in the dataset
@@ -91,3 +92,14 @@ classes:
         required: true
         multivalued: true
         range: integer
+
+enums:
+  AllowedIDSNames:
+    permissible_values:
+      equilibrium:
+      iron_core:
+      magnetics:
+      pf_active:
+      pf_passive:
+      tf:
+      wall:
