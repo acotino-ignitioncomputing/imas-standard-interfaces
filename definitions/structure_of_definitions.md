@@ -30,7 +30,7 @@ Its value is a nested mapping that mirrors the hierarchical structure of the IDS
 The nested mapping follows the recursive type `IDS_PATH`, defined as:
 
 ```python
-IDS_PATH = Dict[str, None | IDS_PATH | list[int]]
+type IDS_PATH = dict[str, IDS_PATH | list[int] | None]
 ```
 
 Each key in the mapping is a node name from the IDS path. The value can be:

@@ -1,38 +1,57 @@
-from pydantic import BaseModel, ConfigDict, model_validator, ValidationError
-from typing import Dict, Optional
+from pydantic import BaseModel, ConfigDict, model_validator, TypeAdapter, ValidationError
+from imas import IDSFactory
 
 # Define type hint for required IDS paths and the constraints on them  
-type IDS_PATH = Dict[str, Optional[IDS_PATH | list[int]]]
+type IDS_PATH = dict[str, IDS_PATH | list[int] | None]
 
 
 class InterfaceDefinition(BaseModel):
     # Version of IMAS Data Dictionary to target
-    dd_version: Optional[str] = None
+    dd_version: str | None = None
 
     # List of paths of other interface definitions to include
-    include: Optional[list[str]] = None
+    include: list[str] | None = None
 
-    # Allowed IDS
-    equilibrium: Optional[IDS_PATH] = None
-    iron_core: Optional[IDS_PATH] = None
-    magnetics: Optional[IDS_PATH] = None
-    pf_active: Optional[IDS_PATH] = None
-    pf_passive: Optional[IDS_PATH] = None
-    tf: Optional[IDS_PATH] = None
-    wall: Optional[IDS_PATH] = None
-
-    # No other fields are permitted
-    model_config = ConfigDict(extra="forbid")
+    # IDS's are stored in self.__pydantic_extra__. Their type is checked afterwards
+    model_config = ConfigDict(extra="allow")
 
     # Enforce that at least one IDS or one include-path is provided 
     @model_validator(mode="after")
     def check_non_empty_definition(self):
-        for key, value in self.__dict__.items():
-            if key != "dd_version" and value is not None:
-                return
+        if self.include is not None or self.__pydantic_extra__:
+            return self
         
-        raise ValueError("At least one IDS or include-path must be provided" )
+        raise ValueError("At least one IDS or include-path must be provided" ) 
+    
+    
+    # Only allow IDS names that are in the Data Dictionary
+    @model_validator(mode="after")
+    def check_ids_name(self):
+        ids_names_list = IDSFactory(self.dd_version).ids_names()
 
+        for key in self.__dict__.keys():
+            if key != "dd_version" and key != "include" and key not in ids_names_list:
+                message = f"IDS name '{key}' is not in Data Dictionary"
+                message += (
+                    f" version {self.dd_version}"
+                    if self.dd_version is not None
+                    else " (version not provided)"
+                )
+                raise ValueError(message)
+        return self
+    
+    # Check type hint of provided IDS
+    @model_validator(mode="after")
+    def check_ids_type(self):
+        adapter =  TypeAdapter(IDS_PATH)
+        for key, value in self.__pydantic_extra__.items():
+            try:
+               adapter.validate_python(value)
+            except Exception:
+                raise ValueError(
+                    f"Format of IDS '{key}' does not comply with standard"
+                    )
+        return self
 
 
 if __name__ == "__main__":
@@ -59,3 +78,4 @@ if __name__ == "__main__":
         except Exception as e:
             print("\tVALIDATION FAILED")
             print(e)
+
