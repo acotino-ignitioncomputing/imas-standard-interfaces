@@ -9,5 +9,5 @@ ids:
     - circuit.connections
     - circuit.current.data
     - supply.name
-    - ids_proporties.homogeneous_time:
+    - ids_properties.homogeneous_time:
         allowed_values: [0,1]

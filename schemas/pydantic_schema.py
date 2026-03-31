@@ -1,7 +1,7 @@
 """Pydantic v2 model for IMAS interface definition YAML files."""
 
 from pydantic import BaseModel, ConfigDict, model_validator
-from imas import IDSFactory
+from imas import IDSFactory, util
 
 
 class PathConstraints(BaseModel):
@@ -33,6 +33,7 @@ class IDSPath(BaseModel):
                     "The following paths must be on a single list entry (prepend '-'):"
                     + "\n\t".join(path.keys())
                 )
+        return self
 
 
 class InterfaceDefinition(BaseModel):
@@ -79,6 +80,40 @@ class InterfaceDefinition(BaseModel):
                     else " (version not provided)"
                 )
                 raise ValueError(message)
+        return self
+
+    @model_validator(mode="after")
+    def check_ids_paths_in_dd(self):
+        """Each IDS path must be present in the provided version of Data Dictionary.
+        If no version is supplied, the latest version is used.
+
+        Raises:
+            ValueError
+
+        Returns:
+            self
+        """
+
+        for ids_name in self.ids:
+            # Create empty IDS to extract valid paths from
+            ids_instance = IDSFactory(self.dd_version).new(ids_name)
+
+            # Convert paths to IMAS NetCDF convention
+            valid_paths_list = [
+                path.replace("/", ".") for path in util.find_paths(ids_instance, "")
+            ]
+
+            for ids_path in self.ids[ids_name].required:
+                ids_path_string = (
+                    list(ids_path)[0] if isinstance(ids_path, dict) else ids_path
+                )
+
+                if ids_path_string not in valid_paths_list:
+                    raise ValueError(
+                        f"Path {ids_path_string} is not in IDS {ids_name} for "
+                        + f"Data Dictionary version {self.dd_version}"
+                    )
+
         return self
 
 

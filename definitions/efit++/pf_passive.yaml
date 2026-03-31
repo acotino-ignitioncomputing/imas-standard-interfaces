@@ -7,5 +7,5 @@ ids:
     - loop.element.geometry.geometry_type:
         allowed_values: [2,3,5,6]
     - loop.current
-    - ids_proporties.homogeneous_time:
+    - ids_properties.homogeneous_time:
         allowed_values: [0,1]

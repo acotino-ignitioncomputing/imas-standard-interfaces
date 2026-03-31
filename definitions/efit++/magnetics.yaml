@@ -19,6 +19,6 @@ ids:
     - flux_loop.flux.data
     - ip.data
     - diamagnetic_flux.data
-    - ids_proporties.homogeneous_time:
+    - ids_properties.homogeneous_time:
         allowed_values: [0,1]
     
