@@ -58,8 +58,8 @@ equilibrium:
       energy_mhd:
     profiles_2d:
       grid_type:
-        name:
-        index:
+        name: ["rectangular"]
+        index: [1]
         description:
       grid:
         dim1:

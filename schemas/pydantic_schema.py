@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, model_validator, TypeAdapter, Valida
 from imas import IDSFactory
 
 # Define type hint for required IDS paths and the constraints on them  
-type IDS_PATH = dict[str, IDS_PATH | list[int] | None]
+type IDS_PATH = dict[str, IDS_PATH | list[int | str] | None]
 
 
 class InterfaceDefinition(BaseModel):
@@ -10,23 +10,37 @@ class InterfaceDefinition(BaseModel):
     dd_version: str | None = None
 
     # List of paths of other interface definitions to include
-    include: list[str] | None = None
+    include: list[str] = []
 
     # IDS's are stored in self.__pydantic_extra__. Their type is checked afterwards
     model_config = ConfigDict(extra="allow")
 
-    # Enforce that at least one IDS or one include-path is provided 
     @model_validator(mode="after")
     def check_non_empty_definition(self):
+        """Enforce that at least one IDS or one include-path is provided 
+
+        Raises:
+            ValueError
+
+        Returns:
+            self
+        """
         if self.include is not None or self.__pydantic_extra__:
             return self
         
         raise ValueError("At least one IDS or include-path must be provided" ) 
     
     
-    # Only allow IDS names that are in the Data Dictionary
     @model_validator(mode="after")
     def check_ids_name(self):
+        """Only allow IDS names that are in the Data Dictionary
+
+        Raises:
+            ValueError
+
+        Returns:
+            self
+        """
         ids_names_list = IDSFactory(self.dd_version).ids_names()
 
         for key in self.__dict__.keys():
@@ -40,9 +54,17 @@ class InterfaceDefinition(BaseModel):
                 raise ValueError(message)
         return self
     
-    # Check type hint of provided IDS
+    # 
     @model_validator(mode="after")
     def check_ids_type(self):
+        """Check type hint of provided IDS
+
+        Raises:
+            ValueError
+
+        Returns:
+            self
+        """
         adapter =  TypeAdapter(IDS_PATH)
         for key, value in self.__pydantic_extra__.items():
             try:
