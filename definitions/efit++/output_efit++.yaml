@@ -57,8 +57,10 @@ ids:
     - time_slice.global_quantities.q_95
     - time_slice.global_quantities.q_min.value
     - time_slice.global_quantities.energy_mhd
-    - time_slice.profiles_2d.grid_type.name
-    - time_slice.profiles_2d.grid_type.index
+    - time_slice.profiles_2d.grid_type.name:
+        allowed_values: ["rectangular"]
+    - time_slice.profiles_2d.grid_type.index:
+        allowed_values: [1]
     - time_slice.profiles_2d.grid_type.description
     - time_slice.profiles_2d.grid.dim1
     - time_slice.profiles_2d.grid.dim2

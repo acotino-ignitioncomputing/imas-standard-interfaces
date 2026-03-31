@@ -7,7 +7,7 @@ from imas import IDSFactory
 class PathConstraints(BaseModel):
     """Constraints on the data array of an IDS path."""
 
-    allowed_values: list[int]
+    allowed_values: list[int | str]
 
 
 class IDSPath(BaseModel):
@@ -21,26 +21,37 @@ class InterfaceDefinition(BaseModel):
     """Top-level model for an IMAS interface definition YAML file."""
 
     dd_version: str | None = None
-    include: list[str] | None = None
-    ids: dict[str, IDSPath] | None = None
+    include: list[str] = []
+    ids: dict[str, IDSPath] = {}
 
     model_config = ConfigDict(extra="forbid")
 
-    # Enforce that at least one IDS or one include-path is provided
     @model_validator(mode="after")
     def check_non_empty_definition(self):
+        """Enforce that at least one IDS or one include-path is provided
+
+        Raises:
+            ValueError
+
+        Returns:
+            self
+        """
         if self.include is None and self.ids is None:
             raise ValueError("At least one IDS or include-path must be provided")
         return self
 
-    # Only allow IDS names that are in the Data Dictionary
+    #
     @model_validator(mode="after")
     def check_ids_name(self):
-        ids_names_list = IDSFactory(self.dd_version).ids_names()
+        """Only allow IDS names that are in the Data Dictionary
 
-        # Skip this check if no IDS's are provided
-        if self.ids is None:
-            return self
+        Raises:
+            ValueError
+
+        Returns:
+            self
+        """
+        ids_names_list = IDSFactory(self.dd_version).ids_names()
 
         for ids_name in self.ids.keys():
             if ids_name not in ids_names_list:
