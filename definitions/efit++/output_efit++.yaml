@@ -93,3 +93,7 @@ ids:
     constraints:
     - path: ids_properties.homogeneous_time
       allowed_values: [1]
+    - path: time_slice.profiles_2d.grid_type.name
+      allowed_values: ["rectangular"]
+    - path: time_slice.profiles_2d.grid_type.index
+      allowed_values: [1]

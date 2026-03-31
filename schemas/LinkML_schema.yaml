@@ -13,9 +13,6 @@ description: >-
 prefixes:
   linkml: https://w3id.org/linkml/
 
-
-default_range: string
-
 imports:
   - linkml:types
 
@@ -75,6 +72,7 @@ classes:
           IDS paths that need to be present in the dataset
         required: true
         multivalued: true
+        range: string
       constraints:
         description: >-
           Constraints applied to IDS paths
@@ -86,12 +84,16 @@ classes:
     attributes:
       path:
         required: true
+        range: string
       allowed_values:
         description: >-
           Data array at this IDS path must only consist of the listed values.
         required: true
         multivalued: true
-        range: integer
+        exactly_one_of:
+          - range: string
+          - range: integer
+
 
 enums:
   AllowedIDSNames:
