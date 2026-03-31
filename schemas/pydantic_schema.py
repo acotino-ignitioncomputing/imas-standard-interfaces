@@ -16,6 +16,24 @@ class IDSPath(BaseModel):
     required: list[str | dict[str, PathConstraints]]
     model_config = ConfigDict(extra="forbid")
 
+    @model_validator(mode="after")
+    def check_length_dictionaries(self):
+        """Dictionaries must have length 1
+
+        Raises:
+            ValueError
+
+        Returns:
+            self
+        """
+
+        for path in self.required:
+            if isinstance(path, dict) and len(path) != 1:
+                raise ValueError(
+                    "The following paths must be on a single list entry (prepend '-'):"
+                    + "\n\t".join(path.keys())
+                )
+
 
 class InterfaceDefinition(BaseModel):
     """Top-level model for an IMAS interface definition YAML file."""
@@ -40,7 +58,6 @@ class InterfaceDefinition(BaseModel):
             raise ValueError("At least one IDS or include-path must be provided")
         return self
 
-    #
     @model_validator(mode="after")
     def check_ids_name(self):
         """Only allow IDS names that are in the Data Dictionary
