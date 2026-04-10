@@ -2,14 +2,14 @@ dd_version: 4.1.0
 ids:
   - ids_name: pf_active
     required_paths:
-    - coil.name
-    - coil.element.turns_with_sign
-    - circuit.connections
-    - circuit.current.data
-    - supply.name
+    - coil(i1)/name
+    - coil(i1)/element/turns_with_sign
+    - circuit(i1)/connections
+    - circuit(i1)/current/data
+    - supply(i1)/name
 
     constraints:
-    - path: coil.element.geometry.geometry_type
+    - path: coil(i1)/element(i2)/geometry/geometry_type
       allowed_values: [2,3,5,6]
-    - path: ids_properties.homogeneous_time
+    - path: ids_properties/homogeneous_time
       allowed_values: [0,1]

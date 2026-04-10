@@ -2,8 +2,8 @@ dd_version: 4.1.0
 ids:
   - ids_name: tf
     required_paths:
-    - b_field_phi_vacuum_r.data
+    - b_field_phi_vacuum_r/data
 
     constraints:
-    - path: ids_properties.homogeneous_time
+    - path: ids_properties/homogeneous_time
       allowed_values: [0,1]

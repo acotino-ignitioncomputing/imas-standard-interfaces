@@ -30,11 +30,11 @@ the following keys:
 
 ### Required paths
 
-Each entry in `required_paths` is a string representing an IDS path. These
-paths follow the [IMAS netCDF naming
-convention](https://imas-python.readthedocs.io/en/stable/netcdf/conventions.html)
-where the forward slashes (`/`) in the corresponding Data Dictionary path are
-replaced by periods (`.`).
+Each entry in `required_paths` is a string representing an IDS path. These paths
+follow the [IMAS IDS path
+convention](https://imas-data-dictionary.readthedocs.io/en/latest/IDS-path-syntax.html)
+where the forward slashes `/` seperate nested structures and index of arrays
+can be given between round brackets `()` just after the array name.
 
 ### Constraints
 
@@ -57,14 +57,14 @@ values in the data array is defined, such that the keys for this mapping are
 ids:
   - ids_name: pf_passive
     required_paths: # sequence of IDS paths
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.current
+    - loop(i1)/name
+    - loop(i1)/element(i2)/turns_with_sign
+    - loop(i1)/current
 
     constraints:
-    - path: loop.element.geometry.geometry_type
-      allowed_values: [2,3,5,6] # Only rectangle, oblique, annulus and thick_line are allowed
-    - path: ids_proporties.homogeneous_time
+    - path: loop(i1)/element(i2)/geometry/geometry_type
+      allowed_values: [2,3,5,6] # rectangle, oblique, annulus and thick line are allowed
+    - path: ids_properties/homogeneous_time
       allowed_values: [0,1]
 ```
 
@@ -97,64 +97,65 @@ include: # sequence of relative paths to interface definitions
 ids:
   - ids_name: magnetics
     required_paths:
-    - b_field_pol_probe.name
-    - b_field_pol_probe.position.r
-    - b_field_pol_probe.position.phi
-    - b_field_pol_probe.position.z
-    - b_field_pol_probe.poloidal_angle
-    - b_field_pol_probe.toroidal_angle
-    - b_field_pol_probe.area
-    - b_field_pol_probe.length
-    - b_field_pol_probe.turns
-    - b_field_pol_probe.field.data
-    - flux_loop.name
-    - flux_loop.position.r
-    - flux_loop.position.phi
-    - flux_loop.position.z
-    - flux_loop.flux.data
-    - ip.data
-    - diamagnetic_flux.data
+    - b_field_pol_probe(i1)/name
+    - b_field_pol_probe(i1)/position/r
+    - b_field_pol_probe(i1)/position/phi
+    - b_field_pol_probe(i1)/position/z
+    - b_field_pol_probe(i1)/poloidal_angle
+    - b_field_pol_probe(i1)/toroidal_angle
+    - b_field_pol_probe(i1)/area
+    - b_field_pol_probe(i1)/length
+    - b_field_pol_probe(i1)/turns
+    - b_field_pol_probe(i1)/field/data
+    - flux_loop(i1)/name
+    - flux_loop(i1)/position(i2)/r
+    - flux_loop(i1)/position(i2)/phi
+    - flux_loop(i1)/position(i2)/z
+    - flux_loop(i1)/flux/data
+    - ip(i1)/data
+    - diamagnetic_flux(i1)/data
 
     constraints:
-    - path: ids_proporties.homogeneous_time
+    - path: ids_properties/homogeneous_time
       allowed_values: [0,1]
 
   - ids_name: pf_active
     required_paths:
-    - coil.name
-    - coil.element.turns_with_sign
-    - circuit.connections
-    - circuit.current.data
-    - supply.name
+    - coil(i1)/name
+    - coil(i1)/element/turns_with_sign
+    - circuit(i1)/connections
+    - circuit(i1)/current/data
+    - supply(i1)/name
 
     constraints:
-    - path: coil.element.geometry.geometry_type
+    - path: coil(i1)/element(i2)/geometry/geometry_type
       allowed_values: [2,3,5,6]
-    - path: ids_proporties.homogeneous_time
+    - path: ids_properties/homogeneous_time
       allowed_values: [0,1]
 
   - ids_name: pf_passive
     required_paths:
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.current
+    - loop(i1)/name
+    - loop(i1)/element(i2)/turns_with_sign
+    - loop(i1)/current
 
     constraints:
-    - path: loop.element.geometry.geometry_type
+    - path: loop(i1)/element(i2)/geometry/geometry_type
       allowed_values: [2,3,5,6]
-    - path: ids_proporties.homogeneous_time
+    - path: ids_properties/homogeneous_time
       allowed_values: [0,1]
 
   - ids_name: tf
     required_paths:
-    - b_field_phi_vacuum_r.data
+    - b_field_phi_vacuum_r/data
 
     constraints:
-    - path: ids_proporties.homogeneous_time
+    - path: ids_properties/homogeneous_time
       allowed_values: [0,1]
 
   - ids_name: wall
     required_paths:
-    - description_2d.limiter.unit.outline.r
-    - description_2d.limiter.unit.outline.z
+    - description_2d(i1)/limiter/unit(i2)/outline/r
+    - description_2d(i1)/limiter/unit(i2)/outline/z
+
 ```
