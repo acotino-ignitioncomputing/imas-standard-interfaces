@@ -93,6 +93,7 @@ classes:
         exactly_one_of:
           - range: string
           - range: integer
+      # TODO: add other constraints (value_range, at_least_one_present, has_shape, same_shape)
 
 
 enums:
