@@ -2,6 +2,7 @@
 
 from pydantic import BaseModel, ConfigDict, model_validator
 from imas import IDSFactory, util
+import re
 
 
 class PathConstraints(BaseModel):
@@ -99,14 +100,19 @@ class InterfaceDefinition(BaseModel):
             ids_instance = IDSFactory(self.dd_version).new(ids_name)
 
             # Convert paths to IMAS NetCDF convention
+            """ 
             valid_paths_list = [
                 path.replace("/", ".") for path in util.find_paths(ids_instance, "")
             ]
+            """
+            valid_paths_list = util.find_paths(ids_instance, "")
 
             for ids_path in self.ids[ids_name].required:
                 ids_path_string = (
                     list(ids_path)[0] if isinstance(ids_path, dict) else ids_path
                 )
+                # Remove index-notation (if present)
+                ids_path_string = re.sub(r"\(.{1,6}\)", "", ids_path_string)
 
                 if ids_path_string not in valid_paths_list:
                     raise ValueError(

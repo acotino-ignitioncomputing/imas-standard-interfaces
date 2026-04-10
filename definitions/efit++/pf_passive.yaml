@@ -2,10 +2,10 @@ dd_version: 4.1.0
 ids:
   pf_passive:
     required:
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
+    - loop(i1)/name
+    - loop(i1)/element(i2)/turns_with_sign
+    - loop(i1)/element(i2)/geometry/geometry_type:
         allowed_values: [2,3,5,6]
-    - loop.current
-    - ids_properties.homogeneous_time:
+    - loop(i1)/current
+    - ids_properties/homogeneous_time:
         allowed_values: [0,1]

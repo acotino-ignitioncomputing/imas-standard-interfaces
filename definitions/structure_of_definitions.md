@@ -25,10 +25,10 @@ Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.
 
 Each mapping with key `required` maps to a sequence of IDS paths that must be
 present in the dataset and whose data array must be non-empty. These paths
-follow the [IMAS netCDF naming
-convention](https://imas-python.readthedocs.io/en/stable/netcdf/conventions.html)
-where the forward slashes ( `/`) in the corresponding  Data Dictionary path are
-replaced by periods (`.`).
+follow the [IMAS IDS path
+convention](https://imas-data-dictionary.readthedocs.io/en/latest/IDS-path-syntax.html)
+where the forward slashes `/` seperate nested structures and index of arrays
+can be given between round brackets `()` just after the array name.
 
 If there are no further constraints on the data array of an IDS path then the
 path is encoded as a `string`. In case there are extra constraints imposed on

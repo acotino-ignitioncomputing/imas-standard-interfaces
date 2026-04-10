@@ -2,12 +2,12 @@ dd_version: 4.1.0
 ids:
   pf_active:
     required:
-    - coil.name
-    - coil.element.turns_with_sign
-    - coil.element.geometry.geometry_type:
+    - coil(i1)/name
+    - coil(i1)/element/turns_with_sign
+    - coil(i1)/element(i2)/geometry/geometry_type:
         allowed_values: [2,3,5,6]
-    - circuit.connections
-    - circuit.current.data
-    - supply.name
-    - ids_properties.homogeneous_time:
+    - circuit(i1)/connections
+    - circuit(i1)/current/data
+    - supply(i1)/name
+    - ids_properties/homogeneous_time:
         allowed_values: [0,1]
