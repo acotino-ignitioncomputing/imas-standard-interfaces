@@ -1,6 +1,10 @@
 # LinkML schema for IMAS interface definitions
 # Captures the rules described in definitions/structure_of_definitions.md
 # Validates YAML files such as those in definitions/efit++/
+#
+# To check whether the syntax of the schema itself is correct with respect to
+# LinkML-syntax, use the command
+# linkml-term-validator validate-schema schemas/LinkML_schema.yaml
 
 id: https://github.com/iterorganization/imas-standard-interfaces/schemas/LinkML_schema
 name: LinkML_schema
@@ -26,7 +30,7 @@ classes:
       dd_version:
         description: >-
           The version of the IMAS Data Dictionary that this definition targets.
-        required: false
+        required: true
         pattern: "^[0-9]{1,}\\.[0-9]{1,}\\.[0-9]{1,}"
       ids:
         description: >-
@@ -65,17 +69,17 @@ classes:
     attributes:
       ids_name: 
         description: >-
-          Name of the IDS
-        range: AllowedIDSNames
+          Name of the IDS.
+        range: string
       required_paths:
         description: >-
-          IDS paths that need to be present in the dataset
+          IDS paths that need to be present in the dataset.
         required: true
         multivalued: true
         range: string
       constraints:
         description: >-
-          Constraints applied to IDS paths
+          Constraints applied to IDS paths.
         required: false
         multivalued: true
         range: PathConstraint
@@ -83,26 +87,41 @@ classes:
   PathConstraint:
     attributes:
       path:
+        description: >-
+          List of IDS paths for which the constraints hold.
         required: true
+        multivalued: true
         range: string
       allowed_values:
         description: >-
           Data array at this IDS path must only consist of the listed values.
-        required: true
+        required: false
         multivalued: true
         exactly_one_of:
           - range: string
           - range: integer
+      has_shape:
+        description: >-
+          Data array at this IDS path must have the indicated shape.
+        required: false
+        multivalued: true
+      value_range:
+        description: >-
+          The values of the data array at this IDS path must fall within given
+          range.
+        required: false
+        multivalued: true
+        range: float
+        exact_cardinality: 2
+      at_least_one_present:
+        description: >-
+          Indicates that at least one of the the listed paths must be present.
+        required: false
+        ifabsent: null
+      same_shape:
+        description: >-
+          Indicates that the data arrays of the listed paths must have the same
+          shape.
+        required: false
+        ifabsent: null
       # TODO: add other constraints (value_range, at_least_one_present, has_shape, same_shape)
-
-
-enums:
-  AllowedIDSNames:
-    permissible_values:
-      equilibrium:
-      iron_core:
-      magnetics:
-      pf_active:
-      pf_passive:
-      tf:
-      wall:
