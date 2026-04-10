@@ -23,8 +23,8 @@ ids:
     - description_2d(0)/mobile/unit(i2)/outline(0)/r # NOTE: Not in PDS input desciption, but mentioned in spreadsheet
     - description_2d(0)/mobile/unit(i2)/outline(0)/z
     
-    constraints:
-    - # TODO: think of options in geometry of wall.description_2d(0).vessel.unit 
+    #constraints:
+    #- # TODO: think of options in geometry of wall.description_2d(0).vessel.unit 
     # where DD has no geometry type. For now, just picked centreline
 
   - ids_name: pf_active
@@ -34,7 +34,7 @@ ids:
     - coil(i1)/resistance
 
     constraints:
-    - path: coil(i1)/element(0)/geometry/geometry_type
+    - path: [coil(i1)/element(0)/geometry/geometry_type]
       allowed_values: [2] # Code also allows 1. Seperate definition?
     - path: # TODO: In case geometry_type = 2, and DDv4. Seperate definition?
       - coil(i1)/element(0)/geometry/outline/r
@@ -47,7 +47,7 @@ ids:
     - loop(i1)/resistance
 
     constraints:
-    - path: loop(i1)/element(0)/geometry/geometry_type
+    - path: [loop(i1)/element(0)/geometry/geometry_type]
       allowed_values: [1,2] # spreadsheet mentions type 3 is also handled
 
 

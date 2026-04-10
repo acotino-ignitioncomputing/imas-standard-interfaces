@@ -1,3 +1,5 @@
+dd_version: 4.1.0
+
 include: # list of relative paths to interface definitions
 - magnetics.yaml
 - pf_active.yaml
