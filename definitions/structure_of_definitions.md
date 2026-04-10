@@ -21,9 +21,9 @@ present:
 The mapping with key `ids` maps to a sequence of nested mappings, where the key
 of each of these mappings is the name of an IDS in the [IMAS Data
 Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.html
-) and the value is a mapping with key `required`.
+).
 
-Each mapping with key `required` maps to a sequence of IDS paths that must be
+Each of these mappings maps to a sequence of IDS paths that must be
 present in the dataset and whose data array must be non-empty. These paths
 follow the [IMAS IDS path
 convention](https://imas-data-dictionary.readthedocs.io/en/latest/IDS-path-syntax.html)
@@ -41,14 +41,16 @@ values are allowed to be present in the data array.
 ### Example 1
 
 ```yaml
+dd_version: 4.1.0
 ids:
-  pf_passive:
-    required: # sequence of IDS paths
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-        allowed_values: [2,3,5,6]  # rectangle, oblique, annulus and thick line are allowed
-    - loop.current
+  pf_passive: # sequence of IDS paths
+  - loop(i1)/name
+  - loop(i1)/element(i2)/turns_with_sign
+  - loop(i1)/element(i2)/geometry/geometry_type:
+      allowed_values: [2,3,5,6] # rectangle, oblique, annulus and thick line are allowed
+  - loop(i1)/current
+  - ids_properties/homogeneous_time:
+      allowed_values: [0,1]
 ```
 
 ## Including other definitions
@@ -79,53 +81,48 @@ include: # sequence of relative paths to interface definitions
 ```yaml
 ids:
   magnetics:
-    required:
-    - b_field_pol_probe.name
-    - b_field_pol_probe.position.r
-    - b_field_pol_probe.position.phi
-    - b_field_pol_probe.position.z
-    - b_field_pol_probe.poloidal_angle
-    - b_field_pol_probe.toroidal_angle
-    - b_field_pol_probe.area
-    - b_field_pol_probe.length
-    - b_field_pol_probe.turns
-    - b_field_pol_probe.field.data
-    - flux_loop.name
-    - flux_loop.position.r
-    - flux_loop.position.phi
-    - flux_loop.position.z
-    - flux_loop.flux.data
-    - ip.data
-    - diamagnetic_flux.data
-    - ids_proporties.homogeneous_time:
-        allowed_values: [0,1]
+  - b_field_pol_probe(i1)/name
+  - b_field_pol_probe(i1)/position/r
+  - b_field_pol_probe(i1)/position/phi
+  - b_field_pol_probe(i1)/position/z
+  - b_field_pol_probe(i1)/poloidal_angle
+  - b_field_pol_probe(i1)/toroidal_angle
+  - b_field_pol_probe(i1)/area
+  - b_field_pol_probe(i1)/length
+  - b_field_pol_probe(i1)/turns
+  - b_field_pol_probe(i1)/field/data
+  - flux_loop(i1)/name
+  - flux_loop(i1)/position(i2)/r
+  - flux_loop(i1)/position(i2)/phi
+  - flux_loop(i1)/position(i2)/z
+  - flux_loop(i1)/flux/data
+  - ip(i1)/data
+  - diamagnetic_flux(i1)/data
+  - ids_properties/homogeneous_time:
+      allowed_values: [0,1]
   pf_active:
-    required:
-    - coil.name
-    - coil.element.turns_with_sign
-    - coil.element.geometry.geometry_type:
-        allowed_values: [2,3,5,6]
-    - circuit.connections
-    - circuit.current.data
-    - supply.name
-    - ids_proporties.homogeneous_time:
-        allowed_values: [0,1]
+  - coil(i1)/name
+  - coil(i1)/element/turns_with_sign
+  - coil(i1)/element(i2)/geometry/geometry_type:
+      allowed_values: [2,3,5,6]
+  - circuit(i1)/connections
+  - circuit(i1)/current/data
+  - supply(i1)/name
+  - ids_properties/homogeneous_time:
+      allowed_values: [0,1]
   pf_passive:
-    required:
-    - loop.name
-    - loop.element.turns_with_sign
-    - loop.element.geometry.geometry_type:
-        allowed_values: [2,3,5,6]
-    - loop.current
-    - ids_proporties.homogeneous_time:
-        allowed_values: [0,1]
+  - loop(i1)/name
+  - loop(i1)/element(i2)/turns_with_sign
+  - loop(i1)/element(i2)/geometry/geometry_type:
+      allowed_values: [2,3,5,6]
+  - loop(i1)/current
+  - ids_properties/homogeneous_time:
+      allowed_values: [0,1]
   tf:
-    required:
-    - b_field_phi_vacuum_r.data
-    - ids_proporties.homogeneous_time:
-        allowed_values: [0,1]
+  - b_field_phi_vacuum_r/data
+  - ids_properties/homogeneous_time:
+      allowed_values: [0,1]
   wall:
-    required:
-    - description_2d.limiter.unit.outline.r
-    - description_2d.limiter.unit.outline.z
+  - description_2d(i1)/limiter/unit(i2)/outline/r
+  - description_2d(i1)/limiter/unit(i2)/outline/z
 ```

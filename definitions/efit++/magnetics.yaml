@@ -1,24 +1,22 @@
 dd_version: 4.1.0
 ids:
   magnetics:
-    required:
-    - b_field_pol_probe(i1)/name
-    - b_field_pol_probe(i1)/position/r
-    - b_field_pol_probe(i1)/position/phi
-    - b_field_pol_probe(i1)/position/z
-    - b_field_pol_probe(i1)/poloidal_angle
-    - b_field_pol_probe(i1)/toroidal_angle
-    - b_field_pol_probe(i1)/area
-    - b_field_pol_probe(i1)/length
-    - b_field_pol_probe(i1)/turns
-    - b_field_pol_probe(i1)/field/data
-    - flux_loop(i1)/name
-    - flux_loop(i1)/position(i2)/r
-    - flux_loop(i1)/position(i2)/phi
-    - flux_loop(i1)/position(i2)/z
-    - flux_loop(i1)/flux/data
-    - ip(i1)/data
-    - diamagnetic_flux(i1)/data
-    - ids_properties/homogeneous_time:
-        allowed_values: [0,1]
-    
+  - b_field_pol_probe(i1)/name
+  - b_field_pol_probe(i1)/position/r
+  - b_field_pol_probe(i1)/position/phi
+  - b_field_pol_probe(i1)/position/z
+  - b_field_pol_probe(i1)/poloidal_angle
+  - b_field_pol_probe(i1)/toroidal_angle
+  - b_field_pol_probe(i1)/area
+  - b_field_pol_probe(i1)/length
+  - b_field_pol_probe(i1)/turns
+  - b_field_pol_probe(i1)/field/data
+  - flux_loop(i1)/name
+  - flux_loop(i1)/position(i2)/r
+  - flux_loop(i1)/position(i2)/phi
+  - flux_loop(i1)/position(i2)/z
+  - flux_loop(i1)/flux/data
+  - ip(i1)/data
+  - diamagnetic_flux(i1)/data
+  - ids_properties/homogeneous_time:
+      allowed_values: [0,1]

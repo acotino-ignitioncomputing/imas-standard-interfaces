@@ -1,7 +1,6 @@
 dd_version: 4.1.0
 ids:
   tf:
-    required:
-    - b_field_phi_vacuum_r/data
-    - ids_properties/homogeneous_time:
-        allowed_values: [0,1]
+  - b_field_phi_vacuum_r/data
+  - ids_properties/homogeneous_time:
+      allowed_values: [0,1]
