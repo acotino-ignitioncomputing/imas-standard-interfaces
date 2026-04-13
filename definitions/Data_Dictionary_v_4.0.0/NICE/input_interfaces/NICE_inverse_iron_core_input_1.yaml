@@ -1,4 +1,4 @@
-dd_version: 4.1.0 # TODO: check for compatible version
+dd_version: 4.0.0 # TODO: check for compatible version
 
 include:
 - NICE_inverse_input_1.yaml

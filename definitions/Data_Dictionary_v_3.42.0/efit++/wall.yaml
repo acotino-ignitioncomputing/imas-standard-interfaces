@@ -1,4 +1,4 @@
-dd_version: 4.1.0
+dd_version: 3.42.0
 ids:
   - name: wall
     required_paths:
