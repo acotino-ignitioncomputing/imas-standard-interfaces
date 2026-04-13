@@ -74,15 +74,25 @@ classes:
       required_paths:
         description: >-
           IDS paths that need to be present in the dataset.
-        required: true
         multivalued: true
         range: string
       constraints:
         description: >-
           Constraints applied to IDS paths.
-        required: false
         multivalued: true
         range: PathConstraint
+    rules:
+      - postconditions:
+          any_of:
+            - slot_conditions:
+                required_paths:
+                  required: true
+            - slot_conditions:
+                constraints:
+                  required: true
+        description: >-
+          At least one of `required_paths` or `constraints` must be present in
+          each dictionary within `ids`. Both may be present simultaneously.
 
   PathConstraint:
     attributes:
