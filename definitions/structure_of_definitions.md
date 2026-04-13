@@ -21,7 +21,7 @@ version of the IMAS Data Dictionary that the definition targets (e.g.
 The key `ids` maps to a sequence of IDS entries. Each entry is a mapping with
 the following keys:
 
-- `ids_name`: The name of an IDS in the [IMAS Data
+- `name`: The name of an IDS in the [IMAS Data
   Dictionary](https://imas-data-dictionary.readthedocs.io/en/latest/reference_ids.html).
 - `required_paths`: A sequence of IDS paths that must be present in the dataset
   and whose data array must be non-empty.

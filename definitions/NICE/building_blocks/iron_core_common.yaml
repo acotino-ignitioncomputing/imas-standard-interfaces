@@ -1,7 +1,7 @@
 dd_version: 4.1.0 # TODO: check for compatible version
 
 ids:
-  - ids_name: iron_core
+  - name: iron_core
     required_paths:
     - ids_properties/version_put/data_dictionary
     - segment(i1)/geometry/outline/r

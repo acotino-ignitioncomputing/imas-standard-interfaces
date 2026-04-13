@@ -5,7 +5,7 @@ include:
 - ../building_blocks/NICE_vessel_wall_2.yaml
 
 ids:
-  - ids_name: equilibrium
+  - name: equilibrium
     required_paths:
     - time(0)
     - time_slice(0)/global_quantities/ip
@@ -20,7 +20,7 @@ ids:
       - time_slice(0)/profiles_1d/f_df_dpsi
       at_least_one_present:
       
-  - ids_name: pf_active
+  - name: pf_active
     constraints:
     - path: [coil(i1)/element(0)/geometry/geometry_type]
       allowed_values: [2]

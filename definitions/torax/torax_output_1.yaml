@@ -1,7 +1,7 @@
 dd_version: 4.0.0
 
 ids:
-  - ids_name: core_profiles
+  - name: core_profiles
     required_paths:
     - ids_properties/comment
     - ids_properties/homogeneous_time
@@ -59,7 +59,7 @@ ids:
     - path: [ids_properties/homogeneous_time]
       allowed_values: [1]
 
-  - ids_name: equilibrium
+  - name: equilibrium
     required_paths:
     - ids_properties/homogeneous_time
     - ids_properties/comment

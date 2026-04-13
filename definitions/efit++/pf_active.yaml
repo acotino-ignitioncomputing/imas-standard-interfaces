@@ -1,6 +1,6 @@
 dd_version: 4.1.0
 ids:
-  - ids_name: pf_active
+  - name: pf_active
     required_paths:
     - coil(i1)/name
     - coil(i1)/element/turns_with_sign

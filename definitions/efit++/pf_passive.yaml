@@ -1,6 +1,6 @@
 dd_version: 4.1.0
 ids:
-  - ids_name: pf_passive
+  - name: pf_passive
     required_paths:
     - loop(i1)/name
     - loop(i1)/element(i2)/turns_with_sign

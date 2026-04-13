@@ -1,6 +1,6 @@
 dd_version: 4.1.0
 ids:
-  - ids_name: magnetics
+  - name: magnetics
     required_paths:
     - b_field_pol_probe(i1)/name
     - b_field_pol_probe(i1)/position/r

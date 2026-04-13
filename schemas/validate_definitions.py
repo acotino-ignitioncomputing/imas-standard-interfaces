@@ -30,7 +30,7 @@ def check_ids_name(definition: dict) -> bool:
 
     correct_ids_names = True
     for ids in definition["ids"]:
-        ids_name = ids["ids_name"]
+        ids_name = ids["name"]
         if ids_name not in ids_names_list:
             print(
                 f"\tIDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
@@ -46,7 +46,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
 
     all_paths_valid = True
     for ids_dict in definition["ids"]:
-        ids_name = ids_dict["ids_name"]
+        ids_name = ids_dict["name"]
 
         # Create empty IDS to extract valid paths from
         ids_instance = IDSFactory(dd_version).new(ids_name)

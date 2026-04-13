@@ -67,7 +67,7 @@ classes:
       This class holds the IDS name, the required paths and (optionally) the
       constraints applied to certain paths.
     attributes:
-      ids_name: 
+      name: 
         description: >-
           Name of the IDS.
         range: string

@@ -1,12 +1,12 @@
 dd_version: 4.1.0 # TODO: check for compatible version
 
 ids:
-  - ids_name: equilibrium
+  - name: equilibrium
     required_paths:
     - ids_properties/version_put/data_dictionary
     - vacuum_toroidal_field/r0
 
-  - ids_name: wall
+  - name: wall
     required_paths:
     - ids_properties/version_put/data_dictionary
     - description_2d(0)/vessel/unit(i2)/annular/restitivity
@@ -19,13 +19,13 @@ ids:
     #- # TODO: think of options in geometry of wall.description_2d(0).vessel.unit 
     # where DD has no geometry type. For now, just picked centreline
 
-  - ids_name: pf_active
+  - name: pf_active
     required_paths:
     - ids_properties/version_put/data_dictionary
     - coil(i1)/element/turns_with_sign
     - coil(i1)/resistance
 
-  - ids_name: pf_passive
+  - name: pf_passive
     required_paths:
     - ids_properties/version_put/data_dictionary
     - loop(i1)/resistance

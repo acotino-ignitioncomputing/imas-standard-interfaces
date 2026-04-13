@@ -1,7 +1,7 @@
 dd_version: 4.0.0
 
 ids:
-  - ids_name: core_profiles
+  - name: core_profiles
     required_paths:
     - profiles_1d(itime)/grid/rho_tor_norm
     - profiles_1d(itime)/time
@@ -20,7 +20,7 @@ ids:
       - profiles_1d(itime)/ion(i1)/temperature
       at_least_one_present:
 
-  - ids_name: equilibrium
+  - name: equilibrium
     required_paths:
     - time
     - vacuum_toroidal_field/r0
@@ -64,7 +64,7 @@ ids:
       - time_slice(itime)/profiles_1d/r_outboard
       at_least_one_present:
 
-  - ids_name: core_sources
+  - name: core_sources
     required_paths:
     - source(i1)/identifier/name
     - source(i1)/profiles_1d(itime)/grid/rho_tor_norm
