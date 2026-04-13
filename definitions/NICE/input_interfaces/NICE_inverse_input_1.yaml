@@ -2,27 +2,24 @@ dd_version: 4.1.0 # TODO: check for compatible version
 
 include:
 - ../building_blocks/NICE_common.yaml
+- ../building_blocks/NICE_vessel_wall_1.yaml
 
 ids:
   - ids_name: equilibrium
     required_paths:
     - time(0)
-    - time_slice(0)/global_quantities/ip
     - vacuum_toroidal_field/b0
     - time_slice(0)/boundary/outline/r
     - time_slice(0)/boundary/outline/z
 
-    #optional_paths: # ADD note on how this path influences the simulation (otherwise omit this key entirely)
-    #- coil(i1)/current/data(0) # what to do with indexing on lowest array? Omit??
-    
     constraints:
-    - path: # TODO: check source code for this 
-      - time_slice(0)/profiles_1d/psi
-      - time_slice(0)/profiles_1d/dpressure_dpsi
-      - time_slice(0)/profiles_1d/f_df_dpsi
-      at_least_one_present:
-    - path: [time_slice(0)/profiles_1d/psi] # TODO: how to link with other constraint?
+    - path: [time_slice(0)/profiles_1d/psi]
       value_range: [0.0, 1.0]
     - path: [time_slice(0)/global_quantities/ip]
       value_range: [0.0, 1000000000.0] # TODO: check values with code. How to handle half-open interval?
-
+    - path: [coil(i1)/element(0)/geometry/geometry_type]
+      allowed_values: [1] 
+    - path:
+      - coil(i1)/element(0)/geometry/outline/r
+      - coil(i1)/element(0)/geometry/outline/z
+      has_shape: [5]
