@@ -17,6 +17,9 @@ ids:
       value_range: [0.0, 1.0]
     - path: [time_slice(0)/global_quantities/ip]
       value_range: [0.0, 1000000000.0] # TODO: check values with code. How to handle half-open interval?
+    
+  - ids_name: pf_active
+    constraints:
     - path: [coil(i1)/element(0)/geometry/geometry_type]
       allowed_values: [1] 
     - path:

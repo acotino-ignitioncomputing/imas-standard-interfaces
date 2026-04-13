@@ -19,5 +19,8 @@ ids:
       - time_slice(0)/profiles_1d/dpressure_dpsi
       - time_slice(0)/profiles_1d/f_df_dpsi
       at_least_one_present:
+      
+  - ids_name: pf_active
+    constraints:
     - path: [coil(i1)/element(0)/geometry/geometry_type]
       allowed_values: [2]
