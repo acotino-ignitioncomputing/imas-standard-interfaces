@@ -1,0 +1,37 @@
+dd_version: 3.42.0
+
+include: # list of relative paths to interface definitions
+- ../building_blocks/magnetics.yaml
+- ../building_blocks/pf_active.yaml
+- ../building_blocks/pf_passive.yaml
+- ../building_blocks/tf.yaml
+- ../building_blocks/wall.yaml
+
+ids:
+  - name: magnetics
+    required_paths:
+    - time
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [1]
+  
+  - name: tf
+    required_paths:
+    - time
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [1]
+
+  - name: pf_active
+    required_paths:
+    - time
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [1]
+
+  - name: pf_passive
+    required_paths:
+    - time
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [1]

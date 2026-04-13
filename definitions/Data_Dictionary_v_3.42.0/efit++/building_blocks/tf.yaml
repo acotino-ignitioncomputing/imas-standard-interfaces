@@ -4,6 +4,3 @@ ids:
     required_paths:
     - b_field_phi_vacuum_r/data
 
-    constraints:
-    - path: [ids_properties/homogeneous_time]
-      allowed_values: [0,1]

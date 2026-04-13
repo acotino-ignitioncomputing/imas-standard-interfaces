@@ -20,7 +20,4 @@ ids:
     - ip(i1)/data
     - diamagnetic_flux(i1)/data
 
-    constraints:
-    - path: [ids_properties/homogeneous_time]
-      allowed_values: [0,1]
     
