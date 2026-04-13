@@ -39,14 +39,20 @@ can be given between round brackets `()` just after the array name.
 ### Constraints
 
 Each entry in `constraints` describes which constraints are enforced on the data
-array of the specified IDS path. Currently, only a constraint on the allowed
-values in the data array is defined, such that the keys for this mapping are
+array of the specified IDS path. The only mandatory key for this mapping is
+`path`, which maps to a list of one or several IDS paths to which the constraint in question
+applies. The paths listed here must also be present in the dataset. Other optional mapping keys are:
 
-- `path`: The IDS path to which the constraint applies. This path must be
-  present in the dataset.
-- `allowed_values`: A list of values that are allowed to be present
-  in the data array at this IDS path. When specified, the data array must only
-  consist of the listed values.
+- `allowed_values`: A list of values (integer, float or string) that are allowed
+  to be present in the data array at the IDS path. When specified, the data
+  array must only consist of the listed values.
+- `value_range`: A list of length 2 with floats describing a closed interval.
+  When specified, the data array must only consist of values that fall
+  within that interval.
+- `has_shape`: A list of integers describing the shape of the data array at the IDS path. The i-th integer in this list corresponds with the i-th axis of the data array. When specified, the data array must have the indicated shape.
+- `same_shape`: None. When specified, the data arrays at the IDS paths listed in `path` must have the same shape.
+- `at_least_one_present`: None. When specified, at least one of the paths listed
+  in key `paths` must be present in the dataset.
 
   Note: as it is demanded that the IDS path in `path` is present in the dataset,
   it is allowed to omit this path in the sequence `required_paths`.

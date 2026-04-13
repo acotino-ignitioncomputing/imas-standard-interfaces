@@ -97,14 +97,16 @@ classes:
           Data array at this IDS path must only consist of the listed values.
         required: false
         multivalued: true
-        exactly_one_of:
+        any_of:
           - range: string
           - range: integer
+          - range: float
       has_shape:
         description: >-
           Data array at this IDS path must have the indicated shape.
         required: false
         multivalued: true
+        range: integer
       value_range:
         description: >-
           The values of the data array at this IDS path must fall within given
@@ -124,4 +126,3 @@ classes:
           shape.
         required: false
         ifabsent: null
-      # TODO: add other constraints (value_range, at_least_one_present, has_shape, same_shape)
