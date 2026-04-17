@@ -1,0 +1,12 @@
+dd_version: 3.42.0
+ids:
+  - name: pf_passive
+    required_paths:
+    - loop(i1)/element(i2)/geometry/rectangle/r
+    - loop(i1)/element(i2)/geometry/rectangle/z
+    - loop(i1)/element(i2)/geometry/rectangle/width
+    - loop(i1)/element(i2)/geometry/rectangle/height
+
+    constraints:
+    - path: [loop(i1)/element(i2)/geometry/geometry_type]
+      allowed_values: [2]

@@ -1,0 +1,11 @@
+dd_version: 3.42.0
+ids:
+  - name: pf_passive
+    required_paths:
+    - loop(i1)/element(i2)/geometry/thick_line/first_point
+    - loop(i1)/element(i2)/geometry/thick_line/second_point
+    - loop(i1)/element(i2)/geometry/thick_line/thickness
+
+    constraints:
+    - path: [loop(i1)/element(i2)/geometry/geometry_type]
+      allowed_values: [6]

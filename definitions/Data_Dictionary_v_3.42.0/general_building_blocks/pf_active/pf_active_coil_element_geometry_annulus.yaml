@@ -1,0 +1,12 @@
+dd_version: 3.42.0
+ids:
+  - name: pf_active
+    required_paths:
+    - coil(i1)/element(i2)/geometry/annulus/r
+    - coil(i1)/element(i2)/geometry/annulus/z
+    - coil(i1)/element(i2)/geometry/annulus/radius_inner
+    - coil(i1)/element(i2)/geometry/annulus/radius_outer
+
+    constraints:
+    - path: [coil(i1)/element(i2)/geometry/geometry_type]
+      allowed_values: [5]

@@ -1,0 +1,14 @@
+dd_version: 3.42.0
+ids:
+  - name: pf_active
+    required_paths:
+    - coil(i1)/element(i2)/geometry/oblique/r
+    - coil(i1)/element(i2)/geometry/oblique/z
+    - coil(i1)/element(i2)/geometry/oblique/length_alpha
+    - coil(i1)/element(i2)/geometry/oblique/length_beta
+    - coil(i1)/element(i2)/geometry/oblique/alpha
+    - coil(i1)/element(i2)/geometry/oblique/beta
+
+    constraints:
+    - path: [coil(i1)/element(i2)/geometry/geometry_type]
+      allowed_values: [3]
