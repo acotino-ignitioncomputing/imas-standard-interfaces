@@ -1,6 +1,0 @@
-dd_version: 3.42.0
-ids:
-  - name: wall
-    required_paths:
-    - description_2d(i1)/limiter/unit(i2)/outline/r
-    - description_2d(i1)/limiter/unit(i2)/outline/z
