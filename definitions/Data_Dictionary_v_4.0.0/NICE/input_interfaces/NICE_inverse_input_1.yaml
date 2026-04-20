@@ -7,22 +7,22 @@ include:
 ids:
   - name: equilibrium
     required_paths:
-    - time(0)
+    - time(1)
     - vacuum_toroidal_field/b0
-    - time_slice(0)/boundary/outline/r
-    - time_slice(0)/boundary/outline/z
+    - time_slice(1)/boundary/outline/r
+    - time_slice(1)/boundary/outline/z
 
     constraints:
-    - path: [time_slice(0)/profiles_1d/psi]
+    - path: [time_slice(1)/profiles_1d/psi]
       value_range: [0.0, 1.0]
-    - path: [time_slice(0)/global_quantities/ip]
+    - path: [time_slice(1)/global_quantities/ip]
       value_range: [0.0, 1000000000.0] # TODO: check values with code. How to handle half-open interval?
     
   - name: pf_active
     constraints:
-    - path: [coil(i1)/element(0)/geometry/geometry_type]
+    - path: [coil(i1)/element(1)/geometry/geometry_type]
       allowed_values: [1] 
     - path:
-      - coil(i1)/element(0)/geometry/outline/r
-      - coil(i1)/element(0)/geometry/outline/z
+      - coil(i1)/element(1)/geometry/outline/r
+      - coil(i1)/element(1)/geometry/outline/z
       has_shape: [5]

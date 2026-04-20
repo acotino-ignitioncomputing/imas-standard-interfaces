@@ -34,19 +34,19 @@ ids:
 
   - name: equilibrium
     required_paths:
-    - time_slice(0)/time
-    - time_slice(0)/global_quantities/ip
-    - time_slice(0)/global_quantities/current_centre/z
-    - time_slice(0)/boundary/type
-    - time_slice(0)/boundary/elongation
-    - time_slice(0)/boundary/geometric_axis/r
-    - time_slice(0)/boundary/minor_radius
-    - time_slice(0)/boundary_separatrix/gap(24)/value
-    - time_slice(0)/boundary_separatrix/gap(25)/value
-    - time_slice(0)/boundary_separatrix/gap(26)/value
-    - time_slice(0)/boundary_separatrix/gap(27)/value
-    - time_slice(0)/boundary_separatrix/gap(28)/value
-    - time_slice(0)/boundary_separatrix/gap(29)/value
+    - time_slice(1)/time
+    - time_slice(1)/global_quantities/ip
+    - time_slice(1)/global_quantities/current_centre/z
+    - time_slice(1)/boundary/type
+    - time_slice(1)/boundary/elongation
+    - time_slice(1)/boundary/geometric_axis/r
+    - time_slice(1)/boundary/minor_radius
+    - time_slice(1)/boundary_separatrix/gap(24)/value
+    - time_slice(1)/boundary_separatrix/gap(25)/value
+    - time_slice(1)/boundary_separatrix/gap(26)/value
+    - time_slice(1)/boundary_separatrix/gap(27)/value
+    - time_slice(1)/boundary_separatrix/gap(28)/value
+    - time_slice(1)/boundary_separatrix/gap(29)/value
 
   - name: pf_active
     required_paths:

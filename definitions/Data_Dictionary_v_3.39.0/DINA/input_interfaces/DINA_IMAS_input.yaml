@@ -19,8 +19,8 @@ ids:
     required_paths:
     - vacuum_toroidal_field/b0
     - vacuum_toroidal_field/r0
-    - time_slice(0)/profiles_2d(0)/grid/dim1
-    - time_slice(0)/profiles_2d(0)/grid/dim2
+    - time_slice(1)/profiles_2d(1)/grid/dim1
+    - time_slice(1)/profiles_2d(1)/grid/dim2
 
   - name: pf_active
     required_paths:
@@ -32,40 +32,40 @@ ids:
 
   - name: wall
     required_paths:
-    - description_2d(0)/limiter/unit(i1)/outline/r
-    - description_2d(0)/limiter/unit(i1)/outline/z
+    - description_2d(1)/limiter/unit(i1)/outline/r
+    - description_2d(1)/limiter/unit(i1)/outline/z
     constraints:
     - path:
-      - description_2d(0)/limiter/unit(i1)/outline/r
-      - description_2d(0)/limiter/unit(i1)/outline/z
+      - description_2d(1)/limiter/unit(i1)/outline/r
+      - description_2d(1)/limiter/unit(i1)/outline/z
       same_shape:
 
   - name: core_profiles
     required_paths:
-    - profiles_1d(0)/grid/rho_tor_norm
-    - profiles_1d(0)/electrons/temperature
-    - profiles_1d(0)/t_i_average
-    - profiles_1d(0)/electrons/density
-    - profiles_1d(0)/ion(0)/density
-    - profiles_1d(0)/ion(1)/density
+    - profiles_1d(1)/grid/rho_tor_norm
+    - profiles_1d(1)/electrons/temperature
+    - profiles_1d(1)/t_i_average
+    - profiles_1d(1)/electrons/density
+    - profiles_1d(1)/ion(1)/density
+    - profiles_1d(1)/ion(2)/density
     constraints:
     - path:
-      - profiles_1d(0)/grid/rho_tor_norm
-      - profiles_1d(0)/electrons/temperature
-      - profiles_1d(0)/t_i_average
-      - profiles_1d(0)/electrons/density
-      - profiles_1d(0)/ion(0)/density
-      - profiles_1d(0)/ion(1)/density
+      - profiles_1d(1)/grid/rho_tor_norm
+      - profiles_1d(1)/electrons/temperature
+      - profiles_1d(1)/t_i_average
+      - profiles_1d(1)/electrons/density
+      - profiles_1d(1)/ion(1)/density
+      - profiles_1d(1)/ion(2)/density
       same_shape:
 
   - name: core_sources
     required_paths:
-    - source(0)/profiles_1d(0)/electrons/energy
-    - source(0)/profiles_1d(0)/total_ion_energy
+    - source(1)/profiles_1d(1)/electrons/energy
+    - source(1)/profiles_1d(1)/total_ion_energy
     constraints:
     - path:
-      - source(0)/profiles_1d(0)/electrons/energy
-      - source(0)/profiles_1d(0)/total_ion_energy
+      - source(1)/profiles_1d(1)/electrons/energy
+      - source(1)/profiles_1d(1)/total_ion_energy
       same_shape:
 
   - name: pulse_schedule
@@ -73,22 +73,22 @@ ids:
     - pf_active/coil(i1)/current/reference/data
     - pf_active/coil(i1)/resistance_additional/reference/data
     - pf_active/coil(i1)/resistance_additional/reference/time
-    - ec/launcher(0)/power/reference/data
-    - ec/launcher(0)/power/reference/time
+    - ec/launcher(1)/power/reference/data
+    - ec/launcher(1)/power/reference/time
     - ec/power/reference/data
     - ec/power/reference/time
     - ic/power/reference/data
     - density_control/ion(i1)/n_i_volume_average/reference/data
     - density_control/ion(i1)/n_i_volume_average/reference/time
-    - density_control/ion(i1)/element(0)/z_n
+    - density_control/ion(i1)/element(1)/z_n
     constraints:
     - path:
       - pf_active/coil(i1)/resistance_additional/reference/data
       - pf_active/coil(i1)/resistance_additional/reference/time
       same_shape:
     - path:
-      - ec/launcher(0)/power/reference/data
-      - ec/launcher(0)/power/reference/time
+      - ec/launcher(1)/power/reference/data
+      - ec/launcher(1)/power/reference/time
       same_shape:
     - path:
       - ec/power/reference/time

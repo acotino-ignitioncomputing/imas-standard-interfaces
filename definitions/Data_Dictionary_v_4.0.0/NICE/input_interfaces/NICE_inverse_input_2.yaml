@@ -7,20 +7,20 @@ include:
 ids:
   - name: equilibrium
     required_paths:
-    - time(0)
-    - time_slice(0)/global_quantities/ip
+    - time(1)
+    - time_slice(1)/global_quantities/ip
     - vacuum_toroidal_field/b0
-    - time_slice(0)/boundary/outline/r
-    - time_slice(0)/boundary/outline/z
+    - time_slice(1)/boundary/outline/r
+    - time_slice(1)/boundary/outline/z
 
 
     constraints:
     - path: # TODO: check source code for this 
-      - time_slice(0)/profiles_1d/dpressure_dpsi
-      - time_slice(0)/profiles_1d/f_df_dpsi
+      - time_slice(1)/profiles_1d/dpressure_dpsi
+      - time_slice(1)/profiles_1d/f_df_dpsi
       at_least_one_present:
       
   - name: pf_active
     constraints:
-    - path: [coil(i1)/element(0)/geometry/geometry_type]
+    - path: [coil(i1)/element(1)/geometry/geometry_type]
       allowed_values: [2]

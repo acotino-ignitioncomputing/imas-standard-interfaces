@@ -9,14 +9,14 @@ ids:
   - name: wall
     required_paths:
     - ids_properties/version_put/data_dictionary
-    - description_2d(0)/vessel/unit(i2)/annular/restitivity
-    - description_2d(0)/limiter/unit(i2)/outline/r
-    - description_2d(0)/limiter/unit(i2)/outline/z
-    - description_2d(0)/mobile/unit(i2)/outline(0)/r # NOTE: Not in PDS input desciption, but mentioned in spreadsheet
-    - description_2d(0)/mobile/unit(i2)/outline(0)/z
+    - description_2d(1)/vessel/unit(i2)/annular/restitivity
+    - description_2d(1)/limiter/unit(i2)/outline/r
+    - description_2d(1)/limiter/unit(i2)/outline/z
+    - description_2d(1)/mobile/unit(i2)/outline(1)/r # NOTE: Not in PDS input desciption, but mentioned in spreadsheet
+    - description_2d(1)/mobile/unit(i2)/outline(1)/z
     
     #constraints:
-    #- # TODO: think of options in geometry of wall.description_2d(0).vessel.unit 
+    #- # TODO: think of options in geometry of wall.description_2d(1).vessel.unit 
     # where DD has no geometry type. For now, just picked centreline
 
   - name: pf_active
@@ -31,7 +31,7 @@ ids:
     - loop(i1)/resistance
 
     constraints:
-    - path: [loop(i1)/element(0)/geometry/geometry_type]
+    - path: [loop(i1)/element(1)/geometry/geometry_type]
       allowed_values: [1,2] # CHECK source code: spreadsheet mentions type 3 is also handled
 
 
