@@ -1,5 +1,62 @@
 dd_version: 4.0.0 # TODO: check for compatible version
 
-include:
-- NICE_inverse_input_2.yaml
-- ../building_blocks/iron_core_common.yaml
+ids:
+  - name: equilibrium
+    required_paths:
+    - time(1)
+    - time_slice(1)/global_quantities/ip
+    - vacuum_toroidal_field/b0
+    - time_slice(1)/boundary/outline/r
+    - time_slice(1)/boundary/outline/z
+    - ids_properties/version_put/data_dictionary
+    - vacuum_toroidal_field/r0
+
+
+    constraints:
+    - path: # TODO: check source code for this 
+      - time_slice(1)/profiles_1d/dpressure_dpsi
+      - time_slice(1)/profiles_1d/f_df_dpsi
+      at_least_one_present:
+      
+  - name: pf_active
+    required_paths:
+    - ids_properties/version_put/data_dictionary
+    - coil(i1)/element/turns_with_sign
+    - coil(i1)/resistance
+    constraints:
+    - path: [coil(i1)/element(1)/geometry/geometry_type]
+      allowed_values: [2]
+
+  - name: pf_passive
+    required_paths:
+    - ids_properties/version_put/data_dictionary
+    - loop(i1)/resistance
+
+    constraints:
+    - path: [loop(i1)/element(1)/geometry/geometry_type]
+      allowed_values: [1,2] # CHECK source code: spreadsheet mentions type 3 is also handled
+
+  - name: wall
+    required_paths:
+    - ids_properties/version_put/data_dictionary
+    - description_2d(1)/limiter/unit(i2)/outline/r
+    - description_2d(1)/limiter/unit(i2)/outline/z
+    - description_2d(1)/mobile/unit(i2)/outline(1)/r # NOTE: Not in PDS input desciption, but mentioned in spreadsheet
+    - description_2d(1)/mobile/unit(i2)/outline(1)/z
+    - description_2d(1)/vessel/unit(i2)/annular/resistivity
+    - description_2d(1)/vessel/unit(1)/annular/outline_inner/r
+    - description_2d(1)/vessel/unit(1)/annular/outline_inner/z
+    - description_2d(1)/vessel/unit(1)/annular/outline_outer/r
+    - description_2d(1)/vessel/unit(1)/annular/outline_outer/z
+    - description_2d(1)/vessel/unit(2)/annular/outline_inner/r
+    - description_2d(1)/vessel/unit(2)/annular/outline_inner/z
+    - description_2d(1)/vessel/unit(2)/annular/outline_outer/r
+    - description_2d(1)/vessel/unit(2)/annular/outline_outer/z
+
+  - name: iron_core
+    required_paths:
+    - ids_properties/version_put/data_dictionary
+    - segment(i1)/geometry/outline/r
+    - segment(i1)/geometry/outline/z
+    - segment(i1)/b_field
+    - segment(i1)/permeability_relative
