@@ -1,6 +1,0 @@
-include: # list of relative paths to interface definitions
-- magnetics.yaml
-- pf_active.yaml
-- pf_passive.yaml
-- tf.yaml
-- wall.yaml

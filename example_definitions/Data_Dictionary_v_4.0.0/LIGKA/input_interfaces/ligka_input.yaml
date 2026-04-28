@@ -1,0 +1,92 @@
+dd_version: 4.0.0
+
+ids:
+  - name: equilibrium
+    required_paths:
+    - vacuum_toroidal_field/b0
+    - vacuum_toroidal_field/r0
+    - time_slice(1)/global_quantities/magnetic_axis/b_field_phi
+    - time_slice(1)/global_quantities/magnetic_axis/r
+    - time_slice(1)/boundary/minor_radius
+    - time_slice(1)/boundary/geometric_axis/r
+    - time_slice(1)/boundary/geometric_axis/z
+    - time_slice(1)/global_quantities/area
+    - time_slice(1)/global_quantities/volume
+    - time_slice(1)/global_quantities/psi_boundary
+    - time_slice(1)/global_quantities/psi_axis
+    - time_slice(1)/global_quantities/beta_pol
+    - time_slice(1)/global_quantities/beta_tor
+    - time_slice(1)/global_quantities/ip
+    - time_slice(1)/global_quantities/q_axis
+    - time_slice(1)/profiles_2d(1)/grid_type/index
+    - time_slice(1)/coordinate_system/grid/dim1
+    - time_slice(1)/coordinate_system/grid/dim2
+    - time_slice(1)/profiles_2d(1)/grid/dim1
+    - time_slice(1)/profiles_2d(1)/grid/dim2
+    - time_slice(1)/profiles_1d/q
+    - time_slice(1)/profiles_1d/pressure
+    - time_slice(1)/profiles_1d/f
+    - time_slice(1)/profiles_1d/dpressure_dpsi
+    - time_slice(1)/coordinate_system/tensor_contravariant
+    - time_slice(1)/coordinate_system/r
+    - time_slice(1)/coordinate_system/z
+
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [0, 1]
+
+  - name: core_profiles
+    required_paths:
+    - time
+    - profiles_1d(1)/electrons/temperature
+    - profiles_1d(1)/ion(i1)/element(1)/a
+    - profiles_1d(1)/ion(i1)/element(1)/z_n
+
+    constraints:
+    - path:
+      - profiles_1d(1)/grid/rho_pol_norm
+      - profiles_1d(1)/grid/psi
+      - profiles_1d(1)/grid/rho_tor_norm
+      at_least_one_present:
+    - path:
+      - profiles_1d(1)/electrons/pressure_thermal
+      - profiles_1d(1)/electrons/pressure
+      at_least_one_present:
+    - path:
+      - profiles_1d(1)/electrons/density_thermal
+      - profiles_1d(1)/electrons/density
+      at_least_one_present:
+    - path:
+      - profiles_1d(1)/ion(i1)/temperature
+      - profiles_1d(1)/t_i_average
+      at_least_one_present:
+    - path:
+      - profiles_1d(1)/ion(i1)/density_thermal
+      - profiles_1d(1)/ion(i1)/density
+      at_least_one_present:
+
+  - name: mhd_linear
+    required_paths:
+    - time_slice(1)/toroidal_mode(i1)/plasma/velocity_perturbed/coordinate1/coefficients_real
+    - time_slice(1)/toroidal_mode(i1)/perturbation_type/index
+    - time_slice(1)/toroidal_mode(i1)/ballooning_type/index
+
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [0, 1]
+
+  - name: distributions
+    required_paths:
+    - distribution(i1)/species/type/name
+    - distribution(i1)/profiles_1d(1)/grid/rho_tor
+    - distribution(i1)/profiles_1d(1)/grid/rho_tor_norm
+    - distribution(i1)/profiles_1d(1)/grid/rho_pol_norm
+    - distribution(i1)/markers(1)/positions
+    - distribution(i1)/markers(1)/orbit_integrals_instant/time_orbit
+    - distribution(i1)/markers(1)/orbit_integrals_instant/values
+    - distribution(i1)/markers(1)/orbit_integrals_instant/expressions
+    - distribution(i1)/markers(1)/orbit_integrals/m_pol
+    - distribution(i1)/markers(1)/orbit_integrals/n_tor
+    - distribution(i1)/markers(1)/orbit_integrals/bounce_harmonics
+    - distribution(i1)/markers(1)/orbit_integrals/values
+    - distribution(i1)/markers(1)/orbit_integrals/expressions

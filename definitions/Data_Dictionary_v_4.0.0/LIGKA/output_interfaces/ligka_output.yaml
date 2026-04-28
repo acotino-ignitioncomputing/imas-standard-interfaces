@@ -1,0 +1,94 @@
+dd_version: 4.0.0
+
+ids:
+  - name: mhd_linear
+    required_paths:
+    - time
+    - ids_properties/creation_date
+    - ids_properties/provider
+    - ids_properties/homogeneous_time
+    - code/name
+    - model_type/index
+    - time_slice(1)/toroidal_mode(i1)/n_phi
+    - time_slice(1)/toroidal_mode(i1)/m_pol_dominant
+    - time_slice(1)/toroidal_mode(i1)/perturbation_type/index
+    - time_slice(1)/toroidal_mode(i1)/ballooning_type/index
+    - time_slice(1)/toroidal_mode(i1)/radial_mode_number
+    - time_slice(1)/toroidal_mode(i1)/frequency
+    - time_slice(1)/toroidal_mode(i1)/growthrate
+    - time_slice(1)/toroidal_mode(i1)/plasma/grid_type/index
+    - time_slice(1)/toroidal_mode(i1)/plasma/grid_type/description
+    - time_slice(1)/toroidal_mode(i1)/plasma/grid/dim1
+    - time_slice(1)/toroidal_mode(i1)/plasma/grid/dim2
+    - time_slice(1)/toroidal_mode(i1)/plasma/tau_alfven
+    - time_slice(1)/toroidal_mode(i1)/plasma/coordinate_system/r
+    - time_slice(1)/toroidal_mode(i1)/plasma/coordinate_system/z
+    - time_slice(1)/toroidal_mode(i1)/plasma/velocity_perturbed/coordinate1/coefficients_real
+    - time_slice(1)/toroidal_mode(i1)/plasma/phi_potential_perturbed/real
+    - time_slice(1)/toroidal_mode(i1)/plasma/phi_potential_perturbed/imaginary
+    - time_slice(1)/toroidal_mode(i1)/plasma/phi_potential_perturbed/coefficients_real
+    - time_slice(1)/toroidal_mode(i1)/plasma/phi_potential_perturbed/coefficients_imaginary
+    - time_slice(1)/toroidal_mode(i1)/plasma/psi_potential_perturbed/real
+    - time_slice(1)/toroidal_mode(i1)/plasma/psi_potential_perturbed/imaginary
+    - time_slice(1)/toroidal_mode(i1)/plasma/psi_potential_perturbed/coefficients_real
+    - time_slice(1)/toroidal_mode(i1)/plasma/psi_potential_perturbed/coefficients_imaginary
+
+    constraints:
+    - path: [model_type/index]
+      allowed_values: [11, 12, 16, 23, 24, 35]
+    - path: [time_slice(1)/toroidal_mode(i1)/plasma/grid_type/index]
+      allowed_values: [24]
+    - path: [time_slice(1)/toroidal_mode(i1)/ballooning_type/index]
+      allowed_values: [0, 1]
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [0, 1]
+    - path:
+      - time_slice(1)/toroidal_mode(i1)/plasma/phi_potential_perturbed/coefficients_real
+      - time_slice(1)/toroidal_mode(i1)/plasma/phi_potential_perturbed/coefficients_imaginary
+      - time_slice(1)/toroidal_mode(i1)/plasma/psi_potential_perturbed/coefficients_real
+      - time_slice(1)/toroidal_mode(i1)/plasma/psi_potential_perturbed/coefficients_imaginary
+      same_shape:
+
+  - name: equilibrium
+    required_paths:
+    - vacuum_toroidal_field/b0
+    - vacuum_toroidal_field/r0
+    - time_slice(1)/global_quantities/magnetic_axis/b_field_phi
+    - time_slice(1)/global_quantities/magnetic_axis/r
+    - time_slice(1)/boundary/minor_radius
+    - time_slice(1)/boundary/geometric_axis/r
+    - time_slice(1)/boundary/geometric_axis/z
+    - time_slice(1)/global_quantities/psi_boundary
+    - time_slice(1)/global_quantities/psi_axis
+    - time_slice(1)/global_quantities/ip
+    - time_slice(1)/profiles_1d/q
+    - time_slice(1)/profiles_1d/pressure
+    - time_slice(1)/profiles_1d/f
+    - time_slice(1)/coordinate_system/r
+    - time_slice(1)/coordinate_system/z
+
+  - name: core_profiles
+    required_paths:
+    - time
+    - profiles_1d(1)/electrons/temperature
+    - profiles_1d(1)/ion(i1)/element(1)/a
+    - profiles_1d(1)/ion(i1)/element(1)/z_n
+
+    constraints:
+    - path:
+      - profiles_1d(1)/grid/rho_pol_norm
+      - profiles_1d(1)/grid/psi
+      - profiles_1d(1)/grid/rho_tor_norm
+      at_least_one_present:
+    - path:
+      - profiles_1d(1)/electrons/density_thermal
+      - profiles_1d(1)/electrons/density
+      at_least_one_present:
+    - path:
+      - profiles_1d(1)/ion(i1)/temperature
+      - profiles_1d(1)/t_i_average
+      at_least_one_present:
+    - path:
+      - profiles_1d(1)/ion(i1)/density_thermal
+      - profiles_1d(1)/ion(i1)/density
+      at_least_one_present:

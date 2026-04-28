@@ -1,0 +1,91 @@
+{ 
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Interface schema", 
+     "description": "Schema for input or output interface. Validate using python -m json.tool schemas/json_schema_new.json",  
+     "type": "object",
+     "properties": {
+
+        "dd_version": {
+          "description": "Version of Data Dictionary",
+          "type": "string"
+        },
+
+        "paths": {
+            "description": "List IDS paths that need to be present",
+            "type":  "array",
+            "items": {
+               "type": "string",
+               "pattern":  "some_pattern_on_IDSPATHS"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        },
+
+        "constraints":{
+            "description": "List of constraints",
+            "type": "object",
+            "properties": {
+
+                "allowed_values": {
+                    "description": "Entries in data arrays may only contain any of the listed values",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "patternProperties": {
+
+                            "some_pattern_on_IDSPATHS": {
+                                "type": "array",
+                                "items": {
+                                    "type": "integer"
+                                }
+                            } 
+                        }
+                    }
+                },
+
+                "value_range": {
+                    "description": "Value of entries in data array must fall within specified interval",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "patternProperties": {
+
+                            "some_pattern_on_IDSPATHS": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "pattern": "pattern_on_interval"
+                                }
+                            } 
+                        }
+                    }
+                },
+
+                "has_shape": {
+                    "description": "Data arrays of listed paths must have specified shape",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+
+                "same_shape":{
+                    "description": "Per sublist, data arrays of listed paths must have the same shape",
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+
+                
+
+
+            }
+        }
+     },
+     "required": ["dd_version","paths"]
+     }
+

@@ -1,0 +1,101 @@
+dd_version: 3.39.0
+
+ids:
+  - name: em_coupling
+    required_paths:
+    - mutual_active_active
+    - mutual_loops_active
+    - field_probes_active
+    - mutual_passive_active
+    - mutual_grid_active
+    - mutual_passive_passive
+    - mutual_grid_passive
+    - mutual_loops_passive
+    - field_probes_passive
+    - mutual_loops_grid
+    - field_probes_grid
+
+  - name: equilibrium
+    required_paths:
+    - vacuum_toroidal_field/b0
+    - vacuum_toroidal_field/r0
+    - time_slice(1)/profiles_2d(1)/grid/dim1
+    - time_slice(1)/profiles_2d(1)/grid/dim2
+
+  - name: pf_active
+    required_paths:
+    - coil(i1)/resistance
+
+  - name: pf_passive
+    required_paths:
+    - loop(i1)/resistance
+
+  - name: wall
+    required_paths:
+    - description_2d(1)/limiter/unit(i1)/outline/r
+    - description_2d(1)/limiter/unit(i1)/outline/z
+    constraints:
+    - path:
+      - description_2d(1)/limiter/unit(i1)/outline/r
+      - description_2d(1)/limiter/unit(i1)/outline/z
+      same_shape:
+
+  - name: core_profiles
+    required_paths:
+    - profiles_1d(1)/grid/rho_tor_norm
+    - profiles_1d(1)/electrons/temperature
+    - profiles_1d(1)/t_i_average
+    - profiles_1d(1)/electrons/density
+    - profiles_1d(1)/ion(1)/density
+    - profiles_1d(1)/ion(2)/density
+    constraints:
+    - path:
+      - profiles_1d(1)/grid/rho_tor_norm
+      - profiles_1d(1)/electrons/temperature
+      - profiles_1d(1)/t_i_average
+      - profiles_1d(1)/electrons/density
+      - profiles_1d(1)/ion(1)/density
+      - profiles_1d(1)/ion(2)/density
+      same_shape:
+
+  - name: core_sources
+    required_paths:
+    - source(1)/profiles_1d(1)/electrons/energy
+    - source(1)/profiles_1d(1)/total_ion_energy
+    constraints:
+    - path:
+      - source(1)/profiles_1d(1)/electrons/energy
+      - source(1)/profiles_1d(1)/total_ion_energy
+      same_shape:
+
+  - name: pulse_schedule
+    required_paths:
+    - pf_active/coil(i1)/current/reference/data
+    - pf_active/coil(i1)/resistance_additional/reference/data
+    - pf_active/coil(i1)/resistance_additional/reference/time
+    - ec/launcher(1)/power/reference/data
+    - ec/launcher(1)/power/reference/time
+    - ec/power/reference/data
+    - ec/power/reference/time
+    - ic/power/reference/data
+    - density_control/ion(i1)/n_i_volume_average/reference/data
+    - density_control/ion(i1)/n_i_volume_average/reference/time
+    - density_control/ion(i1)/element(1)/z_n
+    constraints:
+    - path:
+      - pf_active/coil(i1)/resistance_additional/reference/data
+      - pf_active/coil(i1)/resistance_additional/reference/time
+      same_shape:
+    - path:
+      - ec/launcher(1)/power/reference/data
+      - ec/launcher(1)/power/reference/time
+      same_shape:
+    - path:
+      - ec/power/reference/time
+      - ec/power/reference/data
+      - ic/power/reference/data
+      same_shape:
+    - path:
+      - density_control/ion(i1)/n_i_volume_average/reference/data
+      - density_control/ion(i1)/n_i_volume_average/reference/time
+      same_shape:

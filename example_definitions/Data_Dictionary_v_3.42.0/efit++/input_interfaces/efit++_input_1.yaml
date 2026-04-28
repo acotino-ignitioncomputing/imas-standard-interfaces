@@ -1,0 +1,62 @@
+dd_version: 3.42.0
+
+ids:
+  - name: magnetics
+    required_paths:
+    - time
+    - b_field_pol_probe(i1)/name
+    - b_field_pol_probe(i1)/position/r
+    - b_field_pol_probe(i1)/position/phi
+    - b_field_pol_probe(i1)/position/z
+    - b_field_pol_probe(i1)/poloidal_angle
+    - b_field_pol_probe(i1)/toroidal_angle
+    - b_field_pol_probe(i1)/area
+    - b_field_pol_probe(i1)/length
+    - b_field_pol_probe(i1)/turns
+    - b_field_pol_probe(i1)/field/data
+    - flux_loop(i1)/name
+    - flux_loop(i1)/position(i2)/r
+    - flux_loop(i1)/position(i2)/phi
+    - flux_loop(i1)/position(i2)/z
+    - flux_loop(i1)/flux/data
+    - ip(i1)/data
+    - diamagnetic_flux(i1)/data
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [1]
+
+  - name: tf
+    required_paths:
+    - time
+    - b_field_phi_vacuum_r/data
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [1]
+
+  - name: pf_active
+    required_paths:
+    - time
+    - coil(i1)/name
+    - coil(i1)/element/turns_with_sign
+    - circuit(i1)/connections
+    - circuit(i1)/current/data
+    - supply(i1)/name
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [1]
+
+
+  - name: pf_passive
+    required_paths:
+    - time
+    - loop(i1)/name
+    - loop(i1)/element(i2)/turns_with_sign
+    - loop(i1)/current
+    constraints:
+    - path: [ids_properties/homogeneous_time]
+      allowed_values: [1]
+
+  - name: wall
+    required_paths:
+    - description_2d(i1)/limiter/unit(i2)/outline/r
+    - description_2d(i1)/limiter/unit(i2)/outline/z
