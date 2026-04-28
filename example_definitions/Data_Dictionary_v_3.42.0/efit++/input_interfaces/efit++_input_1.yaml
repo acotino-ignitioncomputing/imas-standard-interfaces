@@ -41,9 +41,12 @@ ids:
     - circuit(i1)/connections
     - circuit(i1)/current/data
     - supply(i1)/name
+    - coil(i1)/element(i2)/geometry/geometry_type
     constraints:
     - path: [ids_properties/homogeneous_time]
       allowed_values: [1]
+    - path: [coil(i1)/element(i2)/geometry/geometry_type]
+      allowed_values: [2,3,5,6]
 
 
   - name: pf_passive
@@ -52,9 +55,12 @@ ids:
     - loop(i1)/name
     - loop(i1)/element(i2)/turns_with_sign
     - loop(i1)/current
+    - loop(i1)/element(i2)/geometry/geometry_type
     constraints:
     - path: [ids_properties/homogeneous_time]
       allowed_values: [1]
+    - path: [loop(i1)/element(i2)/geometry/geometry_type]
+      allowed_values: [2,3,5,6]
 
   - name: wall
     required_paths:
