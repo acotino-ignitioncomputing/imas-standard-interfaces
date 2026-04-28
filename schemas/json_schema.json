@@ -1,7 +1,7 @@
 { 
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "Interface schema", 
-     "description": "Schema for input or output interface. Validate using python -m json.tool schemas/json_schema_new.json",  
+     "description": "Schema for input or output interface. Validate using python -m json.tool json_schema_new.json",  
      "type": "object",
      "properties": {
 
@@ -11,18 +11,53 @@
         },
 
         "paths": {
-            "description": "List IDS paths that need to be present",
+            "description": "List of IDS paths that need to be present",
             "type":  "array",
-            "items": {
-               "type": "string",
-               "pattern":  "some_pattern_on_IDSPATHS"
-            },
             "minItems": 1,
-            "uniqueItems": true
+            "uniqueItems": true,
+            "items": {
+               "type": "string"
+            }
         },
 
-        "constraints":{
-            "description": "List of constraints",
+        "optional_paths": {
+            "description": "List of sets of IDS paths whose presence is optional",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "minProperties": 1,
+                "maxProperties": 1,
+                "properties": {
+                    "all_or_none": {
+                        "description": "Either all listed IDS paths are present or all are absent",
+                        "type": "array",
+                        "uniqueItems": true,
+                        "minItems": 1,
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+
+                    "any_subset": {
+                        "description": "Only the path(s) listed in a single subarray are allowed to be present",
+                        "type": "array",
+                        "minItems": 2,
+                        "items": {
+
+                            "type": [ "string","array"],
+                            "uniqueItems": true,
+                            "minItems": 1,
+                            "items": {
+                                "type": "string"
+                                }
+                        }
+                    }
+                }               
+            }
+        },
+
+        "constraints": {
+            "description": "List of constraints. IDS paths listed here do not imply presence",
             "type": "object",
             "properties": {
 
@@ -31,32 +66,31 @@
                     "type": "array",
                     "items": {
                         "type": "object",
-                        "patternProperties": {
-
-                            "some_pattern_on_IDSPATHS": {
-                                "type": "array",
-                                "items": {
-                                    "type": "integer"
-                                }
-                            } 
+                        "additionalProperties": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "type": "integer"
+                            }
                         }
                     }
                 },
 
                 "value_range": {
-                    "description": "Value of entries in data array must fall within specified interval",
+                    "description": "Value of entries in data array must fall within specified interval. Null implies +/- infinity",
                     "type": "array",
                     "items": {
                         "type": "object",
-                        "patternProperties": {
-
-                            "some_pattern_on_IDSPATHS": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string",
-                                    "pattern": "pattern_on_interval"
-                                }
-                            } 
+                        "additionalProperties": {
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "items": {
+                                "anyOf": [
+                                    {"type": "number"},
+                                    {"type": "null"}
+                                ]
+                            }
                         }
                     }
                 },
@@ -65,7 +99,14 @@
                     "description": "Data arrays of listed paths must have specified shape",
                     "type": "array",
                     "items": {
-                        "type": "integer"
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
                     }
                 },
 
@@ -74,18 +115,19 @@
                     "type": "array",
                     "items": {
                         "type": "array",
+                        "uniqueItems": true,
+                        "minItems": 2,
                         "items": {
                             "type": "string"
                         }
                     }
                 }
-
-                
-
-
             }
         }
      },
-     "required": ["dd_version","paths"]
+     "anyOf": [
+        {"required": ["dd_version", "paths"]},
+        { "required": ["dd_version", "optional_paths"]}
+     ]
      }
 
