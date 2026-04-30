@@ -28,22 +28,19 @@ def extract_paths(definition: dict) -> list:
     # Collect all IDS paths
     path_list = []
 
-    if "paths" in definition:
-        path_list += definition["paths"]
-
-    if "optional_paths" in definition:
-        for criterium_dict in definition["optional_paths"]:
-            # Extract paths from (sub)lists
-            for sublist in criterium_dict.values():
-                for entry in sublist:
-                    if type(entry) is str:
-                        path_list.append(entry)
-                    elif type(entry) is list:
-                        path_list += entry
-                    else:
-                        raise (
-                            Exception(f"Invalid entry '{entry}' in {criterium_dict}")
-                        )
+    for criterium_dict in definition["paths"]:
+        # Extract paths from string(s) or dictionaries
+        for string_or_dict in criterium_dict.values():
+            for entry in string_or_dict:
+                if type(entry) is str:
+                    path_list.append(entry)
+                elif type(entry) is dict:
+                    for _, sublist in entry.items():
+                        path_list += sublist
+                else:
+                    raise (
+                        Exception(f"Invalid entry \n\t'{entry}'\n in {criterium_dict}")
+                    )
     return sorted(path_list)
 
 
@@ -117,7 +114,8 @@ if __name__ == "__main__":
     incorrect_definitions = []
 
     # for file_path in sorted(folder.glob("**/*.yaml")):
-    for file_path in [Path("nice_inv_input_v73.yaml")]:
+    folder_tmp = Path(__file__).parents[1] / "tmp_defs"
+    for file_path in sorted(folder_tmp.glob("**/*.yaml")):
         with open(file_path) as file:
             definition_dict = yaml.safe_load(file)
 
@@ -137,13 +135,11 @@ if __name__ == "__main__":
         if not check_ids_paths_in_dd(definition_dict):
             incorrect_definitions.append(file_path.name)
             continue
-        """ 
-        """
 
         print("\tAll checks passed")
 
     if incorrect_definitions:
         print("\nIssues were found in the following file(s)")
-        print("\n\t".join(incorrect_definitions))
+        print("\n\t" + "\n\t".join(incorrect_definitions))
     else:
         print("\nNo issues found")
