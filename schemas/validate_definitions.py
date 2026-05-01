@@ -6,6 +6,47 @@ from imas import IDSFactory, util
 import re
 
 
+def print_nice_error_message(message: str):
+    # Error messages from the JSON Schema validator can be difficult to interpret.
+    # This functions tries to improve the message based on 'schema/jason_schema.json'
+
+    if "has non-unique elements" in message:
+        # Duplicate IDS paths in sequence
+
+        # Extract paths from error message instead of using function 'extract_paths'
+        # since it is not yet verified that the input YAML file follows the JSON Schema
+        list_of_paths = (
+            re.match(r"\[.{1,}\]", message)
+            .group()
+            .replace("[", "")
+            .replace("]", "")
+            .replace(" ", "")
+            .split(",")
+        )
+        # Collect duplicate paths
+        duplicate_paths = []
+        for IDS_path in list_of_paths:
+            if list_of_paths.count(IDS_path) > 1 and IDS_path not in duplicate_paths:
+                duplicate_paths.append(IDS_path)
+
+        print("\tThe following IDS paths were duplicated in the sequence:")
+        print("\n\t\t" + "\n\t\t".join(duplicate_paths) + "\n")
+
+    elif "is too short" in message:
+        # Certain sequences must have length 2 or greater
+        print("\t\tThis sequence has only 1 entry, but must have 2 or more")
+
+    elif "Allow at most one occurence of the" in message:
+        # Only one 'all_of' key is allowed under 'paths'
+        print(
+            "\t\tMultiple 'all_of' keys are present directly under 'paths', but at most"
+            + " one is allowed.\n"
+        )
+
+    else:
+        print("\t\t" + message + "\n")
+
+
 def validate_against_schema(definition: dict, schema: dict) -> bool:
     """
     Check correctness of the layout of definition with respect to JSON Schema
@@ -19,7 +60,7 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     for error in sorted(found_errors, key=str):
         validation_correct = False
         print(f"\tError at JSON path {error.json_path}\n")
-        print(f"\t{error.message}\n")
+        print_nice_error_message(error.message)
 
     return validation_correct
 
