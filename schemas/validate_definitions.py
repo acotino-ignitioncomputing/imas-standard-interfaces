@@ -4,6 +4,10 @@ Dictionary"""
 import jsonschema
 from imas import IDSFactory, util
 import re
+from pathlib import Path
+import click
+import json
+import yaml
 
 
 def print_nice_error_message(message: str):
@@ -138,14 +142,17 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     return all_paths_valid
 
 
-# Check IDS paths are in DD
+@click.command()
+@click.argument("input_path")
+def main(input_path: str):
+    """Validate the syntax of the provided YAML files with respect to the
+    JSON Schema. Also checks the correctness of the IDS names and paths
+    with respect to provided Data Dictionary version.
 
-
-if __name__ == "__main__":
-    from pathlib import Path
-    import argparse
-    import json
-    import yaml
+    Arguments:\n
+    INPUT_PATH  absolute or relative path to YAML file or to folder containing YAML
+    files at some depth-level.
+    """
 
     # Load schema
     schema_path = Path(__file__).parents[0] / "json_schema.json"
@@ -153,23 +160,7 @@ if __name__ == "__main__":
         schema_dict = json.load(file)
 
     # From input, get path of YAML-file or folder
-    parser = argparse.ArgumentParser(
-        prog="validate_definitions",
-        description=(
-            "Validate the syntax of the provided YAML files with respect to the"
-            + " JSON Schema. Also checks the correctness of the IDS names and paths"
-            + " with respect to provided Data Dictionary version."
-        ),
-    )
-    parser.add_argument(
-        "input_path",
-        help=(
-            "absolute or relative path to YAML file or to folder containing YAML "
-            + " files at some depth-level."
-        ),
-    )
-    args = parser.parse_args()
-    input_path = Path(args.input_path)
+    input_path = Path(input_path)
 
     if not input_path.exists():
         raise FileNotFoundError(
@@ -223,3 +214,7 @@ if __name__ == "__main__":
         print("\n\t" + "\n\t".join(incorrect_definitions))
     else:
         print("\nNo issues found")
+
+
+if __name__ == "__main__":
+    main()
