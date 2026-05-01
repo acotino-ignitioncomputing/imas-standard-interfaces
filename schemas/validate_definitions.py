@@ -113,9 +113,9 @@ if __name__ == "__main__":
 
     incorrect_definitions = []
 
-    # for file_path in sorted(folder.glob("**/*.yaml")):
-    folder_tmp = Path(__file__).parents[1] / "tmp_defs"
-    for file_path in sorted(folder_tmp.glob("**/*.yaml")):
+    # folder_tmp = Path(__file__).parents[1] / "tmp_defs"
+    # for file_path in sorted(folder_tmp.glob("**/*.yaml")):
+    for file_path in sorted(folder.glob("**/*.yaml")):
         with open(file_path) as file:
             definition_dict = yaml.safe_load(file)
 
