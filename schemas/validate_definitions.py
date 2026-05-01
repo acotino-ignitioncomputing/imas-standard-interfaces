@@ -14,22 +14,20 @@ SPACING_2 = "  "
 SPACING_4 = "    "
 
 
-def print_nice_error_message(message: str):
+def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
     # Error messages from the JSON Schema validator can be difficult to interpret.
     # This functions tries to improve the message based on 'schema/jason_schema.json'
-    if "has non-unique elements" in message:
+
+    json_path = error.json_path
+
+    print(f"{SPACING_2}Error at JSON path {json_path}\n")
+
+    if error.schema["type"] == "array" and error.validator == "uniqueItems":
         # Duplicate IDS paths in sequence
 
-        # Extract paths from error message instead of using function 'extract_paths'
-        # since it is not yet verified that the input YAML file follows the JSON Schema
-        list_of_paths = (
-            re.match(r"\[.{1,}\]", message)
-            .group()
-            .replace("[", "")
-            .replace("]", "")
-            .replace(" ", "")
-            .split(",")
-        )
+        # Get list of paths
+        list_of_paths = error.instance
+
         # Collect duplicate paths
         duplicate_paths = []
         for IDS_path in list_of_paths:
@@ -39,11 +37,16 @@ def print_nice_error_message(message: str):
         print(f"{SPACING_2}The following IDS paths were duplicated in the sequence:")
         print(f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n")
 
-    elif "is too short" in message:
+    elif error.schema["type"] == "array" and error.validator == "minItems":
         # Certain sequences must have length 2 or greater
-        print(f"{SPACING_4}This sequence has only 1 entry, but must have 2 or more")
+        print(f"{SPACING_4}This sequence has only 1 entry, but must have 2 or more\n")
 
-    elif "Allow at most one occurence of the" in message:
+    elif (
+        json_path == "$.paths"
+        and error.validator == "not"
+        and "Allow at most one occurence of the 'all_of'-key under 'paths'"
+        == error.validator_value["description"]
+    ):
         # Only one 'all_of' key is allowed under 'paths'
         print(
             f"{SPACING_4}Multiple 'all_of' keys are present directly under 'paths', but at most"
@@ -51,7 +54,7 @@ def print_nice_error_message(message: str):
         )
 
     else:
-        print(f"{SPACING_4}" + message + "\n")
+        print(f"{SPACING_4}" + error.message + "\n")
 
 
 def validate_against_schema(definition: dict, schema: dict) -> bool:
@@ -66,9 +69,7 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     validation_correct = True
     for error in sorted(found_errors, key=str):
         validation_correct = False
-        print(f"{SPACING_2}Error at JSON path {error.json_path}\n")
-        breakpoint()
-        print_nice_error_message(error.message)
+        print_nice_error_message(error)
 
     return validation_correct
 
