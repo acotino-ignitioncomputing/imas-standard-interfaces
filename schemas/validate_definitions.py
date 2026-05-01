@@ -102,20 +102,59 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
 
 if __name__ == "__main__":
     from pathlib import Path
+    import argparse
     import json
     import yaml
 
+    # Load schema
     schema_path = Path(__file__).parents[0] / "json_schema.json"
     with open(schema_path) as file:
         schema_dict = json.load(file)
 
-    folder = Path(__file__).parents[1] / "example_definitions"
+    # From input, get path of YAML-file or folder
+    parser = argparse.ArgumentParser(
+        prog="validate_definitions",
+        description=(
+            "Validate the syntax of the provided YAML files with respect to the"
+            + " JSON Schema. Also checks the correctness of the IDS names and paths"
+            + " with respect to provided Data Dictionary version."
+        ),
+    )
+    parser.add_argument(
+        "input_path",
+        help=(
+            "absolute or relative path to YAML file or to folder containing YAML "
+            + " files at some depth-level."
+        ),
+    )
+    args = parser.parse_args()
+    input_path = Path(args.input_path)
 
+    if not input_path.exists():
+        raise FileNotFoundError(
+            "Provided path does not point to an existing file or directory: "
+            + f"\n\t{input_path.name}"
+        )
+
+    # Get list of YAML file(s)
+    if input_path.is_dir():
+        list_of_files = sorted(input_path.glob("**/*.yaml"))
+        if not list_of_files:
+            raise Exception(
+                f"The folder '{input_path}' seems to contain no YAML files at any level"
+            )
+        else:
+            print(f"Searching for YAML files in folder {input_path.name}")
+    elif input_path.is_file():
+        list_of_files = [input_path]
+    else:
+        raise Exception(
+            f"Provided path '{input_path}' does not point to a file or folder."
+        )
+
+    # Validate each YAML file and collect which were incorrect
     incorrect_definitions = []
-
-    # folder_tmp = Path(__file__).parents[1] / "tmp_defs"
-    # for file_path in sorted(folder_tmp.glob("**/*.yaml")):
-    for file_path in sorted(folder.glob("**/*.yaml")):
+    for file_path in list_of_files:
         with open(file_path) as file:
             definition_dict = yaml.safe_load(file)
 
@@ -126,12 +165,12 @@ if __name__ == "__main__":
             incorrect_definitions.append(file_path.name)
             continue
 
-        #  Check IDS names are in Data Dictionary
+        #  Check if IDS names are in Data Dictionary
         if not check_ids_name(definition_dict):
             incorrect_definitions.append(file_path.name)
             continue
 
-        # Check IDS paths are in Data Dictionary
+        # Check if IDS paths are in Data Dictionary
         if not check_ids_paths_in_dd(definition_dict):
             incorrect_definitions.append(file_path.name)
             continue
