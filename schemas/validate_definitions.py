@@ -9,11 +9,14 @@ import click
 import json
 import yaml
 
+# Global parameters used for consistent amount of spacing, independent of user config
+SPACING_2 = "  "
+SPACING_4 = "    "
+
 
 def print_nice_error_message(message: str):
     # Error messages from the JSON Schema validator can be difficult to interpret.
     # This functions tries to improve the message based on 'schema/jason_schema.json'
-
     if "has non-unique elements" in message:
         # Duplicate IDS paths in sequence
 
@@ -33,22 +36,22 @@ def print_nice_error_message(message: str):
             if list_of_paths.count(IDS_path) > 1 and IDS_path not in duplicate_paths:
                 duplicate_paths.append(IDS_path)
 
-        print("\tThe following IDS paths were duplicated in the sequence:")
-        print("\n\t\t" + "\n\t\t".join(duplicate_paths) + "\n")
+        print(f"{SPACING_2}The following IDS paths were duplicated in the sequence:")
+        print(f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n")
 
     elif "is too short" in message:
         # Certain sequences must have length 2 or greater
-        print("\t\tThis sequence has only 1 entry, but must have 2 or more")
+        print(f"{SPACING_4}This sequence has only 1 entry, but must have 2 or more")
 
     elif "Allow at most one occurence of the" in message:
         # Only one 'all_of' key is allowed under 'paths'
         print(
-            "\t\tMultiple 'all_of' keys are present directly under 'paths', but at most"
+            f"{SPACING_4}Multiple 'all_of' keys are present directly under 'paths', but at most"
             + " one is allowed.\n"
         )
 
     else:
-        print("\t\t" + message + "\n")
+        print(f"{SPACING_4}" + message + "\n")
 
 
 def validate_against_schema(definition: dict, schema: dict) -> bool:
@@ -63,7 +66,8 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     validation_correct = True
     for error in sorted(found_errors, key=str):
         validation_correct = False
-        print(f"\tError at JSON path {error.json_path}\n")
+        print(f"{SPACING_2}Error at JSON path {error.json_path}\n")
+        breakpoint()
         print_nice_error_message(error.message)
 
     return validation_correct
@@ -84,7 +88,9 @@ def extract_paths(definition: dict) -> list:
                         path_list += sublist
                 else:
                     raise (
-                        Exception(f"Invalid entry \n\t'{entry}'\n in {criterium_dict}")
+                        Exception(
+                            f"Invalid entry \n{SPACING_2}'{entry}'\n in {criterium_dict}"
+                        )
                     )
     return sorted(path_list)
 
@@ -105,7 +111,7 @@ def check_ids_name(definition: dict) -> bool:
         ids_name = ids_path.split("/")[0]
         if ids_name not in ids_names_list:
             print(
-                f"\tIDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
+                f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
             )
             correct_ids_names = False
 
@@ -134,7 +140,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
 
         if ids_path not in valid_paths_list:
             print(
-                f"\tIDS path {ids_path} is not in IDS {ids_name} for "
+                f"{SPACING_2}IDS path {ids_path} is not in IDS {ids_name} for "
                 + f"Data Dictionary version {dd_version}."
             )
             all_paths_valid = False
@@ -165,7 +171,7 @@ def main(input_path: str):
     if not input_path.exists():
         raise FileNotFoundError(
             "Provided path does not point to an existing file or directory: "
-            + f"\n\t{input_path.name}"
+            + f"\n{SPACING_2}{input_path.name}"
         )
 
     # Get list of YAML file(s)
@@ -207,11 +213,11 @@ def main(input_path: str):
             incorrect_definitions.append(file_path.name)
             continue
 
-        print("\tAll checks passed")
+        print(f"{SPACING_2}All checks passed")
 
     if incorrect_definitions:
         print("\nIssues were found in the following file(s)")
-        print("\n\t" + "\n\t".join(incorrect_definitions))
+        print(f"\n{SPACING_2}" + f"\n{SPACING_2}".join(incorrect_definitions))
     else:
         print("\nNo issues found")
 
