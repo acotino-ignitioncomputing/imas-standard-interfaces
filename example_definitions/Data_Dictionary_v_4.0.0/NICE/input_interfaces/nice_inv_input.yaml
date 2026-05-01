@@ -15,7 +15,7 @@ paths:
   - pf_passive/loop/resistance
   - wall/description_2d(1)/limiter/unit/outline/r
   - wall/description_2d(1)/limiter/unit/outline/z
-  - wall/description_2d(1)/mobile/unit/outline(1)/r # NOTE: Not in PDS input desciption, but mentioned in spreadsheet
+  - wall/description_2d(1)/mobile/unit/outline(1)/r
   - wall/description_2d(1)/mobile/unit/outline(1)/z
   - wall/description_2d(1)/vessel/unit(1)/annular/centreline/r
   - wall/description_2d(1)/vessel/unit(2)/annular/centreline/r
@@ -26,14 +26,26 @@ paths:
   - wall/description_2d(1)/vessel/unit(2)/annular/thickness
   - wall/ids_properties/version_put/data_dictionary
 
+- all_or_none:
+  - iron_core/ids_properties/version_put/data_dictionary
+  - iron_core/segment/b_field
+  - iron_core/segment/geometry/outline/r
+  - iron_core/segment/geometry/outline/z
+  - iron_core/segment/permeability_relative
+
+- any_of:
+  - equilibrium/time_slice(1)/profiles_1d/psi
+  - equilibrium/time_slice(1)/profiles_1d/dpressure_dpsi
+  - equilibrium/time_slice(1)/profiles_1d/f_df_dpsi
+
 constraints:
   allowed_values:
-  - pf_active/coil/element(1)/geometry/geometry_type: [1]
+  - pf_active/coil/element(1)/geometry/geometry_type: [1,2]
   - pf_passive/loop/element(1)/geometry/geometry_type: [1, 2]
 
   value_range:
   - equilibrium/time_slice(1)/profiles_1d/psi: [0.0, 1.0]
-  - equilibrium/time_slice(1)/global_quantities/ip: [0.0, 1000000000.0]
+  - equilibrium/time_slice(1)/global_quantities/ip: [null, 1000000000.0]
 
   has_shape:
   - pf_active/coil/element(1)/geometry/outline/r: [5]

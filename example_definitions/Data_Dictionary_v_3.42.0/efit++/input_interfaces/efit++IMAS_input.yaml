@@ -19,29 +19,40 @@ paths:
   - magnetics/flux_loop/position/r
   - magnetics/flux_loop/position/z
   - magnetics/ip/data
-  - magnetics/time
   - pf_active/circuit/connections
   - pf_active/circuit/current/data
   - pf_active/coil/element/geometry/geometry_type
   - pf_active/coil/element/turns_with_sign
   - pf_active/coil/name
   - pf_active/supply/name
-  - pf_active/time
   - pf_passive/loop/current
   - pf_passive/loop/element/geometry/geometry_type
   - pf_passive/loop/element/turns_with_sign
   - pf_passive/loop/name
-  - pf_passive/time
   - tf/b_field_phi_vacuum_r/data
-  - tf/time
   - wall/description_2d/limiter/unit/outline/r
   - wall/description_2d/limiter/unit/outline/z
 
+- any_of:
+  - all_of:
+    - magnetics/time
+    - pf_active/time
+    - pf_passive/time
+    - tf/time
+  - all_of:
+    - magnetics/b_field_pol_probe/field/time
+    - magnetics/diamagnetic_flux/time
+    - magnetics/flux_loop/flux/time
+    - magnetics/ip/time
+    - pf_active/circuit/current/time
+    - pf_passive/loop/time
+    - tf/b_field_phi_vacuum_r/time
+
 constraints:
   allowed_values:
-  - magnetics/ids_properties/homogeneous_time: [1]
-  - tf/ids_properties/homogeneous_time: [1]
-  - pf_active/ids_properties/homogeneous_time: [1]
+  - magnetics/ids_properties/homogeneous_time: [0,1]
   - pf_active/coil/element/geometry/geometry_type: [2, 3, 5, 6]
-  - pf_passive/ids_properties/homogeneous_time: [1]
+  - pf_active/ids_properties/homogeneous_time: [0,1]
   - pf_passive/loop/element/geometry/geometry_type: [2, 3, 5, 6]
+  - pf_passive/ids_properties/homogeneous_time: [0,1]
+  - tf/ids_properties/homogeneous_time: [0,1]
