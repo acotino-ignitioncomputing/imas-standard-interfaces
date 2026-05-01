@@ -1,54 +1,40 @@
-dd_version: 4.0.0 # TODO: check for compatible version
+dd_version: 4.0.0
 
-ids:
-  - name: equilibrium
-    required_paths:
-    - time(1)
-    - vacuum_toroidal_field/b0
-    - time_slice(1)/boundary/outline/r
-    - time_slice(1)/boundary/outline/z
-    - ids_properties/version_put/data_dictionary
-    - vacuum_toroidal_field/r0
+paths:
+- all_of:
+  - equilibrium/ids_properties/version_put/data_dictionary
+  - equilibrium/time(1)
+  - equilibrium/time_slice(1)/boundary/outline/r
+  - equilibrium/time_slice(1)/boundary/outline/z
+  - equilibrium/vacuum_toroidal_field/b0
+  - equilibrium/vacuum_toroidal_field/r0
+  - pf_active/coil/element/turns_with_sign
+  - pf_active/coil/resistance
+  - pf_active/ids_properties/version_put/data_dictionary
+  - pf_passive/ids_properties/version_put/data_dictionary
+  - pf_passive/loop/resistance
+  - wall/description_2d(1)/limiter/unit/outline/r
+  - wall/description_2d(1)/limiter/unit/outline/z
+  - wall/description_2d(1)/mobile/unit/outline(1)/r # NOTE: Not in PDS input desciption, but mentioned in spreadsheet
+  - wall/description_2d(1)/mobile/unit/outline(1)/z
+  - wall/description_2d(1)/vessel/unit(1)/annular/centreline/r
+  - wall/description_2d(1)/vessel/unit(2)/annular/centreline/r
+  - wall/description_2d(1)/vessel/unit(1)/annular/centreline/z
+  - wall/description_2d(1)/vessel/unit(2)/annular/centreline/z
+  - wall/description_2d(1)/vessel/unit/annular/resistivity
+  - wall/description_2d(1)/vessel/unit(1)/annular/thickness
+  - wall/description_2d(1)/vessel/unit(2)/annular/thickness
+  - wall/ids_properties/version_put/data_dictionary
 
-    constraints:
-    - path: [time_slice(1)/profiles_1d/psi]
-      value_range: [0.0, 1.0]
-    - path: [time_slice(1)/global_quantities/ip]
-      value_range: [0.0, 1000000000.0] # TODO: check values with code. How to handle half-open interval?
-    
-  - name: pf_active
-    required_paths:
-    - ids_properties/version_put/data_dictionary
-    - coil(i1)/element/turns_with_sign
-    - coil(i1)/resistance
-    constraints:
-    - path: [coil(i1)/element(1)/geometry/geometry_type]
-      allowed_values: [1] 
-    - path:
-      - coil(i1)/element(1)/geometry/outline/r
-      - coil(i1)/element(1)/geometry/outline/z
-      has_shape: [5]
-  
-  - name: pf_passive
-    required_paths:
-    - ids_properties/version_put/data_dictionary
-    - loop(i1)/resistance
+constraints:
+  allowed_values:
+  - pf_active/coil/element(1)/geometry/geometry_type: [1]
+  - pf_passive/loop/element(1)/geometry/geometry_type: [1, 2]
 
-    constraints:
-    - path: [loop(i1)/element(1)/geometry/geometry_type]
-      allowed_values: [1,2] 
-  
-  - name: wall
-    required_paths:
-    - ids_properties/version_put/data_dictionary
-    - description_2d(1)/limiter/unit(i2)/outline/r
-    - description_2d(1)/limiter/unit(i2)/outline/z
-    - description_2d(1)/mobile/unit(i2)/outline(1)/r # NOTE: Not in PDS input desciption, but mentioned in spreadsheet
-    - description_2d(1)/mobile/unit(i2)/outline(1)/z
-    - description_2d(1)/vessel/unit(i2)/annular/resistivity
-    - description_2d(1)/vessel/unit(1)/annular/centreline/r
-    - description_2d(1)/vessel/unit(1)/annular/centreline/z
-    - description_2d(1)/vessel/unit(1)/annular/thickness
-    - description_2d(1)/vessel/unit(2)/annular/centreline/r
-    - description_2d(1)/vessel/unit(2)/annular/centreline/z
-    - description_2d(1)/vessel/unit(2)/annular/thickness
+  value_range:
+  - equilibrium/time_slice(1)/profiles_1d/psi: [0.0, 1.0]
+  - equilibrium/time_slice(1)/global_quantities/ip: [0.0, 1000000000.0]
+
+  has_shape:
+  - pf_active/coil/element(1)/geometry/outline/r: [5]
+  - pf_active/coil/element(1)/geometry/outline/z: [5]

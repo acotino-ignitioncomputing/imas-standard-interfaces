@@ -1,28 +1,18 @@
 dd_version: 3.39.0
 
-ids:
-  - name: pf_active
-    required_paths:
-    - coil(i1)/element(i2)/turns_with_sign
-    constraints:
-    - path: [coil(i1)/element(i2)/geometry/geometry_type]
-      allowed_values: [2, 3, 5]
+paths:
+- all_of:
+  - equilibrium/time_slice(1)/profiles_2d(1)/grid/dim1
+  - equilibrium/time_slice(1)/profiles_2d(1)/grid/dim2
+  - magnetics/b_field_pol_probe/length
+  - magnetics/b_field_pol_probe/poloidal_angle
+  - magnetics/b_field_pol_probe/position/r
+  - magnetics/b_field_pol_probe/position/z
+  - magnetics/flux_loop/position(1)/r
+  - magnetics/flux_loop/position(1)/z
+  - pf_active/coil/element/turns_with_sign
 
-  - name: pf_passive
-    constraints:
-    - path: [loop(i1)/element(1)/geometry/geometry_type]
-      allowed_values: [2, 3]
-
-  - name: magnetics
-    required_paths:
-    - flux_loop(i1)/position(1)/r
-    - flux_loop(i1)/position(1)/z
-    - b_field_pol_probe(i1)/position/r
-    - b_field_pol_probe(i1)/position/z
-    - b_field_pol_probe(i1)/poloidal_angle
-    - b_field_pol_probe(i1)/length
-
-  - name: equilibrium
-    required_paths:
-    - time_slice(1)/profiles_2d(1)/grid/dim1
-    - time_slice(1)/profiles_2d(1)/grid/dim2
+constraints:
+  allowed_values:
+  - pf_active/coil/element/geometry/geometry_type: [2, 3, 5]
+  - pf_passive/loop/element(1)/geometry/geometry_type: [2, 3]

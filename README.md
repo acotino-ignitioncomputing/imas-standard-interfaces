@@ -19,7 +19,6 @@ standard_interfaces/
 │   │   ├── LIGKA/
 │   │   ├── NICE/
 │   │   └── torax/
-│   └── structure_of_definitions.md
 ├── example_datasets/
 │   ├── example.md
 │   ├── valid_pf_passive.cdl
@@ -27,16 +26,15 @@ standard_interfaces/
 │   └── invalid_2_pf_passive.cdl
 ├── schemas/
 │   ├── json_schema.json
-│   └── validate_definitions.py
+│   ├── validate_definitions.py
+│   └── structure_of_definitions.md
 ```
 
 ### `example_definitions/`
 
 Example interface definitions organised by Data Dictionary version and
 simulation code. Each code folder contains YAML files describing the input
-and/or output interfaces of that code. See
-`example_definitions/structure_of_definitions.md` for a description of the
-definition format.
+and/or output interfaces of that code.
 
 ### `example_datasets/`
 
@@ -53,3 +51,4 @@ Schemas and tooling for validating interface definitions:
   definitions.
 - `validate_definitions.py` — Python script for validating definitions against
   the schema and the IMAS Data Dictionary.
+- `structure_of_definitions.md` for a description of the definition format in plain text.

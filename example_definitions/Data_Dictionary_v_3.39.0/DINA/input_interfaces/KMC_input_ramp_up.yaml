@@ -1,53 +1,43 @@
 dd_version: 3.39.0
 
-ids:
-  # Pulse_schedule input: ramp-up and flattop phase
-  - name: pulse_schedule
-    required_paths:
-    - flux_control/i_plasma/reference/data
-    - pf_active/coil(i1)/current/reference/data
-    - pf_active/coil(i1)/current/reference/time
-    - pf_active/supply(i1)/voltage/reference/data
-    - pf_active/supply(i1)/voltage/reference/time
-    - position_control/elongation/reference/data
-    - position_control/elongation/reference/time
-    - position_control/gap(i1)/value/reference/data
-    - position_control/gap(i1)/value/reference/time
-    constraints:
-    - path:
-      - flux_control/i_plasma/reference/data
-      - pf_active/coil(i1)/current/reference/data
-      - pf_active/coil(i1)/current/reference/time
-      same_shape:
-    - path:
-      - pf_active/supply(i1)/voltage/reference/data
-      - pf_active/supply(i1)/voltage/reference/time
-      same_shape:
-    - path:
-      - position_control/elongation/reference/data
-      - position_control/elongation/reference/time
-      same_shape:
-    - path:
-      - position_control/gap(i1)/value/reference/data
-      - position_control/gap(i1)/value/reference/time
-      same_shape:
+paths:
+- all_of:
+  - equilibrium/time_slice(1)/boundary/elongation
+  - equilibrium/time_slice(1)/boundary/geometric_axis/r
+  - equilibrium/time_slice(1)/boundary/minor_radius
+  - equilibrium/time_slice(1)/boundary/type
+  - equilibrium/time_slice(1)/boundary_separatrix/gap(24)/value
+  - equilibrium/time_slice(1)/boundary_separatrix/gap(25)/value
+  - equilibrium/time_slice(1)/boundary_separatrix/gap(26)/value
+  - equilibrium/time_slice(1)/boundary_separatrix/gap(27)/value
+  - equilibrium/time_slice(1)/boundary_separatrix/gap(28)/value
+  - equilibrium/time_slice(1)/boundary_separatrix/gap(29)/value
+  - equilibrium/time_slice(1)/global_quantities/current_centre/z
+  - equilibrium/time_slice(1)/global_quantities/ip
+  - equilibrium/time_slice(1)/time
+  - pf_active/coil/current/data
+  - pulse_schedule/flux_control/i_plasma/reference/data
+  - pulse_schedule/pf_active/coil/current/reference/data
+  - pulse_schedule/pf_active/coil/current/reference/time
+  - pulse_schedule/pf_active/supply/voltage/reference/data
+  - pulse_schedule/pf_active/supply/voltage/reference/time
+  - pulse_schedule/position_control/elongation/reference/data
+  - pulse_schedule/position_control/elongation/reference/time
+  - pulse_schedule/position_control/gap/value/reference/data
+  - pulse_schedule/position_control/gap/value/reference/time
 
-  - name: equilibrium
-    required_paths:
-    - time_slice(1)/time
-    - time_slice(1)/global_quantities/ip
-    - time_slice(1)/global_quantities/current_centre/z
-    - time_slice(1)/boundary/type
-    - time_slice(1)/boundary/elongation
-    - time_slice(1)/boundary/geometric_axis/r
-    - time_slice(1)/boundary/minor_radius
-    - time_slice(1)/boundary_separatrix/gap(24)/value
-    - time_slice(1)/boundary_separatrix/gap(25)/value
-    - time_slice(1)/boundary_separatrix/gap(26)/value
-    - time_slice(1)/boundary_separatrix/gap(27)/value
-    - time_slice(1)/boundary_separatrix/gap(28)/value
-    - time_slice(1)/boundary_separatrix/gap(29)/value
-
-  - name: pf_active
-    required_paths:
-    - coil(i1)/current/data
+constraints:
+  same_shape:
+  - all_of:
+    - pulse_schedule/flux_control/i_plasma/reference/data
+    - pulse_schedule/pf_active/coil/current/reference/data
+    - pulse_schedule/pf_active/coil/current/reference/time
+  - all_of:
+    - pulse_schedule/pf_active/supply/voltage/reference/data
+    - pulse_schedule/pf_active/supply/voltage/reference/time
+  - all_of:
+    - pulse_schedule/position_control/elongation/reference/data
+    - pulse_schedule/position_control/elongation/reference/time
+  - all_of:
+    - pulse_schedule/position_control/gap/value/reference/data
+    - pulse_schedule/position_control/gap/value/reference/time
