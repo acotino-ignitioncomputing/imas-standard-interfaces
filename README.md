@@ -50,5 +50,6 @@ Schemas and tooling for validating interface definitions:
 - `json_schema.json` — JSON Schema describing the structure of interface
   definitions.
 - `validate_definitions.py` — Python script for validating definitions against
-  the schema and the IMAS Data Dictionary.
+  the schema and the IMAS Data Dictionary. Run using `python
+  validate_definitions.py [path_to_folder_or_YAML_file]`
 - `structure_of_definitions.md` for a description of the definition format in plain text.
