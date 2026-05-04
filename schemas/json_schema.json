@@ -108,10 +108,7 @@
                             "minItems": 2,
                             "maxItems": 2,
                             "items": {
-                                "anyOf": [
-                                    {"type": "number"},
-                                    {"type": "null"}
-                                ]
+                                "type": "number"
                             }
                         }
                     }
@@ -139,6 +136,7 @@
                         "type": "object",
                         "minProperties": 1,
                         "maxProperties": 1,
+                        "additionalProperties": false,
                         "properties": {
                             "all_of": {
                                 "description": "The above constraint is applied to all of the listed paths",
