@@ -4,6 +4,57 @@ Dictionary"""
 import jsonschema
 from imas import IDSFactory, util
 import re
+from pathlib import Path
+import click
+import json
+import yaml
+
+# Global parameters used for consistent amount of spacing, independent of user config
+SPACING_2 = "  "
+SPACING_4 = "    "
+
+
+def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
+    # Error messages from the JSON Schema validator can be difficult to interpret.
+    # This functions tries to improve the message based on 'schema/jason_schema.json'
+
+    json_path = error.json_path
+
+    print(f"{SPACING_2}Error at YAML path {json_path}\n")
+
+    if error.schema["type"] == "array" and error.validator == "uniqueItems":
+        # Duplicate IDS paths in sequence
+
+        # Get list of paths
+        list_of_paths = error.instance
+
+        # Collect duplicate paths
+        duplicate_paths = []
+        for IDS_path in list_of_paths:
+            if list_of_paths.count(IDS_path) > 1 and IDS_path not in duplicate_paths:
+                duplicate_paths.append(IDS_path)
+
+        print(f"{SPACING_2}The following IDS paths were duplicated in the sequence:")
+        print(f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n")
+
+    elif error.schema["type"] == "array" and error.validator == "minItems":
+        # Certain sequences must have length 2 or greater
+        print(f"{SPACING_4}This sequence must have 2 or more entries\n")
+
+    elif (
+        json_path == "$.paths"
+        and error.validator == "not"
+        and "Allow at most one occurence of the 'all_of'-key under 'paths'"
+        == error.validator_value["description"]
+    ):
+        # Only one 'all_of' key is allowed under 'paths'
+        print(
+            f"{SPACING_4}Multiple 'all_of' keys are present directly under 'paths', but at most"
+            + " one is allowed.\n"
+        )
+
+    else:
+        print(f"{SPACING_4}" + error.message + "\n")
 
 
 def validate_against_schema(definition: dict, schema: dict) -> bool:
@@ -18,8 +69,7 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     validation_correct = True
     for error in sorted(found_errors, key=str):
         validation_correct = False
-        print(f"\tError at JSON path {error.json_path}\n")
-        print(f"\t{error.message}\n")
+        print_nice_error_message(error)
 
     return validation_correct
 
@@ -39,7 +89,9 @@ def extract_paths(definition: dict) -> list:
                         path_list += sublist
                 else:
                     raise (
-                        Exception(f"Invalid entry \n\t'{entry}'\n in {criterium_dict}")
+                        Exception(
+                            f"Invalid entry \n{SPACING_2}'{entry}'\n in {criterium_dict}"
+                        )
                     )
     return sorted(path_list)
 
@@ -60,7 +112,7 @@ def check_ids_name(definition: dict) -> bool:
         ids_name = ids_path.split("/")[0]
         if ids_name not in ids_names_list:
             print(
-                f"\tIDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
+                f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
             )
             correct_ids_names = False
 
@@ -80,7 +132,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
         # Extract IDS name and path, and remove any index notation
         ids_name = full_ids_path.split("/")[0]
         ids_path = full_ids_path.replace(f"{ids_name}/", "")
-        ids_path = re.sub(r"\(.{1,6}\)", "", ids_path)
+        ids_path = re.sub(r"\([^\(\)]{1,}\)", "", ids_path)
 
         # Create empty IDS to extract valid paths
         ids_instance = IDSFactory(dd_version).new(ids_name)
@@ -89,7 +141,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
 
         if ids_path not in valid_paths_list:
             print(
-                f"\tIDS path {ids_path} is not in IDS {ids_name} for "
+                f"{SPACING_2}IDS path {ids_path} is not in IDS {ids_name} for "
                 + f"Data Dictionary version {dd_version}."
             )
             all_paths_valid = False
@@ -97,25 +149,94 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     return all_paths_valid
 
 
-# Check IDS paths are in DD
+def check_index_notation(definition: dict) -> bool:
+    """Index notation in IDS paths must follow IMAS IDS path convention"""
+
+    all_index_notation_valid = True
+    path_list = extract_paths(definition)
+
+    for ids_path in path_list:
+        index_notation_list = re.findall(r"\([^\(\)]{1,}\)", ids_path)
+
+        for index_notation in index_notation_list:
+            # Remove brackets and split on ','
+            index_part_list = (
+                index_notation.replace("(", "").replace(")", "").split(",")
+            )
+
+            for index_part in index_part_list:
+
+                # Indexing should be 1-based. Check if 0-based is used
+                if index_part[0] == "0":
+                    print(
+                        f"{SPACING_2}Index in IDS path {ids_path} should not start with 0"
+                    )
+                    all_index_notation_valid = False
+                    continue
+
+                # Check for number of ':' in index
+                if index_part.count(":") > 2:
+                    print(f"{SPACING_2}Index in IDS path {ids_path} has too many ':'")
+                    all_index_notation_valid = False
+                    continue
+
+                # Check for forbidden symbols
+                if not re.fullmatch(r"[0-9:\-]{1,}", index_part):
+                    print(
+                        f"{SPACING_2}Index in IDS path {ids_path} contains forbidden"
+                        + " symbols"
+                    )
+                    all_index_notation_valid = False
+                    continue
+
+    return all_index_notation_valid
 
 
-if __name__ == "__main__":
-    from pathlib import Path
-    import json
-    import yaml
+@click.command()
+@click.argument("input_path")
+def main(input_path: str):
+    """Validate the syntax of the provided YAML files with respect to the
+    JSON Schema. Also checks the correctness of the IDS names and paths
+    with respect to provided Data Dictionary version.
 
+    Arguments:\n
+    INPUT_PATH  absolute or relative path to YAML file or to folder containing YAML
+    files at some depth-level.
+    """
+
+    # Load schema
     schema_path = Path(__file__).parents[0] / "json_schema.json"
     with open(schema_path) as file:
         schema_dict = json.load(file)
 
-    folder = Path(__file__).parents[1] / "example_definitions"
+    # From input, get path of YAML-file or folder
+    input_path = Path(input_path)
 
+    if not input_path.exists():
+        raise FileNotFoundError(
+            "Provided path does not point to an existing file or directory: "
+            + f"\n{SPACING_2}{input_path.name}"
+        )
+
+    # Get list of YAML file(s)
+    if input_path.is_dir():
+        list_of_files = sorted(input_path.glob("**/*.yaml"))
+        if not list_of_files:
+            raise Exception(
+                f"The folder '{input_path}' seems to contain no YAML files at any level"
+            )
+        else:
+            print(f"Searching for YAML files in folder {input_path.name}")
+    elif input_path.is_file():
+        list_of_files = [input_path]
+    else:
+        raise Exception(
+            f"Provided path '{input_path}' does not point to a file or folder."
+        )
+
+    # Validate each YAML file and collect which were incorrect
     incorrect_definitions = []
-
-    # folder_tmp = Path(__file__).parents[1] / "tmp_defs"
-    # for file_path in sorted(folder_tmp.glob("**/*.yaml")):
-    for file_path in sorted(folder.glob("**/*.yaml")):
+    for file_path in list_of_files:
         with open(file_path) as file:
             definition_dict = yaml.safe_load(file)
 
@@ -126,20 +247,29 @@ if __name__ == "__main__":
             incorrect_definitions.append(file_path.name)
             continue
 
-        #  Check IDS names are in Data Dictionary
+        #  Check if IDS names are in Data Dictionary
         if not check_ids_name(definition_dict):
             incorrect_definitions.append(file_path.name)
             continue
 
-        # Check IDS paths are in Data Dictionary
+        # Check if IDS paths are in Data Dictionary
         if not check_ids_paths_in_dd(definition_dict):
             incorrect_definitions.append(file_path.name)
             continue
 
-        print("\tAll checks passed")
+        # Check index notatiop in IDS paths
+        if not check_index_notation(definition_dict):
+            incorrect_definitions.append(file_path.name)
+            continue
+
+        print(f"{SPACING_2}All checks passed")
 
     if incorrect_definitions:
         print("\nIssues were found in the following file(s)")
-        print("\n\t" + "\n\t".join(incorrect_definitions))
+        print(f"\n{SPACING_2}" + f"\n{SPACING_2}".join(incorrect_definitions))
     else:
         print("\nNo issues found")
+
+
+if __name__ == "__main__":
+    main()
