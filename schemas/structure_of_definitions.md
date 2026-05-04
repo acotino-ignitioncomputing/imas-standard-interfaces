@@ -121,7 +121,7 @@ The following mapping keys are allowed:
 - `value_range`: maps to a sequence of mappings having the IDS path as key,
   which maps to a length-2 sequence of integers representing a closed interval.
   The values of the data array at the IDS path must fall within this interval.
-  The value `null` can be used to indicate + / - infinity.
+  The value `-.inf` and `+.inf` can be used to indicate negative- and positive infinity.
 - `has_shape`: maps to a sequence of mappings having the IDS path as key, which
   maps to a list of integers describing the shape of the data array at the IDS
   path. The i-th integer in this list corresponds with the i-th axis of the data
@@ -140,7 +140,7 @@ constraints:
 
   value_range:
   - equilibrium/time_slice(1)/profiles_1d/psi: [0.0, 1.0]
-  - equilibrium/time_slice(1)/global_quantities/ip: [null, 1000000000.0]
+  - equilibrium/time_slice(1)/global_quantities/ip: [-.inf, 1000000000.0]
 
   has_shape:
   - pf_active/coil/element(1)/geometry/outline/r: [5]

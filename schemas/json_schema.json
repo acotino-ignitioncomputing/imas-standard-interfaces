@@ -108,10 +108,7 @@
                             "minItems": 2,
                             "maxItems": 2,
                             "items": {
-                                "anyOf": [
-                                    {"type": "number"},
-                                    {"type": "null"}
-                                ]
+                                "type": "number"
                             }
                         }
                     }
