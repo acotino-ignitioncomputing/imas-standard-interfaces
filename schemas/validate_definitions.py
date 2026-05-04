@@ -39,7 +39,7 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
 
     elif error.schema["type"] == "array" and error.validator == "minItems":
         # Certain sequences must have length 2 or greater
-        print(f"{SPACING_4}This sequence has only 1 entry, but must have 2 or more\n")
+        print(f"{SPACING_4}This sequence must have 2 or more entries\n")
 
     elif (
         json_path == "$.paths"
