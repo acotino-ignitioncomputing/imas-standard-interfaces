@@ -132,7 +132,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
         # Extract IDS name and path, and remove any index notation
         ids_name = full_ids_path.split("/")[0]
         ids_path = full_ids_path.replace(f"{ids_name}/", "")
-        ids_path = re.sub(r"\(.{1,6}\)", "", ids_path)
+        ids_path = re.sub(r"\([^\(\)]{1,}\)", "", ids_path)
 
         # Create empty IDS to extract valid paths
         ids_instance = IDSFactory(dd_version).new(ids_name)
@@ -147,6 +147,49 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
             all_paths_valid = False
 
     return all_paths_valid
+
+
+def check_index_notation(definition: dict) -> bool:
+    """Index notation in IDS paths must follow IMAS IDS path convention"""
+
+    all_index_notation_valid = True
+    path_list = extract_paths(definition)
+
+    for ids_path in path_list:
+        index_notation_list = re.findall(r"\([^\(\)]{1,}\)", ids_path)
+
+        for index_notation in index_notation_list:
+            # Remove brackets and split on ','
+            index_part_list = (
+                index_notation.replace("(", "").replace(")", "").split(",")
+            )
+
+            for index_part in index_part_list:
+
+                # Indexing should be 1-based. Check if 0-based is used
+                if index_part[0] == "0":
+                    print(
+                        f"{SPACING_2}Index in IDS path {ids_path} should not start with 0"
+                    )
+                    all_index_notation_valid = False
+                    continue
+
+                # Check for number of ':' in index
+                if index_part.count(":") > 2:
+                    print(f"{SPACING_2}Index in IDS path {ids_path} has too many ':'")
+                    all_index_notation_valid = False
+                    continue
+
+                # Check for forbidden symbols
+                if not re.fullmatch(r"[0-9:\-]{1,}", index_part):
+                    print(
+                        f"{SPACING_2}Index in IDS path {ids_path} contains forbidden"
+                        + " symbols"
+                    )
+                    all_index_notation_valid = False
+                    continue
+
+    return all_index_notation_valid
 
 
 @click.command()
@@ -211,6 +254,11 @@ def main(input_path: str):
 
         # Check if IDS paths are in Data Dictionary
         if not check_ids_paths_in_dd(definition_dict):
+            incorrect_definitions.append(file_path.name)
+            continue
+
+        # Check index notatiop in IDS paths
+        if not check_index_notation(definition_dict):
             incorrect_definitions.append(file_path.name)
             continue
 
