@@ -20,7 +20,7 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
 
     json_path = error.json_path
 
-    print(f"{SPACING_2}Error at JSON path {json_path}\n")
+    print(f"{SPACING_2}Error at YAML path {json_path}\n")
 
     if error.schema["type"] == "array" and error.validator == "uniqueItems":
         # Duplicate IDS paths in sequence
