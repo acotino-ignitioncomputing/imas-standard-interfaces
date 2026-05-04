@@ -45,7 +45,7 @@ constraints:
 
   value_range:
   - equilibrium/time_slice(1)/profiles_1d/psi: [0.0, 1.0]
-  - equilibrium/time_slice(1)/global_quantities/ip: [-.inf, 1000000000.0]
+  - equilibrium/time_slice(1)/global_quantities/ip: [-.inf, 1.0e+9]
 
   has_shape:
   - pf_active/coil/element(1)/geometry/outline/r: [5]
