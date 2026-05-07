@@ -2,14 +2,13 @@ dd_version: 3.39.0
 
 paths:
 - all_of:
-  - core_profiles/profiles_1d(1)/electrons/density
-  - core_profiles/profiles_1d(1)/electrons/temperature
-  - core_profiles/profiles_1d(1)/grid/rho_tor_norm
-  - core_profiles/profiles_1d(1)/ion(1)/density
-  - core_profiles/profiles_1d(1)/ion(2)/density
-  - core_profiles/profiles_1d(1)/t_i_average
-  - core_sources/source(1)/profiles_1d(1)/electrons/energy
-  - core_sources/source(1)/profiles_1d(1)/total_ion_energy
+  - core_profiles/profiles_1d/electrons/density
+  - core_profiles/profiles_1d/electrons/temperature
+  - core_profiles/profiles_1d/grid/rho_tor_norm
+  - core_profiles/profiles_1d/ion/density
+  - core_profiles/profiles_1d/t_i_average
+  - core_sources/source/profiles_1d/electrons/energy
+  - core_sources/source/profiles_1d/total_ion_energy
   - em_coupling/field_probes_active
   - em_coupling/field_probes_grid
   - em_coupling/field_probes_passive
@@ -21,47 +20,46 @@ paths:
   - em_coupling/mutual_loops_passive
   - em_coupling/mutual_passive_active
   - em_coupling/mutual_passive_passive
-  - equilibrium/time_slice(1)/profiles_2d(1)/grid/dim1
-  - equilibrium/time_slice(1)/profiles_2d(1)/grid/dim2
+  - equilibrium/time_slice/profiles_2d/grid/dim1
+  - equilibrium/time_slice/profiles_2d/grid/dim2
   - equilibrium/vacuum_toroidal_field/b0
   - equilibrium/vacuum_toroidal_field/r0
   - pf_active/coil/resistance
   - pf_passive/loop/resistance
-  - pulse_schedule/density_control/ion/element(1)/z_n
+  - pulse_schedule/density_control/ion/element/z_n
   - pulse_schedule/density_control/ion/n_i_volume_average/reference/data
   - pulse_schedule/density_control/ion/n_i_volume_average/reference/time
-  - pulse_schedule/ec/launcher(1)/power/reference/data
-  - pulse_schedule/ec/launcher(1)/power/reference/time
+  - pulse_schedule/ec/launcher/power/reference/data
+  - pulse_schedule/ec/launcher/power/reference/time
   - pulse_schedule/ec/power/reference/data
   - pulse_schedule/ec/power/reference/time
   - pulse_schedule/ic/power/reference/data
   - pulse_schedule/pf_active/coil/current/reference/data
   - pulse_schedule/pf_active/coil/resistance_additional/reference/data
   - pulse_schedule/pf_active/coil/resistance_additional/reference/time
-  - wall/description_2d(1)/limiter/unit/outline/r
-  - wall/description_2d(1)/limiter/unit/outline/z
+  - wall/description_2d/limiter/unit/outline/r
+  - wall/description_2d/limiter/unit/outline/z
 
 constraints:
   same_shape:
   - all_of:
-    - wall/description_2d(1)/limiter/unit/outline/r
-    - wall/description_2d(1)/limiter/unit/outline/z
+    - wall/description_2d/limiter/unit/outline/r
+    - wall/description_2d/limiter/unit/outline/z
   - all_of:
-    - core_profiles/profiles_1d(1)/grid/rho_tor_norm
-    - core_profiles/profiles_1d(1)/electrons/temperature
-    - core_profiles/profiles_1d(1)/t_i_average
-    - core_profiles/profiles_1d(1)/electrons/density
-    - core_profiles/profiles_1d(1)/ion(1)/density
-    - core_profiles/profiles_1d(1)/ion(2)/density
+    - core_profiles/profiles_1d/grid/rho_tor_norm
+    - core_profiles/profiles_1d/electrons/temperature
+    - core_profiles/profiles_1d/t_i_average
+    - core_profiles/profiles_1d/electrons/density
+    - core_profiles/profiles_1d/ion/density
   - all_of:
-    - core_sources/source(1)/profiles_1d(1)/electrons/energy
-    - core_sources/source(1)/profiles_1d(1)/total_ion_energy
+    - core_sources/source/profiles_1d/electrons/energy
+    - core_sources/source/profiles_1d/total_ion_energy
   - all_of:
     - pulse_schedule/pf_active/coil/resistance_additional/reference/data
     - pulse_schedule/pf_active/coil/resistance_additional/reference/time
   - all_of:
-    - pulse_schedule/ec/launcher(1)/power/reference/data
-    - pulse_schedule/ec/launcher(1)/power/reference/time
+    - pulse_schedule/ec/launcher/power/reference/data
+    - pulse_schedule/ec/launcher/power/reference/time
   - all_of:
     - pulse_schedule/ec/power/reference/time
     - pulse_schedule/ec/power/reference/data

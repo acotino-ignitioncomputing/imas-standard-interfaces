@@ -24,24 +24,19 @@ specifying any constraints on the data arrays at the specified IDS paths.
 Each string representing an IDS path of a certain IDS is build-up by appending
 the IDS name with the IDS path.
 The IDS paths follow the [IMAS IDS path
-convention](https://imas-data-dictionary.readthedocs.io/en/latest/IDS-path-syntax.html)
-with the exception of the criterium that the index specifier is mandatory for
-array of structures: the forward slashes `/` seperate nested structures, and the
-index and ranges of arrays can be given between round brackets `()` just after
-the array name.
+convention](https://imas-data-dictionary.readthedocs.io/en/latest/IDS-path-syntax.html), where the forward slashes `/` seperate nested structures.
 
 For example
 
 ```yaml
 - pf_active/coil/resistance # all coils
-- pf_passive/loop/element(1)/geometry/geometry_type # first element of each coil
-- pulse_schedule/density_control/ion/element(3:7)/z_n # elements 3 until 7 
+- pf_passive/loop/element/geometry/geometry_type # first element of each coil
+- pulse_schedule/density_control/ion/element/z_n # elements 3 until 7 
 ```
 
 In order to increase readability of the interface definitions, it is recommended
-to sort any sequence of IDS paths in alphabetical order (ignoring index and
-ranges in round brackets) and to write lists of integers as much as possible in
-'YAML flow style' (see [example 2](@example-2)).
+to sort any sequence of IDS paths in alphabetical order and to write lists of integers as much as possible in
+'YAML flow style' (see [example 2](#example-2)).
 
 For more example interface definitions, see the YAML files in the folder `example_definitions` of this repository.
 
@@ -77,8 +72,8 @@ dd_version: 4.0.0
 
 paths:
 - all_of:
-  - equilibrium/time(1)
-  - equilibrium/time_slice(1)/global_quantities/ip
+  - equilibrium/time
+  - equilibrium/time_slice/global_quantities/ip
   - equilibrium/vacuum_toroidal_field/b0
 
 - all_or_none:
@@ -90,14 +85,14 @@ paths:
 
 - any_of:
   - all_of:
-    - wall/description_2d(1)/vessel/unit(1:2)/annular/centreline/r
-    - wall/description_2d(1)/vessel/unit(1:2)/annular/centreline/z
-    - wall/description_2d(1)/vessel/unit(1:2)/annular/thickness
+    - wall/description_2d(/vessel/unit/annular/centreline/r
+    - wall/description_2d(/vessel/unit/annular/centreline/z
+    - wall/description_2d/vessel/unit/annular/thickness
   - all_of:
-    - wall/description_2d(1)/vessel/unit(1:2)/annular/outline_inner/r
-    - wall/description_2d(1)/vessel/unit(1:2)/annular/outline_inner/z
-    - wall/description_2d(1)/vessel/unit(1:2)/annular/outline_outer/r
-    - wall/description_2d(1)/vessel/unit(1:2)/annular/outline_outer/z
+    - wall/description_2d/vessel/unit/annular/outline_inner/r
+    - wall/description_2d/vessel/unit/annular/outline_inner/z
+    - wall/description_2d/vessel/unit/annular/outline_outer/r
+    - wall/description_2d/vessel/unit/annular/outline_outer/z
 
 - any_of:
   - equilibrium/time_slice/profiles_1d/gm9
@@ -139,17 +134,17 @@ constraints:
   - equilibrium/time_slice/profiles_2d/grid_type/index: [1]
 
   value_range:
-  - equilibrium/time_slice(1)/profiles_1d/psi: [0.0, 1.0]
-  - equilibrium/time_slice(1)/global_quantities/ip: [-.inf, 1.0e+9]
+  - equilibrium/time_slice/profiles_1d/psi: [0.0, 1.0]
+  - equilibrium/time_slice/global_quantities/ip: [-.inf, 1.0e+9]
 
   has_shape:
-  - pf_active/coil/element(1)/geometry/outline/r: [5]
-  - pf_active/coil/element(1)/geometry/outline/z: [5]
+  - pf_active/coil/element/geometry/outline/r: [5]
+  - pf_active/coil/element/geometry/outline/z: [5]
 
   same_shape:
   - all_of:
-    - core_sources/source(1)/profiles_1d(1)/electrons/energy
-    - core_sources/source(1)/profiles_1d(1)/total_ion_energy
+    - core_sources/source/profiles_1d/electrons/energy
+    - core_sources/source/profiles_1d/total_ion_energy
   - all_of:
     - pulse_schedule/ec/power/reference/data
     - pulse_schedule/ic/power/reference/data
