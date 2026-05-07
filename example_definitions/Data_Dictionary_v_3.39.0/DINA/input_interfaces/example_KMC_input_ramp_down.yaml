@@ -13,9 +13,3 @@ paths:
   - pf_active/coil/current/data
   - pulse_schedule/position_control/gap/value/reference/data
   - pulse_schedule/position_control/gap/value/reference/time
-
-constraints:
-  same_shape:
-  - all_of:
-    - pulse_schedule/position_control/gap/value/reference/data
-    - pulse_schedule/position_control/gap/value/reference/time

@@ -143,9 +143,6 @@ constraints:
 
   same_shape:
   - all_of:
-    - core_sources/source/profiles_1d/electrons/energy
-    - core_sources/source/profiles_1d/total_ion_energy
-  - all_of:
     - pulse_schedule/ec/power/reference/data
     - pulse_schedule/ic/power/reference/data
 ```
