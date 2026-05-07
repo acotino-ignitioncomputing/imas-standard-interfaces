@@ -16,7 +16,7 @@ The key `dd_version` specifies the version of the IMAS Data Dictionary that the
 definition targets (e.g. `4.1.0`).
 
 The key [`paths`](#paths) contains  sets of IDS paths that must be present in
-the dataset.
+the dataset and whose data array must be non-empty.
 
 Optionally, a [`constraint`](#constraints) key may be present at the top level,
 specifying any constraints on the data arrays at the specified IDS paths.
@@ -107,23 +107,12 @@ Each entry in `constraints` describes which constraints are enforced on the data
 array of the specified IDS path. Listing an IDS path under this key does not
 imply that its presence is required.
 
-The following mapping keys are allowed:
+Currently, only the following mapping key is allowed:
 
 - `allowed_values`: maps to a sequence of mappings having the IDS path as key,
   which maps to a sequence of values (integer, float or string) that are allowed
   to be present in the data array at the IDS path. When specified, the data
   array must only consist of the listed values.
-- `value_range`: maps to a sequence of mappings having the IDS path as key,
-  which maps to a length-2 sequence of integers representing a closed interval.
-  The values of the data array at the IDS path must fall within this interval.
-  The value `-.inf` and `+.inf` can be used to indicate negative- and positive infinity.
-- `has_shape`: maps to a sequence of mappings having the IDS path as key, which
-  maps to a list of integers describing the shape of the data array at the IDS
-  path. The i-th integer in this list corresponds with the i-th axis of the data
-  array.
-- `same_shape`: maps to a sequence of mappings with the `all_of` key. The data
-  arrays at the IDS paths listed under the `all_of` key must have the same
-  shape.
 
 ### Example 2
 
@@ -132,17 +121,4 @@ The following mapping keys are allowed:
 constraints:
   allowed_values:
   - equilibrium/time_slice/profiles_2d/grid_type/index: [1]
-
-  value_range:
-  - equilibrium/time_slice/profiles_1d/psi: [0.0, 1.0]
-  - equilibrium/time_slice/global_quantities/ip: [-.inf, 1.0e+9]
-
-  has_shape:
-  - pf_active/coil/element/geometry/outline/r: [5]
-  - pf_active/coil/element/geometry/outline/z: [5]
-
-  same_shape:
-  - all_of:
-    - pulse_schedule/ec/power/reference/data
-    - pulse_schedule/ic/power/reference/data
 ```

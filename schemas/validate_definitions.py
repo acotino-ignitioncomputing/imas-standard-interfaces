@@ -3,7 +3,6 @@ Dictionary"""
 
 import jsonschema
 from imas import IDSFactory, util
-import re
 from pathlib import Path
 import click
 import json

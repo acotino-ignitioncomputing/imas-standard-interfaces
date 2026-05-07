@@ -96,59 +96,6 @@
                             }
                         }
                     }
-                },
-
-                "value_range": {
-                    "description": "Value of entries in data array must fall within specified interval. Null implies +/- infinity",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "array",
-                            "minItems": 2,
-                            "maxItems": 2,
-                            "items": {
-                                "type": "number"
-                            }
-                        }
-                    }
-                },
-
-                "has_shape": {
-                    "description": "Data arrays of listed paths must have specified shape",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {
-                                "type": "integer"
-                            }
-                        }
-                    }
-                },
-
-                "same_shape":{
-                    "description": "Per entry of array, data arrays of listed paths must have the same shape",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "minProperties": 1,
-                        "maxProperties": 1,
-                        "additionalProperties": false,
-                        "properties": {
-                            "all_of": {
-                                "description": "The above constraint is applied to all of the listed paths",
-                                "type": "array",
-                                "uniqueItems": true,
-                                "minItems": 2,
-                                "items": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }

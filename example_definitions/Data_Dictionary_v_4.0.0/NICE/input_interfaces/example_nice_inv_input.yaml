@@ -39,11 +39,3 @@ constraints:
   allowed_values:
   - pf_active/coil/element/geometry/geometry_type: [1,2]
   - pf_passive/loop/element/geometry/geometry_type: [1, 2]
-
-  value_range:
-  - equilibrium/time_slice/profiles_1d/psi: [0.0, 1.0]
-  - equilibrium/time_slice/global_quantities/ip: [-.inf, 1.0e+9]
-
-  has_shape:
-  - pf_active/coil/element/geometry/outline/r: [5]
-  - pf_active/coil/element/geometry/outline/z: [5]
