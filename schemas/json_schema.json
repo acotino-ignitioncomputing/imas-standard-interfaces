@@ -8,8 +8,13 @@
      "properties": {
 
         "dd_version": {
-          "description": "Version of Data Dictionary",
-          "type": "string"
+          "description": "List of versions of Data Dictionary",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+              "type": "string"
+          }
         },
 
         "paths": {

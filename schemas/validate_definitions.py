@@ -98,51 +98,50 @@ def extract_paths(definition: dict) -> list:
 def check_ids_name(definition: dict) -> bool:
     """Only allow IDS names that are in the Data Dictionary."""
 
-    dd_version = definition["dd_version"]
-
-    ids_names_list = IDSFactory(dd_version).ids_names()
-
     correct_ids_names = True
+    for dd_version in definition["dd_version"]:
 
-    # Collect all IDS paths
-    path_list = extract_paths(definition)
+        ids_names_list = IDSFactory(dd_version).ids_names()
 
-    for ids_path in path_list:
-        ids_name = ids_path.split("/")[0]
-        if ids_name not in ids_names_list:
-            print(
-                f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
-            )
-            correct_ids_names = False
+        # Collect all IDS paths
+        path_list = extract_paths(definition)
+
+        for ids_path in path_list:
+            ids_name = ids_path.split("/")[0]
+            if ids_name not in ids_names_list:
+                print(
+                    f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
+                )
+                correct_ids_names = False
 
     return correct_ids_names
 
 
 def check_ids_paths_in_dd(definition: dict) -> bool:
     """Each IDS path must be present in the provided version of Data Dictionary."""
-    dd_version = definition["dd_version"]
-
     all_paths_valid = True
 
-    # Collect all IDS paths
-    path_list = extract_paths(definition)
+    for dd_version in definition["dd_version"]:
 
-    for full_ids_path in path_list:
-        # Extract IDS name and path
-        ids_name = full_ids_path.split("/")[0]
-        ids_path = full_ids_path.replace(f"{ids_name}/", "")
+        # Collect all IDS paths
+        path_list = extract_paths(definition)
 
-        # Create empty IDS to extract valid paths
-        ids_instance = IDSFactory(dd_version).new(ids_name)
+        for full_ids_path in path_list:
+            # Extract IDS name and path
+            ids_name = full_ids_path.split("/")[0]
+            ids_path = full_ids_path.replace(f"{ids_name}/", "")
 
-        valid_paths_list = util.find_paths(ids_instance, "")
+            # Create empty IDS to extract valid paths
+            ids_instance = IDSFactory(dd_version).new(ids_name)
 
-        if ids_path not in valid_paths_list:
-            print(
-                f"{SPACING_2}IDS path {ids_path} is not in IDS {ids_name} for "
-                + f"Data Dictionary version {dd_version}."
-            )
-            all_paths_valid = False
+            valid_paths_list = util.find_paths(ids_instance, "")
+
+            if ids_path not in valid_paths_list:
+                print(
+                    f"{SPACING_2}IDS path {ids_path} is not in IDS {ids_name} for "
+                    + f"Data Dictionary version {dd_version}."
+                )
+                all_paths_valid = False
 
     return all_paths_valid
 

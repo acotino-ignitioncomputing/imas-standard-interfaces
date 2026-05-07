@@ -12,8 +12,8 @@ present:
 - `dd_version`
 - [`paths`](#paths)
 
-The key `dd_version` specifies the version of the IMAS Data Dictionary that the
-definition targets (e.g. `4.1.0`).
+The key `dd_version` holds a list of versions of the IMAS Data Dictionary that
+the definition targets (e.g. `4.1.0`).
 
 The key [`paths`](#paths) contains  sets of IDS paths that must be present in
 the dataset and whose data array must be non-empty.
@@ -35,8 +35,8 @@ For example
 ```
 
 In order to increase readability of the interface definitions, it is recommended
-to sort any sequence of IDS paths in alphabetical order and to write lists of integers as much as possible in
-'YAML flow style' (see [example 2](#example-2)).
+to sort any sequence of IDS paths in alphabetical order and to write lists of
+integers as much as possible in 'YAML flow style' (see [example 2](#example-2)).
 
 For more example interface definitions, see the YAML files in the folder `example_definitions` of this repository.
 
@@ -68,7 +68,7 @@ descriptions of the same input / output dataset:
 ### Example 1
 
 ```yaml
-dd_version: 4.0.0
+dd_version: [4.0.0]
 
 paths:
 - all_of:
