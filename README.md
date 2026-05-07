@@ -1,23 +1,55 @@
 # Standard Interfaces
 
 This repository provides standardized schemas and interfaces for scientific data
-formats.
+formats used in IMAS (Integrated Modelling & Analysis Suite). Interface
+definitions are written in YAML and reference IDS's in the IMAS Data Dictionary.
 
 ## Repository structure
 
-``` doctree
+```text
 standard_interfaces/
-├── definitions/
-│   ├── efit++/
-└── examples/
+├── example_definitions/
+│   ├── Data_Dictionary_v_3.39.0/
+│   │   ├── CHEASE/
+│   │   └── DINA/
+│   ├── Data_Dictionary_v_3.42.0/
+│   │   ├── HELENA/
+│   │   └── efit++/
+│   ├── Data_Dictionary_v_4.0.0/
+│   │   ├── LIGKA/
+│   │   ├── NICE/
+│   │   └── torax/
+├── example_datasets/
+│   ├── example.md
+│   ├── valid_pf_passive.cdl
+│   ├── invalid_1_pf_passive.cdl
+│   └── invalid_2_pf_passive.cdl
+├── schemas/
+│   ├── json_schema.json
+│   ├── validate_definitions.py
+│   └── structure_of_definitions.md
 ```
 
-The folder `definitions` contains interface definitions, both modular and
-tokamak specific. See `definitions/structure_of_definitions.md` for a
-description of these definitions.
+### `example_definitions/`
 
-The folder `examples` contains CDL-files describing netCDF datasets containing
-dummy data of the IDS `pf_passive`. These datasets are meant to further clarify
-the interpretation of the interface definitions in the folder `definitions`. See
-`examples/example.md` for a brief instruction on how to generate netCDF datasets
-from these CDL-files
+Example interface definitions organised by Data Dictionary version and
+simulation code. Each code folder contains YAML files describing the input
+and/or output interfaces of that code.
+
+### `example_datasets/`
+
+CDL files describing netCDF datasets containing dummy data for the IDS
+`pf_passive`. These datasets illustrate how to interpret the interface
+definitions. See `example_datasets/example.md` for instructions on generating
+netCDF datasets from these CDL files.
+
+### `schemas/`
+
+Schemas and tooling for validating interface definitions:
+
+- `json_schema.json` — JSON Schema describing the structure of interface
+  definitions.
+- `validate_definitions.py` — Python script for validating definitions against
+  the schema and the IMAS Data Dictionary. Run using `python
+  validate_definitions.py [path_to_folder_or_YAML_file]`
+- `structure_of_definitions.md` for a description of the definition format in plain text.

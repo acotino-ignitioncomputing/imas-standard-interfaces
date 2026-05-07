@@ -1,0 +1,19 @@
+dd_version: [3.42.0]
+
+paths:
+- all_of:
+  - equilibrium/time_slice/global_quantities/ip
+  - equilibrium/time_slice/global_quantities/psi_axis
+  - equilibrium/time_slice/global_quantities/psi_boundary
+  - equilibrium/time_slice/profiles_1d/dpressure_dpsi
+  - equilibrium/time_slice/profiles_1d/f_df_dpsi
+  - equilibrium/time_slice/profiles_1d/pressure
+  - equilibrium/time_slice/profiles_1d/psi
+  - equilibrium/time_slice/profiles_1d/q
+  - equilibrium/time_slice/profiles_2d/grid_type/index
+  - equilibrium/vacuum_toroidal_field/b0
+  - equilibrium/vacuum_toroidal_field/r0
+
+- any_of:
+  - equilibrium/time_slice/boundary/outline/r
+  - equilibrium/time_slice/profiles_2d/psi

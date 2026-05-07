@@ -1,0 +1,203 @@
+netcdf efit_input { // This file describes a netCDF dataset containing
+// dummy data for all IDSs required as input by efit++, based on the
+// interface definition "efit++/efit++_input_1.yaml" (DD version 3.42.0)
+// in the folder "example_definitions" of this repository.
+
+group: magnetics {
+
+    dimensions:
+        b_field_pol_probe_i = 3;
+        flux_loop_i = 2;
+        flux_loop.position_i = 4;
+        time = 4;
+
+    variables:
+        int ids_properties.homogeneous_time;
+        string b_field_pol_probe.name(b_field_pol_probe_i);
+        double b_field_pol_probe.position.r(b_field_pol_probe_i);
+        double b_field_pol_probe.position.phi(b_field_pol_probe_i);
+        double b_field_pol_probe.position.z(b_field_pol_probe_i);
+        double b_field_pol_probe.poloidal_angle(b_field_pol_probe_i);
+        double b_field_pol_probe.toroidal_angle(b_field_pol_probe_i);
+        double b_field_pol_probe.area(b_field_pol_probe_i);
+        double b_field_pol_probe.length(b_field_pol_probe_i);
+        int b_field_pol_probe.turns(b_field_pol_probe_i);
+        double b_field_pol_probe.field.data(b_field_pol_probe_i, time);
+        string flux_loop.name(flux_loop_i);
+        double flux_loop.position.r(flux_loop_i, flux_loop.position_i);
+        double flux_loop.position.phi(flux_loop_i, flux_loop.position_i);
+        double flux_loop.position.z(flux_loop_i, flux_loop.position_i);
+        double flux_loop.flux.data(flux_loop_i, time);
+        double ip.data(time);
+        double diamagnetic_flux.data(time);
+        double time(time);
+
+    data:
+        ids_properties.homogeneous_time = 1;
+        b_field_pol_probe.name = "BP_001", "BP_002", "BP_003";
+        b_field_pol_probe.position.r = 5.2, 4.8, 6.1;
+        b_field_pol_probe.position.phi = 0.0, 1.57, 3.14;
+        b_field_pol_probe.position.z = 3.8, 2.8, 7.0;
+        b_field_pol_probe.poloidal_angle = 0.52, 1.05, 2.09;
+        b_field_pol_probe.toroidal_angle = 0.0, 0.79, 1.57;
+        b_field_pol_probe.area = 0.15, 0.22, 0.18;
+        b_field_pol_probe.length = 0.41, 0.50, 0.38;
+        b_field_pol_probe.turns = 1, 2, 1;
+        b_field_pol_probe.field.data =
+            0.42, 0.43, 0.41, 0.44,
+            0.31, 0.32, 0.30, 0.33,
+            0.55, 0.54, 0.56, 0.53;
+        flux_loop.name = "FL_001", "FL_002";
+        flux_loop.position.r =
+            5.0, 5.1, 5.2, 5.0,
+            4.5, 4.6, 4.7, 4.5;
+        flux_loop.position.phi =
+            0.0, 1.57, 3.14, 4.71,
+            0.0, 1.57, 3.14, 4.71;
+        flux_loop.position.z =
+            3.8, 3.8, 3.8, 3.8,
+            2.8, 2.8, 2.8, 2.8;
+        flux_loop.flux.data =
+            0.12, 0.13, 0.11, 0.14,
+            0.21, 0.22, 0.20, 0.23;
+        ip.data = 89, 87, 84, 91;
+        diamagnetic_flux.data = 0.12, 0.13, 0.11, 0.14;
+        time = 0.021, 0.089, 0.10, 0.16;
+
+} // end magnetics
+
+group: tf {
+
+    dimensions:
+        time = 4;
+
+    variables:
+        int ids_properties.homogeneous_time;
+        double b_field_phi_vacuum_r.data(time);
+        double time(time);
+
+    data:
+        ids_properties.homogeneous_time = 1;
+        b_field_phi_vacuum_r.data = 5.2, 5.3, 5.1, 5.4;
+        time = 0.021, 0.089, 0.10, 0.16;
+
+} // end tf
+
+group: pf_active {
+
+    dimensions:
+        coil_i = 3;
+        coil.element_i = 2;
+        circuit_i = 2;
+        circuit.connections_j = 3;
+        supply_i = 2;
+        time = 4;
+
+    variables:
+        int ids_properties.homogeneous_time;
+        string coil.name(coil_i);
+        double coil.element.turns_with_sign(coil_i);
+        int circuit.connections(circuit_i, circuit.connections_j);
+        double circuit.current.data(circuit_i, time);
+        string supply.name(supply_i);
+        double time(time);
+
+        int coil.element.geometry.geometry_type(coil_i, coil.element_i);
+
+        double coil.element.geometry.rectangle.r(coil_i, coil.element_i);
+        double coil.element.geometry.rectangle.z(coil_i, coil.element_i);
+        double coil.element.geometry.rectangle.width(coil_i, coil.element_i);
+        double coil.element.geometry.rectangle.height(coil_i, coil.element_i);
+    data:
+        ids_properties.homogeneous_time = 1;
+        coil.name = "PF_1", "PF_2", "PF_3";
+        coil.element.turns_with_sign = 1.0, 1.0, 1.0;
+        circuit.connections = 1, 1, 1, 2, 1, -1;
+        circuit.current.data =
+            87, 89, 84, 91,
+            85, 88, 83, 90;
+        supply.name = "PS_1", "PS_2";
+        time = 0.021, 0.089, 0.10, 0.16;
+
+        coil.element.geometry.geometry_type = 2, 2, 2, 2, 2, 2;
+
+        coil.element.geometry.rectangle.r =  6.1, 5.1, 3.6, 1.5, 1.1, 0.44;
+        coil.element.geometry.rectangle.z = 3.8, 2.8, 2.8, 1.3, 1.3, 0.7;
+        coil.element.geometry.rectangle.width = 0.21, 0.30, 0.29, 0.22, 0.23, 0.20;
+        coil.element.geometry.rectangle.height = 0.07, 0.31, 0.25,0.22, 0.23, 0.20;
+
+} // end pf_active
+
+group: pf_passive {
+
+    dimensions:
+        loop_i = 2;
+        loop.element_i = 3;
+        time = 4;
+
+    variables:
+        int ids_properties.homogeneous_time;
+        string loop.name(loop_i);
+        double loop.element.turns_with_sign(loop_i, loop.element_i);
+        double loop.current(loop_i);
+        double time(time);
+
+        int loop.element.geometry.geometry_type(loop_i, loop.element_i);
+
+        double loop.element.geometry.rectangle.r(loop_i, loop.element_i);
+        double loop.element.geometry.rectangle.z(loop_i, loop.element_i);
+        double loop.element.geometry.rectangle.width(loop_i, loop.element_i);
+        double loop.element.geometry.rectangle.height(loop_i, loop.element_i);
+
+        double loop.element.geometry.annulus.r(loop_i, loop.element_i);
+        double loop.element.geometry.annulus.z(loop_i, loop.element_i);
+        double loop.element.geometry.annulus.radius_inner(loop_i, loop.element_i);
+        double loop.element.geometry.annulus.radius_outer(loop_i, loop.element_i);
+
+    data:
+        ids_properties.homogeneous_time = 1;
+        loop.name = "VES_1", "VES_2";
+        loop.element.turns_with_sign = 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
+        loop.current = 89, 87;
+        time = 0.021, 0.089, 0.10, 0.16;
+
+        loop.element.geometry.geometry_type = 2, 2, 2, 5, 5, 5;
+
+        // Note the empty values in the data arrays below: the DD implies that each
+        // element can have only one shape at a time, such that only one set of 
+        // variables related to a shape may have data at a particular entry while 
+        // the other variables must be empty at that entry. 
+        loop.element.geometry.rectangle.r =  5.1, 4.1, 4.6, _, _, _;
+        loop.element.geometry.rectangle.z = 3.8, 2.8, 2.8, _, _, _;
+        loop.element.geometry.rectangle.width = 0.41, 0.60, 0.49, _, _, _;
+        loop.element.geometry.rectangle.height = 0.13, 0.61, 0.50, _, _, _;
+
+        loop.element.geometry.annulus.r = _, _, _, 2.6, 2.6, 3.0; 
+        loop.element.geometry.annulus.z = _, _, _, 8.2, 7.0, 7.6;
+        loop.element.geometry.annulus.radius_inner = _, _, _, 0.12, 0.21, 0.11;
+        loop.element.geometry.annulus.radius_outer =  _, _, _, 1.3, 2.1, 1.8;
+
+} // end pf_passive
+
+group: wall {
+
+    dimensions:
+        description_2d_i = 1;
+        description_2d.limiter.unit_i = 2;
+        description_2d.limiter.unit.outline_i = 5;
+
+    variables:
+        double description_2d.limiter.unit.outline.r(description_2d_i, description_2d.limiter.unit_i, description_2d.limiter.unit.outline_i);
+        double description_2d.limiter.unit.outline.z(description_2d_i, description_2d.limiter.unit_i, description_2d.limiter.unit.outline_i);
+
+    data:
+        description_2d.limiter.unit.outline.r =
+            4.0, 5.1, 6.0, 5.5, 4.5,
+            3.5, 4.6, 5.5, 5.0, 4.0;
+        description_2d.limiter.unit.outline.z =
+            2.8, 3.8, 7.0, 8.2, 2.6,
+            2.8, 3.0, 7.6, 8.0, 2.6;
+
+} // end wall
+
+}

@@ -1,0 +1,92 @@
+dd_version: [4.0.0]
+
+paths:
+- all_of:
+  - core_profiles/code/description
+  - core_profiles/code/name
+  - core_profiles/code/repository
+  - core_profiles/global_quantities/beta_pol
+  - core_profiles/global_quantities/beta_tor
+  - core_profiles/global_quantities/beta_tor_norm
+  - core_profiles/global_quantities/current_bootstrap
+  - core_profiles/global_quantities/ion/n_i_volume_average
+  - core_profiles/global_quantities/ion/t_i_volume_average
+  - core_profiles/global_quantities/ip
+  - core_profiles/global_quantities/li_3
+  - core_profiles/global_quantities/n_e_volume_average
+  - core_profiles/global_quantities/t_e_volume_average
+  - core_profiles/global_quantities/v_loop
+  - core_profiles/ids_properties/comment
+  - core_profiles/ids_properties/creation_date
+  - core_profiles/ids_properties/homogeneous_time
+  - core_profiles/profiles_1d/conductivity_parallel
+  - core_profiles/profiles_1d/electrons/density
+  - core_profiles/profiles_1d/electrons/density_fast
+  - core_profiles/profiles_1d/electrons/density_thermal
+  - core_profiles/profiles_1d/electrons/pressure_thermal
+  - core_profiles/profiles_1d/electrons/temperature
+  - core_profiles/profiles_1d/grid/area
+  - core_profiles/profiles_1d/grid/psi
+  - core_profiles/profiles_1d/grid/psi_boundary
+  - core_profiles/profiles_1d/grid/psi_magnetic_axis
+  - core_profiles/profiles_1d/grid/rho_pol_norm
+  - core_profiles/profiles_1d/grid/rho_tor
+  - core_profiles/profiles_1d/grid/rho_tor_norm
+  - core_profiles/profiles_1d/grid/volume
+  - core_profiles/profiles_1d/ion/density
+  - core_profiles/profiles_1d/ion/density_fast
+  - core_profiles/profiles_1d/ion/density_thermal
+  - core_profiles/profiles_1d/ion/element/a
+  - core_profiles/profiles_1d/ion/element/z_n
+  - core_profiles/profiles_1d/ion/name
+  - core_profiles/profiles_1d/ion/temperature
+  - core_profiles/profiles_1d/j_bootstrap
+  - core_profiles/profiles_1d/j_total
+  - core_profiles/profiles_1d/magnetic_shear
+  - core_profiles/profiles_1d/n_i_total_over_n_e
+  - core_profiles/profiles_1d/pressure_ion_total
+  - core_profiles/profiles_1d/pressure_thermal
+  - core_profiles/profiles_1d/q
+  - core_profiles/profiles_1d/t_i_average
+  - core_profiles/profiles_1d/time
+  - core_profiles/profiles_1d/zeff
+  - core_profiles/time
+  - core_profiles/vacuum_toroidal_field/b0
+  - core_profiles/vacuum_toroidal_field/r0
+  - equilibrium/ids_properties/comment
+  - equilibrium/ids_properties/homogeneous_time
+  - equilibrium/time
+  - equilibrium/time_slice/boundary/geometric_axis/r
+  - equilibrium/time_slice/boundary/minor_radius
+  - equilibrium/time_slice/global_quantities/ip
+  - equilibrium/time_slice/global_quantities/magnetic_axis/z
+  - equilibrium/time_slice/profiles_1d/area
+  - equilibrium/time_slice/profiles_1d/dpressure_dpsi
+  - equilibrium/time_slice/profiles_1d/dpsi_drho_tor
+  - equilibrium/time_slice/profiles_1d/dvolume_dpsi
+  - equilibrium/time_slice/profiles_1d/elongation
+  - equilibrium/time_slice/profiles_1d/f
+  - equilibrium/time_slice/profiles_1d/f_df_dpsi
+  - equilibrium/time_slice/profiles_1d/gm1
+  - equilibrium/time_slice/profiles_1d/gm2
+  - equilibrium/time_slice/profiles_1d/gm3
+  - equilibrium/time_slice/profiles_1d/gm7
+  - equilibrium/time_slice/profiles_1d/j_phi
+  - equilibrium/time_slice/profiles_1d/phi
+  - equilibrium/time_slice/profiles_1d/pressure
+  - equilibrium/time_slice/profiles_1d/psi
+  - equilibrium/time_slice/profiles_1d/q
+  - equilibrium/time_slice/profiles_1d/r_inboard
+  - equilibrium/time_slice/profiles_1d/r_outboard
+  - equilibrium/time_slice/profiles_1d/rho_tor
+  - equilibrium/time_slice/profiles_1d/rho_tor_norm
+  - equilibrium/time_slice/profiles_1d/triangularity_lower
+  - equilibrium/time_slice/profiles_1d/triangularity_upper
+  - equilibrium/time_slice/profiles_1d/volume
+  - equilibrium/vacuum_toroidal_field/b0
+  - equilibrium/vacuum_toroidal_field/r0
+
+constraints:
+  allowed_values:
+  - core_profiles/ids_properties/homogeneous_time: [1]
+  - equilibrium/ids_properties/homogeneous_time: [1]
