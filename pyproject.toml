@@ -1,0 +1,14 @@
+[project]
+name = "imas-standard-interfaces"
+version = "0.1.0"
+description = "Standardized schemas and interfaces for scientific data formats used in IMAS."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "click>=8.1.8",
+    "imas-python>=2.2.0",
+    "jsonschema>=4.26.0",
+    "pyyaml>=6.0.3",
+]
+
+
