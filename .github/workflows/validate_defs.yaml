@@ -1,0 +1,37 @@
+name: Validate example definitions against schema
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+# Needed?
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: |
+          uv version
+          uv sync
+
+      - name: Run validation script
+        run:
+          if [[ "$(uv run python schemas/validate_definitions.py example_definitions/ | tail -1)" == "No issues found" ]];
+          then exit 0;
+          else exit 1;
+          fi
