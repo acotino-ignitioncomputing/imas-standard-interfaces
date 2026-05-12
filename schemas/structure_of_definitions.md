@@ -6,11 +6,15 @@ written in YAML and use references to the IDS's in the IMAS Data Dictionary.
 The structure of these definitions is formally described in the JSON Schema
 `schemas/json_schema.yaml`.
 
-In each file at least the following two top level mapping keys must be
+In each file at least the following three top level mapping keys must be
 present:
 
+- `schema_version`
 - `dd_version`
 - [`paths`](#paths)
+
+The string-value of the key `schema_version` must be equal to the DOI of the
+schema.
 
 The key `dd_version` holds a list of versions of the IMAS Data Dictionary that
 the definition targets (e.g. `4.1.0`).
@@ -68,6 +72,8 @@ descriptions of the same input / output dataset:
 ### Example 1
 
 ```yaml
+schema_version: placeholder_doi
+
 dd_version: [4.0.0]
 
 paths:
@@ -104,7 +110,7 @@ paths:
 ## Constraints
 
 Each entry in `constraints` describes which constraints are enforced on the data
-array of the specified IDS path. Listing an IDS path under this key does not
+array of the specified IDS path. Listing an IDS path under this key **does not**
 imply that its presence is required.
 
 Currently, only the following mapping key is allowed:
