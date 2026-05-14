@@ -1,10 +1,13 @@
+"""
+This script contains various constants.
+"""
 
 from pathlib import Path
 import os
 
 SCHEMA_FILENAME = "json_schema.json"
-SCHEMA_PATH = Path(__file__).parents[3] /"schemas" / SCHEMA_FILENAME
-EXAMPLE_DEFINITIONS_FOLDER = Path(__file__).parents[3] /"example_definitions"
+SCHEMA_PATH = Path(__file__).parents[3] / "schemas" / SCHEMA_FILENAME
+EXAMPLE_DEFINITIONS_FOLDER = Path(__file__).parents[3] / "example_definitions"
 
 SCHEMA_VERSION_KEY = "schema_version"
 
