@@ -9,6 +9,7 @@ dependencies = [
     "imas-python>=2.2.0",
     "jsonschema>=4.26.0",
     "pyyaml>=6.0.3",
+    "requests>=2.32.5"
 ]
 
 
