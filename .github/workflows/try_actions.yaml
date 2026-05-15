@@ -1,0 +1,32 @@
+name: Try some functionaltiy of github actions
+
+on:
+  push: # Remove this line before removing draft status of PR 
+
+
+jobs:
+  tryout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Check position in repo
+        run: |
+          pwd
+          ls
+
+      - name: Move to folder
+        run: |
+          cd schema
+          pwd
+          ls
+
+      - name: Check position in repo again
+        run: |
+          pwd
+          ls
+
