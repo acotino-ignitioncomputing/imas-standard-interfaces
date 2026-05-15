@@ -2,7 +2,7 @@ name: Create new DOI URL, update JSON Schema accordingly and publish on Zenodo
 
 on:
   workflow_run:
-    workflows: [validate_defs]
+    workflows: [Validate example definitions against schema]
     types: [completed]
 
 
