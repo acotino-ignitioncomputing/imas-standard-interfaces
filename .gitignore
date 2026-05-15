@@ -1,2 +1,5 @@
 # IDE files
 .vscode/
+
+# cache files and directories
+__pycache__
