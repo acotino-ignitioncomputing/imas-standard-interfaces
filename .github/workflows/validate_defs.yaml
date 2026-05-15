@@ -1,6 +1,7 @@
 name: Validate example definitions against schema
 
 on:
+  push:
   pull_request:
     types: [opened, closed]
     branches: 
@@ -33,7 +34,7 @@ jobs:
           else exit 1;
           fi
       - name: Some last command
-        run: echo "github.event.pull_request.merged = $({ github.event.pull_request.merged})"
+        run: echo "github.event.pull_request.merged = ${{ github.event.pull_request.merged }}"
 
       - name: Some really last command
-        run: echo "github.event.workflow_run.conclusion = $({ github.event.workflow_run.conclusion})"
+        run: echo "github.event.workflow_run.conclusion = ${{ github.event.workflow_run.conclusion }}"
