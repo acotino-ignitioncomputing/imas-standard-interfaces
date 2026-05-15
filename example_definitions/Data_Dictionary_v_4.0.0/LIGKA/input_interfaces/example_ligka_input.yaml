@@ -1,6 +1,6 @@
 schema_version: placeholder_doi
 
-dd_versions: [4.0.0]
+dd_version: [4.0.0]
 
 paths:
 - all_of:
