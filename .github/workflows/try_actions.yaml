@@ -21,7 +21,7 @@ jobs:
 
       - name: Move to folder
         run: |
-          cd schema
+          cd schemas
           pwd
           ls
 
