@@ -1,9 +1,12 @@
 name: Create new DOI URL, update JSON Schema accordingly and publish on Zenodo 
 
+# TODO: Ensure workflow is started after workflow in 'validate_defs.yaml' has succeeded
 on:
-  workflow_run:
-    workflows: ["validate_defs"]
-    types: [completed]
+  pull_request_review:
+    types: [submitted]
+    branches: 
+      - main
+      - 'releases/**'
 
 
 jobs:
@@ -15,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v1
