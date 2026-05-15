@@ -214,14 +214,14 @@ def main(input_path: str):
         print(f"{SPACING_2}All checks passed")
 
     if incorrect_definitions:
-        print("\nIssues were found in the following file(s)")
-        print(f"\n{SPACING_2}" + f"\n{SPACING_2}".join(incorrect_definitions))
+        raise Exception(
+            "\nIssues were found in the following file(s)"
+            + f"\n{SPACING_2}"
+            + f"\n{SPACING_2}".join(incorrect_definitions)
+        )
     else:
         print("\nNo issues found")
 
 
 if __name__ == "__main__":
     main()
-# SOME Other CHANGE
-# SOME Other CHANGE
-# SOME Other CHANGE
