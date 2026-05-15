@@ -4,7 +4,12 @@ on:
   workflow_run:
     workflows: ["Validate example definitions against schema"]
     types: [completed]
-
+  pull_request:
+    types: [opened, closed]
+    branches: 
+      - main
+      - 'releases/**'
+      - 'tmp/try_**' # Very specifi
 
 jobs:
   publish:
