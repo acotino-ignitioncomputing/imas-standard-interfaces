@@ -1,6 +1,6 @@
 import json
 
-from constants import SCHEMA_PATH, SCHEMA_VERSION_KEY, EXAMPLE_DEFINITIONS_FOLDER
+from tools.constants import SCHEMA_PATH, SCHEMA_VERSION_KEY, EXAMPLE_DEFINITIONS_FOLDER
 
 
 def update_doi_value(new_doi: str):
@@ -31,7 +31,11 @@ def update_doi_value(new_doi: str):
             lines = yaml_file.readlines()
 
         updated_lines = [
-            (f"{SCHEMA_VERSION_KEY}: {new_doi}" if SCHEMA_VERSION_KEY in line else line)
+            (
+                f"{SCHEMA_VERSION_KEY}: {new_doi}\n"
+                if SCHEMA_VERSION_KEY in line
+                else line
+            )
             for line in lines
         ]
 

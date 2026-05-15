@@ -6,19 +6,21 @@ The main-function of this script uses Zenodo's REST API to
 
 Before uploading, the 'const'-value of key SCHEMA_VERSION_KEY in the JSON Schema is
 updated to the new DOI URL.
+
+Documention of Zenodo's REST API: https://developers.zenodo.org/#rest-api
 """
 
 import requests
 import json
 
-from constants import (
+from tools.constants import (
     ZENODO_URL,
     ZENODO_PREFIX,
     ZENODO_API_KEY,
     SCHEMA_FILENAME,
     SCHEMA_PATH,
 )
-from update_doi_value import update_doi_value
+from tools.update_doi_value import update_doi_value
 
 
 def main():
@@ -69,8 +71,9 @@ def main():
     metadata = {
         "metadata": {
             "title": "Interface schema",
-            "upload_type": "publication/standard",
-            "description": "Schema for input or output interface",
+            "upload_type": "publication",
+            "publication_type": "standard",
+            "description": "Schema for the description of an interface for simulation code using IMAS",
             "creators": [{"name": "Github Actions"}],
         }
     }
@@ -82,3 +85,7 @@ def main():
 
     # Publish new deposition
     requests.post(new_deposition_dict["links"]["publish"], headers=headers)
+
+
+if __name__ == "__main__":
+    main()
