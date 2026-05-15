@@ -14,7 +14,7 @@ SCHEMA_VERSION_KEY = "schema_version"
 # Sandbox of Zenodo. Used for testing
 ZENODO_URL = "https://sandbox.zenodo.org/api/deposit/depositions"  # Sandbox
 ZENODO_PREFIX = "10.5072"  # Sandbox
-ZENODO_API_KEY = os.getenv("ZENODO_SANDBOX_API_KEY")
+ZENODO_API_KEY = os.getenv("ZENODO_API_KEY")
 
 """ IMPORTANT: before removing draft-status of PR, change above global variables
 
