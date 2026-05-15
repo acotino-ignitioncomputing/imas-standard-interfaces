@@ -3,13 +3,10 @@ name: Validate example definitions against schema
 on:
   push:
   pull_request:
-    branches: [main]
-
-# Needed?
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    types: [opened, closed]
+    branches: 
+      - main
+      - 'releases/**'
 
 jobs:
   validate:
@@ -30,7 +27,7 @@ jobs:
           uv sync
 
       - name: Run validation script
-        run:
+        run: |
           if [[ "$(uv run python schemas/validate_definitions.py example_definitions/ | tail -1)" == "No issues found" ]];
           then exit 0;
           else exit 1;

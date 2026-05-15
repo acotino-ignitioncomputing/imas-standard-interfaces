@@ -1,0 +1,56 @@
+name: Create new DOI URL, update JSON Schema accordingly and publish on Zenodo 
+
+on:
+  workflow_run:
+    workflows: ["validate_defs"]
+    types: [completed]
+
+
+jobs:
+  publish:
+    if: >
+      github.event.pull_request.merged == true
+      ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: |
+          uv version
+          uv sync
+    
+      - name: Update schema & example definitions and publish
+        env: 
+          ZENODO_API_KEY: ${{secrets.ZENODO_API_KEY}}
+        run: |
+          cd .github/workflows
+          uv run python -m tools.publish_on_zenodo
+
+      - name: Run validation script
+        run: |
+          if [[ "$(uv run python schemas/validate_definitions.py example_definitions/ | tail -1)" == "No issues found" ]];
+          then exit 0;
+          else exit 1;
+          fi
+
+      - name: configure git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+
+      - name: Add updated schema & definitions to git and commit
+        run: |
+          git add schemas/json_schema.json example_definitions
+          git commit -m "Github Actions: updated schema and definitions with new DOI URL"
+          git push
+          
