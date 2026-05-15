@@ -16,7 +16,9 @@ on:
 
 jobs:
   validate:
-    if: github.event.review.state == 'approved'
+    if: >
+      github.event.review.state == 'approved' ||
+      github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
