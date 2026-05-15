@@ -8,9 +8,7 @@ on:
 
 jobs:
   publish:
-    if: >
-      github.event.pull_request.merged == true
-      ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     permissions:
       contents: write

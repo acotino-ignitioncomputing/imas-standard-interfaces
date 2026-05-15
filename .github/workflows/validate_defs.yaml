@@ -1,15 +1,22 @@
 name: Validate example definitions against schema
 
 on:
-  push:
   pull_request:
     types: [opened, closed]
+    branches: 
+      - main
+      - 'releases/**'
+  pull_request_review:
+    types: [submitted]
     branches: 
       - main
       - 'releases/**'
 
 jobs:
   validate:
+    if: >
+      github.event.review.state == 'approved' ||
+      github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
