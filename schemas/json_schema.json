@@ -3,9 +3,16 @@
     "title": "Interface schema", 
      "description": "Schema for input or output interface. Validate using python -m json.tool json_schema_new.json",  
      "type": "object",
-     "required": ["dd_version", "paths"],
+     "required": ["dd_version", "paths","schema_version"],
      "additionalProperties": false,
      "properties": {
+
+        "schema_version": {
+            "description": "Version of this schema",
+            "type": "string",
+            "const": "placeholder_doi"
+
+        },
 
         "dd_version": {
           "description": "List of versions of Data Dictionary",
