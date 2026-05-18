@@ -1,0 +1,37 @@
+name: Validate example definitions against schema
+
+on:
+  pull_request:
+    types: [opened, closed]
+    branches: 
+      - main
+      - 'releases/**'
+  pull_request_review:
+    types: [submitted]
+    branches: 
+      - main
+      - 'releases/**'
+
+jobs:
+  validate:
+    if: >
+      github.event.review.state == 'approved' ||
+      github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: |
+          uv version
+          uv sync
+
+      - name: Run validation script
+        run: uv run python schemas/validate_definitions.py example_definitions/
