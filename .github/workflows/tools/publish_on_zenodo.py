@@ -23,6 +23,7 @@ from tools.constants import (
     SCHEMA_PATH,
     SCRIPT_PATH,
     SCHEMA_VERSION_KEY,
+    EXAMPLE_DEFINITIONS_FOLDER,
 )
 from tools.update_doi_value import update_doi_value
 from tools.commit_schema import commit_schema_to_git
@@ -64,7 +65,10 @@ def main():
     update_doi_value(new_doi)
 
     # Check that validation of example definitions against schema still succeeds
-    process = subprocess.run(["uv", "run", "python", SCRIPT_PATH], capture_output=True)
+    process = subprocess.run(
+        ["uv", "run", "python", SCRIPT_PATH, EXAMPLE_DEFINITIONS_FOLDER],
+        capture_output=True,
+    )
     if process.returncode != 0:
         raise Exception(
             f"After updating the key '{SCHEMA_VERSION_KEY}' in schema and example"
