@@ -19,4 +19,13 @@ ZENODO_URL, ZENODO_PREFIX, ZENODO_API_KEY = (
     SANDBOX_ZENODO_API_KEY,
 )
 
-main()
+choice = input(
+    "WARNING: \n\tThis test runs the main function of 'publish_on_zenodo.py'.\n"
+    + "\tThis WILL push a new commit to the current branch using git.\n"
+    + "\tIf this is expected, type 'yes':\n"
+    + "Continue? "
+)
+if choice == "yes":
+    main()
+else:
+    print("Test aborted")
