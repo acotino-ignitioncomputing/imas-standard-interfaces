@@ -16,30 +16,21 @@ def commit_schema_to_git():
     changed, then commit these files and push them onto the current branch.
     """
 
-    # Configure git
+    # Check if username is configured in git
 
-    process = subprocess.run(
-        ["git", "config", "user.name 'github-actions'"], capture_output=True
-    )
-    check_return_code(
-        process.returncode,
-        "Something went wrong with configuring git username:\n\t"
-        + process.stderr.decode(),
-    )
-    process = subprocess.run(
-        ["git", "config", "user.email 'github-actions@users.noreply.github.com'"],
-        capture_output=True,
-    )
-    check_return_code(
-        process.returncode,
-        "Something went wrong with configuring git email:\n\t"
-        + process.stderr.decode(),
-    )
+    process = subprocess.run(["git", "config", "user.name"], capture_output=True)
+
+    if process.stdout == b"":
+        raise Exception(
+            "No username has been set. Ensure\n\t"
+            + "git config user.name\n"
+            + "is run correctly"
+        )
 
     # Check if schema and definitions are updated
 
     file_path_list = [
-        file_path for file_path in EXAMPLE_DEFINITIONS_FOLDER.glob("**.*.yaml")
+        file_path for file_path in EXAMPLE_DEFINITIONS_FOLDER.glob("**/*.yaml")
     ]
     file_path_list += [SCHEMA_PATH]
 
@@ -50,14 +41,13 @@ def commit_schema_to_git():
     ]
 
     for file_path in file_path_list:
-        if file_path_list not in updated_files_paths:
+        if file_path not in updated_files_paths:
             raise Exception(
                 "Cannot commit schema and example definitions since the following"
                 + f" file was not updated: \n\t{file_path}"
             )
 
     # Stage and commit updated schema & definitions
-
     process = subprocess.run(
         ["git", "add", SCHEMA_PATH, EXAMPLE_DEFINITIONS_FOLDER], capture_output=True
     )
