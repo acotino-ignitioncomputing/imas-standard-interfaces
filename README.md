@@ -53,3 +53,20 @@ Schemas and tooling for validating interface definitions:
   the schema and the IMAS Data Dictionary. Run using `python
   validate_definitions.py [path_to_folder_or_YAML_file]`
 - `structure_of_definitions.md` for a description of the definition format in plain text.
+
+## Versioning
+
+The folder `.github/workflows` contains a GitHub Actions workflow that is
+capable of automatically publishing  `schemas/json_schema.json` on
+[Zenodo](https://zenodo.org/). This workflow is triggered whenever a pull
+request into branch `main` or a branch starting with `request/` is approved.
+The workflow performs the following:
+
+- A new DOI is requested.
+- The value of the key `schema_version` in `schemas/json_schema.json` and in the
+example interface definitions is set to the new DOI.
+- The example interface definitions are validated against the JSON Schema and Data
+Dictionary using the script `schemas/validate_definitions.py`.
+- The JSON Schema is uploaded to Zenodo.
+- The updated `schemas/json_schema.json` and the example interface definitions
+are committed to the pull request.
