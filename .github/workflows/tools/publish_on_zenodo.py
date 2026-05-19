@@ -4,8 +4,9 @@ The main-function of this script uses Zenodo's REST API to
 - construct new DOI URL from this deposition's ID and Zenodo's prefix
 - upload the JSON Schema and publish the deposition.
 
-Before uploading, the 'const'-value of key SCHEMA_VERSION_KEY in the JSON Schema is
-updated to the new DOI URL.
+Before uploading, functions are called for updating the 'const'-value of key
+SCHEMA_VERSION_KEY in the JSON Schema & example definitions to the new DOI URL, and
+to commit the changes onto the branch using git.
 
 Documention of Zenodo's REST API: https://developers.zenodo.org/#rest-api
 """
@@ -59,17 +60,19 @@ def main():
     new_doi = f"https://doi.org/{ZENODO_PREFIX}/zenodo.{new_deposition_id}"
 
     # Update value of key SCHEMA_VERSION_KEY in JSON Schema and YAML files
+    # TODO: catch error and close version draft
     update_doi_value(new_doi)
 
-    # Check that validation of example definitions against schema still succeed
+    # Check that validation of example definitions against schema still succeeds
     process = subprocess.run(["uv", "run", "python", SCRIPT_PATH], capture_output=True)
     if process.returncode != 0:
         raise Exception(
             f"After updating the key '{SCHEMA_VERSION_KEY}' in schema and example"
-            + f" definitions, validation failed: \n\t {process.stdout}"
+            + f" definitions, validation failed: \n\t {process.stderr}"
         )
 
     # Call script to push changed files to current branch
+    # TODO: catch error and close version draft
     commit_schema_to_git()
 
     # Upload JSON Schema

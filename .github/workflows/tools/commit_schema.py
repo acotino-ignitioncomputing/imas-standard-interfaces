@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-from constants import REPOSITORY_PATH, SCHEMA_PATH, EXAMPLE_DEFINITIONS_FOLDER
+from tools.constants import REPOSITORY_PATH, SCHEMA_PATH, EXAMPLE_DEFINITIONS_FOLDER
 
 COMMIT_MESSAGE = "Github Actions: updated schema and definitions with new DOI URL"
 

@@ -19,7 +19,7 @@ ZENODO_URL = "https://sandbox.zenodo.org/api/deposit/depositions"  # Sandbox
 ZENODO_PREFIX = "10.5072"  # Sandbox
 ZENODO_API_KEY = os.getenv("ZENODO_API_KEY")
 
-""" IMPORTANT: before removing draft-status of PR, change above global variables
+""" IMPORTANT: before PR into IO's repo, change above global variables
 
 ZENODO_URL = "https://zenodo.org/api/deposit/depositions"
 ZENODO_PREFIX = "10.5281"
