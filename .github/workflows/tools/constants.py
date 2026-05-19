@@ -10,6 +10,7 @@ REPOSITORY_PATH = Path(__file__).parents[3]
 SCHEMA_FILENAME = "json_schema.json"
 SCHEMA_PATH = REPOSITORY_PATH / "schemas" / SCHEMA_FILENAME
 EXAMPLE_DEFINITIONS_FOLDER = REPOSITORY_PATH / "example_definitions"
+SCRIPT_PATH = REPOSITORY_PATH / "schemas" / "validate_definitions.py"
 
 SCHEMA_VERSION_KEY = "schema_version"
 
