@@ -1,29 +1,29 @@
-{ 
+{
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "Interface schema", 
-     "description": "Schema for input or output interface. Validate using python -m json.tool json_schema_new.json",  
-     "type": "object",
-     "required": ["dd_version", "paths","schema_version"],
-     "additionalProperties": false,
-     "properties": {
-
+    "title": "Interface schema",
+    "description": "Schema for input or output interface. Validate using python -m json.tool json_schema_new.json",
+    "type": "object",
+    "required": [
+        "dd_version",
+        "paths",
+        "schema_version"
+    ],
+    "additionalProperties": false,
+    "properties": {
         "schema_version": {
             "description": "Version of this schema",
             "type": "string",
-            "const": "placeholder_doi"
-
+            "const": "https://doi.org/10.5072/zenodo.502089"
         },
-
         "dd_version": {
-          "description": "List of versions of Data Dictionary",
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-              "type": "string"
-          }
+            "description": "List of versions of Data Dictionary",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            }
         },
-
         "paths": {
             "description": "List of sets of IDS paths",
             "type": "array",
@@ -36,13 +36,12 @@
                 "properties": {
                     "all_of": {
                         "description": "List of IDS paths that need to be present",
-                        "type":  "array",
+                        "type": "array",
                         "minItems": 1,
                         "uniqueItems": true,
                         "items": {
-                        "type": "string"
+                            "type": "string"
                         }
-
                     },
                     "all_or_none": {
                         "description": "Either all listed IDS paths are present or all are absent",
@@ -53,13 +52,15 @@
                             "type": "string"
                         }
                     },
-
                     "any_of": {
                         "description": "The path(s) listed in at least one entry of the array need to be present",
                         "type": "array",
                         "minItems": 2,
                         "items": {
-                            "type": ["string","object"],
+                            "type": [
+                                "string",
+                                "object"
+                            ],
                             "minProperties": 1,
                             "maxProperties": 1,
                             "properties": {
@@ -75,7 +76,6 @@
                             }
                         }
                     }
-
                 }
             },
             "not": {
@@ -83,18 +83,17 @@
                 "type": "array",
                 "contains": {
                     "type": "object",
-                    "required": ["all_of"]
+                    "required": [
+                        "all_of"
+                    ]
                 },
                 "minContains": 2
             }
-                     
         },
-
         "constraints": {
             "description": "List of constraints. IDS paths listed here do not imply presence",
             "type": "object",
             "properties": {
-
                 "allowed_values": {
                     "description": "Entries in data arrays may only contain any of the listed values",
                     "type": "array",
@@ -104,13 +103,16 @@
                             "type": "array",
                             "minItems": 1,
                             "items": {
-                                "type": ["integer","string", "number"]
+                                "type": [
+                                    "integer",
+                                    "string",
+                                    "number"
+                                ]
                             }
                         }
                     }
                 }
             }
         }
-     }
-     }
-
+    }
+}
