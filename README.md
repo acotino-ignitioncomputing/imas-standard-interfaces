@@ -64,9 +64,9 @@ The workflow performs the following:
 
 - A new DOI is requested.
 - The value of the key `schema_version` in `schemas/json_schema.json` and in the
-example interface definitions is set to the new DOI.
-- The example interface definitions are validated against the JSON Schema and Data
-Dictionary using the script `schemas/validate_definitions.py`.
-- The JSON Schema is uploaded to Zenodo.
+example interface definitions is set to the new DOI URL.
+- The example interface definitions are validated against the JSON Schema and
+the Data Dictionary using the script `schemas/validate_definitions.py`.
 - The updated `schemas/json_schema.json` and the example interface definitions
-are committed to the pull request.
+are committed and pushed to the current branch.
+- The JSON Schema is uploaded to Zenodo.
