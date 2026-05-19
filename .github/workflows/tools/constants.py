@@ -5,9 +5,11 @@ This script contains various constants.
 from pathlib import Path
 import os
 
+REPOSITORY_PATH = Path(__file__).parents[3]
+
 SCHEMA_FILENAME = "json_schema.json"
-SCHEMA_PATH = Path(__file__).parents[3] / "schemas" / SCHEMA_FILENAME
-EXAMPLE_DEFINITIONS_FOLDER = Path(__file__).parents[3] / "example_definitions"
+SCHEMA_PATH = REPOSITORY_PATH / "schemas" / SCHEMA_FILENAME
+EXAMPLE_DEFINITIONS_FOLDER = REPOSITORY_PATH / "example_definitions"
 
 SCHEMA_VERSION_KEY = "schema_version"
 

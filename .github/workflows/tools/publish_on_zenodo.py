@@ -21,6 +21,7 @@ from tools.constants import (
     SCHEMA_PATH,
 )
 from tools.update_doi_value import update_doi_value
+from tools.commit_schema import commit_schema_to_git
 
 
 def main():
@@ -58,6 +59,9 @@ def main():
     update_doi_value(new_doi)
 
     # TODO: before uploading, some check that everything went alright
+
+    # Call script to push changed files to current branch
+    commit_schema_to_git()
 
     # Upload JSON Schema
     with open(SCHEMA_PATH, "rb") as json_schema_file:

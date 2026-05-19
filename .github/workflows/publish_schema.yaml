@@ -30,11 +30,6 @@ jobs:
           uv version
           uv sync
 
-      - name: configure git
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-
       - name: Run validation script before updating schema & example definitions
         run: uv run python schemas/validate_definitions.py example_definitions/
     
