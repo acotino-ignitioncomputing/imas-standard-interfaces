@@ -26,7 +26,3 @@ ZENODO_PREFIX = "10.5281"
 ZENODO_API_KEY = os.getenv("ZENODO_API_KEY")
 
 """
-
-SANDBOX_ZENODO_URL = "https://sandbox.zenodo.org/api/deposit/depositions"  # Sandbox
-SANDBOX_ZENODO_PREFIX = "10.5072"  # Sandbox
-SANDBOX_ZENODO_API_KEY = os.getenv("ZENODO_SANDBOX_API_KEY")
