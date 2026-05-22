@@ -3,7 +3,7 @@ Test publishing using Zenodo's sandbox environment https://sandbox.zenodo.org
 
 Run using
     cd .github/workflow
-    uv run python -m tools.tests.test_publish_on_zenodo
+    uv run --group tests python -m tools.tests.test_publish_on_zenodo
 """
 
 import os
