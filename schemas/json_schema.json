@@ -13,7 +13,7 @@
         "schema_version": {
             "description": "Version of this schema",
             "type": "string",
-            "const": "https://doi.org/10.5072/zenodo.503353"
+            "const": "https://doi.org/10.5072/zenodo.503356"
         },
         "dd_version": {
             "description": "List of versions of Data Dictionary",
