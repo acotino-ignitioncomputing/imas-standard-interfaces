@@ -3,42 +3,40 @@ schema_version: placeholder_doi
 dd_version: [3.39.0]
 
 paths:
-- all_of:
-  - core_profiles/profiles_1d/electrons/density
-  - core_profiles/profiles_1d/electrons/temperature
-  - core_profiles/profiles_1d/grid/rho_tor_norm
-  - core_profiles/profiles_1d/ion/density
-  - core_profiles/profiles_1d/t_i_average
-  - core_sources/source/profiles_1d/electrons/energy
-  - core_sources/source/profiles_1d/total_ion_energy
-  - em_coupling/field_probes_active
-  - em_coupling/field_probes_grid
-  - em_coupling/field_probes_passive
-  - em_coupling/mutual_active_active
-  - em_coupling/mutual_grid_active
-  - em_coupling/mutual_grid_passive
-  - em_coupling/mutual_loops_active
-  - em_coupling/mutual_loops_grid
-  - em_coupling/mutual_loops_passive
-  - em_coupling/mutual_passive_active
-  - em_coupling/mutual_passive_passive
-  - equilibrium/time_slice/profiles_2d/grid/dim1
-  - equilibrium/time_slice/profiles_2d/grid/dim2
-  - equilibrium/vacuum_toroidal_field/b0
-  - equilibrium/vacuum_toroidal_field/r0
-  - pf_active/coil/resistance
-  - pf_passive/loop/resistance
-  - pulse_schedule/density_control/ion/element/z_n
-  - pulse_schedule/density_control/ion/n_i_volume_average/reference/data
-  - pulse_schedule/density_control/ion/n_i_volume_average/reference/time
-  - pulse_schedule/ec/launcher/power/reference/data
-  - pulse_schedule/ec/launcher/power/reference/time
-  - pulse_schedule/ec/power/reference/data
-  - pulse_schedule/ec/power/reference/time
-  - pulse_schedule/ic/power/reference/data
-  - pulse_schedule/pf_active/coil/current/reference/data
-  - pulse_schedule/pf_active/coil/resistance_additional/reference/data
-  - pulse_schedule/pf_active/coil/resistance_additional/reference/time
-  - wall/description_2d/limiter/unit/outline/r
-  - wall/description_2d/limiter/unit/outline/z
+- core_profiles/profiles_1d/electrons/density
+- core_profiles/profiles_1d/electrons/temperature
+- core_profiles/profiles_1d/grid/rho_tor_norm
+- core_profiles/profiles_1d/ion/density
+- core_profiles/profiles_1d/t_i_average
+- core_sources/source/profiles_1d/electrons/energy
+- core_sources/source/profiles_1d/total_ion_energy
+- em_coupling/field_probes_active
+- em_coupling/field_probes_grid
+- em_coupling/field_probes_passive
+- em_coupling/mutual_active_active
+- em_coupling/mutual_grid_active
+- em_coupling/mutual_grid_passive
+- em_coupling/mutual_loops_active
+- em_coupling/mutual_loops_grid
+- em_coupling/mutual_loops_passive
+- em_coupling/mutual_passive_active
+- em_coupling/mutual_passive_passive
+- equilibrium/time_slice/profiles_2d/grid/dim1
+- equilibrium/time_slice/profiles_2d/grid/dim2
+- equilibrium/vacuum_toroidal_field/b0
+- equilibrium/vacuum_toroidal_field/r0
+- pf_active/coil/resistance
+- pf_passive/loop/resistance
+- pulse_schedule/density_control/ion/element/z_n
+- pulse_schedule/density_control/ion/n_i_volume_average/reference/data
+- pulse_schedule/density_control/ion/n_i_volume_average/reference/time
+- pulse_schedule/ec/launcher/power/reference/data
+- pulse_schedule/ec/launcher/power/reference/time
+- pulse_schedule/ec/power/reference/data
+- pulse_schedule/ec/power/reference/time
+- pulse_schedule/ic/power/reference/data
+- pulse_schedule/pf_active/coil/current/reference/data
+- pulse_schedule/pf_active/coil/resistance_additional/reference/data
+- pulse_schedule/pf_active/coil/resistance_additional/reference/time
+- wall/description_2d/limiter/unit/outline
 

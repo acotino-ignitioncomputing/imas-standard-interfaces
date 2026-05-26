@@ -3,16 +3,17 @@ schema_version: placeholder_doi
 dd_version: [3.39.0]
 
 paths:
-- all_of:
-  - equilibrium/time_slice/profiles_2d/grid/dim1
-  - equilibrium/time_slice/profiles_2d/grid/dim2
-  - magnetics/b_field_pol_probe/length
-  - magnetics/b_field_pol_probe/poloidal_angle
-  - magnetics/b_field_pol_probe/position/r
-  - magnetics/b_field_pol_probe/position/z
-  - magnetics/flux_loop/position/r
-  - magnetics/flux_loop/position/z
-  - pf_active/coil/element/turns_with_sign
+- equilibrium/time_slice/profiles_2d/grid/dim1
+- equilibrium/time_slice/profiles_2d/grid/dim2
+- magnetics/b_field_pol_probe/length
+- magnetics/b_field_pol_probe/poloidal_angle
+- magnetics/b_field_pol_probe/position/r
+- magnetics/b_field_pol_probe/position/z
+- magnetics/flux_loop/position/r
+- magnetics/flux_loop/position/z
+- pf_active/coil/element/geometry/geometry_type
+- pf_active/coil/element/turns_with_sign
+- pf_passive/loop/element/geometry/geometry_type
 
 constraints:
   allowed_values:

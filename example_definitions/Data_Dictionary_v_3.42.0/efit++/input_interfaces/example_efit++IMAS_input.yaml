@@ -3,52 +3,32 @@ schema_version: placeholder_doi
 dd_version: [3.42.0]
 
 paths:
-- all_of:
-  - magnetics/b_field_pol_probe/area
-  - magnetics/b_field_pol_probe/field/data
-  - magnetics/b_field_pol_probe/length
-  - magnetics/b_field_pol_probe/name
-  - magnetics/b_field_pol_probe/poloidal_angle
-  - magnetics/b_field_pol_probe/position/phi
-  - magnetics/b_field_pol_probe/position/r
-  - magnetics/b_field_pol_probe/position/z
-  - magnetics/b_field_pol_probe/toroidal_angle
-  - magnetics/b_field_pol_probe/turns
-  - magnetics/diamagnetic_flux/data
-  - magnetics/flux_loop/flux/data
-  - magnetics/flux_loop/name
-  - magnetics/flux_loop/position/phi
-  - magnetics/flux_loop/position/r
-  - magnetics/flux_loop/position/z
-  - magnetics/ip/data
-  - pf_active/circuit/connections
-  - pf_active/circuit/current/data
-  - pf_active/coil/element/geometry/geometry_type
-  - pf_active/coil/element/turns_with_sign
-  - pf_active/coil/name
-  - pf_active/supply/name
-  - pf_passive/loop/current
-  - pf_passive/loop/element/geometry/geometry_type
-  - pf_passive/loop/element/turns_with_sign
-  - pf_passive/loop/name
-  - tf/b_field_phi_vacuum_r/data
-  - wall/description_2d/limiter/unit/outline/r
-  - wall/description_2d/limiter/unit/outline/z
+- magnetics/b_field_pol_probe/area
+- magnetics/b_field_pol_probe/field/data
+- magnetics/b_field_pol_probe/length
+- magnetics/b_field_pol_probe/name
+- magnetics/b_field_pol_probe/poloidal_angle
+- magnetics/b_field_pol_probe/position
+- magnetics/b_field_pol_probe/toroidal_angle
+- magnetics/b_field_pol_probe/turns
+- magnetics/diamagnetic_flux/data
+- magnetics/flux_loop/flux/data
+- magnetics/flux_loop/name
+- magnetics/flux_loop/position
+- magnetics/ip/data
+- pf_active/circuit/connections
+- pf_active/circuit/current/data
+- pf_active/coil/element/geometry/geometry_type
+- pf_active/coil/element/turns_with_sign
+- pf_active/coil/name
+- pf_active/supply/name
+- pf_passive/loop/current
+- pf_passive/loop/element/geometry/geometry_type
+- pf_passive/loop/element/turns_with_sign
+- pf_passive/loop/name
+- tf/b_field_phi_vacuum_r/data
+- wall/description_2d/limiter/unit/outline
 
-- any_of:
-  - all_of:
-    - magnetics/time
-    - pf_active/time
-    - pf_passive/time
-    - tf/time
-  - all_of:
-    - magnetics/b_field_pol_probe/field/time
-    - magnetics/diamagnetic_flux/time
-    - magnetics/flux_loop/flux/time
-    - magnetics/ip/time
-    - pf_active/circuit/current/time
-    - pf_passive/loop/time
-    - tf/b_field_phi_vacuum_r/time
 
 constraints:
   allowed_values:
