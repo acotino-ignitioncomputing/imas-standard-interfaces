@@ -25,25 +25,15 @@
         },
 
         "paths": {
-            "description": "List of sets of IDS paths",
+            "description": "List of (sets of) IDS paths",
             "type": "array",
             "minItems": 1,
             "items": {
-                "type": "object",
+                "type": ["string","object"],
                 "minProperties": 1,
                 "maxProperties": 1,
                 "additionalProperties": false,
                 "properties": {
-                    "all_of": {
-                        "description": "List of IDS paths that need to be present",
-                        "type":  "array",
-                        "minItems": 1,
-                        "uniqueItems": true,
-                        "items": {
-                        "type": "string"
-                        }
-
-                    },
                     "all_or_none": {
                         "description": "Either all listed IDS paths are present or all are absent",
                         "type": "array",
@@ -77,15 +67,6 @@
                     }
 
                 }
-            },
-            "not": {
-                "description": "Allow at most one occurence of the 'all_of'-key under 'paths'",
-                "type": "array",
-                "contains": {
-                    "type": "object",
-                    "required": ["all_of"]
-                },
-                "minContains": 2
             }
                      
         },

@@ -19,7 +19,7 @@ schema.
 The key `dd_version` holds a list of versions of the IMAS Data Dictionary that
 the definition targets (e.g. `4.1.0`).
 
-The key [`paths`](#paths) contains  sets of IDS paths that must be present in
+The key [`paths`](#paths) contains (sets of) IDS paths that must be present in
 the dataset and whose data array must be non-empty.
 
 Optionally, a [`constraint`](#constraints) key may be present at the top level,
@@ -46,11 +46,9 @@ For more example interface definitions, see the YAML files in the folder `exampl
 
 ## Paths
 
-The mapping key `paths` maps to a sequence of mappings consisting of exactly one
-of the following keys:
+The mapping key `paths` maps to a sequence of IDS path and / or mappings
+consisting of exactly one of the following keys:
 
-- `all_of`: maps to a sequence of IDS paths that must be present in the
-dataset.
 - `all_or_none`: maps to a sequence of IDS paths of which either all paths must
 be present in the dataset or all must be absent.
 - `any_of`: indicates that at least one of the listed (sets of) IDS paths must
@@ -61,8 +59,7 @@ combination of the two. See [example 1](#example-1).
 The following additional requirements are imposed to prevent different
 descriptions of the same input / output dataset:
 
-- Under `paths` there can be at most one occurence of the key `all_of`. The key
-  `any_of` may hold multiple occurences of `all_of`.
+- The key `any_of` may hold multiple occurences of `all_of`.
 - The sequence under `all_or_none` and `any_of` must have 2 or more entries.
 - Under `any_of`, every occurence of `all_of` must map to a sequence of 2 or
   more entries.
@@ -77,10 +74,9 @@ schema_version: placeholder_doi
 dd_version: [4.0.0]
 
 paths:
-- all_of:
-  - equilibrium/time
-  - equilibrium/time_slice/global_quantities/ip
-  - equilibrium/vacuum_toroidal_field/b0
+- equilibrium/time
+- equilibrium/time_slice/global_quantities/ip
+- equilibrium/vacuum_toroidal_field/b0
 
 - all_or_none:
   - iron_core/ids_properties/version_put/data_dictionary

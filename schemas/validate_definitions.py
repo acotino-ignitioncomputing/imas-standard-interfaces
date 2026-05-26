@@ -73,25 +73,22 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     return validation_correct
 
 
-def extract_paths(definition: dict) -> list:
-    # Collect all IDS paths
+def extract_paths(paths: list) -> list:
+    # Collect all IDS paths from dictionary
     path_list = []
 
-    for criterium_dict in definition["paths"]:
+    for string_or_dict in path_list:
         # Extract paths from string(s) or dictionaries
-        for string_or_dict in criterium_dict.values():
-            for entry in string_or_dict:
-                if type(entry) is str:
-                    path_list.append(entry)
-                elif type(entry) is dict:
-                    for _, sublist in entry.items():
-                        path_list += sublist
-                else:
-                    raise (
-                        Exception(
-                            f"Invalid entry \n{SPACING_2}'{entry}'\n in {criterium_dict}"
-                        )
-                    )
+        if type(string_or_dict) is str:
+            path_list.append(string_or_dict)
+        elif type(string_or_dict) is dict:
+            path_list += extract_paths(string_or_dict.values())
+        else:
+            raise (
+                Exception(
+                    f"Invalid entry \n{SPACING_2}'{string_or_dict}'\n in {string_or_dict}"
+                )
+            )
     return sorted(path_list)
 
 
@@ -104,7 +101,7 @@ def check_ids_name(definition: dict) -> bool:
         ids_names_list = IDSFactory(dd_version).ids_names()
 
         # Collect all IDS paths
-        path_list = extract_paths(definition)
+        path_list = extract_paths(definition["paths"])
 
         for ids_path in path_list:
             ids_name = ids_path.split("/")[0]
@@ -124,7 +121,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     for dd_version in definition["dd_version"]:
 
         # Collect all IDS paths
-        path_list = extract_paths(definition)
+        path_list = extract_paths(definition["paths"])
 
         for full_ids_path in path_list:
             # Extract IDS name and path
