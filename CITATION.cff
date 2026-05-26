@@ -4,3 +4,4 @@ identifiers:
   - type: doi
     value: placeholder_doi
     description: some description of DOI
+doi: 10.5281/zenodo.504518
