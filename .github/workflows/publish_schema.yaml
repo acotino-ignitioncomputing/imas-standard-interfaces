@@ -46,6 +46,7 @@ jobs:
           concept: 498829 # 'concept id', supposed to be "identifier for all versions"
           upsert-doi: true
           upsert-location: doi # store in file CITATION.cff in root under key 'doi'
+          verbose: true
 
       - name : update schema and example definitions with new doi
         run: |
@@ -73,5 +74,6 @@ jobs:
           concept: 498829 # 'concept id', supposed to be "identifier for all versions"
           filenames: schemas/json_schema.json
           metadata: .github/workflows/.zenodo.json
+          verbose: true
 
           

@@ -1,1 +1,6 @@
-doi: placeholder_doi
+cff-version: 1.2.0
+title: interface schema (title)
+identifiers:
+  - type: doi
+    value: placeholder_doi
+    description: some description of DOI
