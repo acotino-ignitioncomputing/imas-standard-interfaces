@@ -1,18 +1,22 @@
 name: Create new DOI URL, update JSON Schema accordingly and publish on Zenodo 
 
 on:
-  pull_request_review:
-    types: [submitted]
-    branches: 
-      - main
-      - 'releases/**'
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        required: true
+        type: string
+      release_body:
+        required: true
+        type: string
+
 
 jobs:
-  publish:
-    if: github.event.review.state == 'approved'
+  publish_and_tag:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    environment: zenodo_sandbox
+    env:
+      ZENODO_API_KEY: ${{secrets.ZENODO_SANDBOX_API_KEY}}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -32,21 +36,57 @@ jobs:
           uv version
           uv sync
 
-      - name: configure git
+      - name: Configure git
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Run validation script before updating schema & example definitions
         run: uv run python schemas/validate_definitions.py example_definitions/
-    
-      - name: >
-          Update schema & example definitions, validate again, commit to git and
-          publish to Zenodo
-        env: 
-          ZENODO_API_KEY: ${{secrets.ZENODO_API_KEY}}
+
+      - name: Get url for uploading new version of schema
+        id: draft_url
         run: |
           cd .github/workflows
-          uv run python -m tools.publish_on_zenodo
+          echo "latest_draft_url=$(uv run python -m tools.get_latest_draft_url)" >> $GITHUB_OUTPUT
+
+      - name: Construct new DOI
+        id: new_doi_construction
+        run: |
+          cd .github/workflows
+          echo "new_doi=$(uv run python -m tools.construct_new_doi ${{ steps.draft_url.outputs.latest_draft_url }})" >> $GITHUB_OUTPUT
+
+      - name: Update schema and example definitions based on new DOI
+        run: |
+          cd .github/workflows
+          uv run python -m tools.update_doi_value ${{ steps.new_doi_construction.outputs.new_doi }}
+          
+      - name: Run validation script again before commiting and publishing
+        run: uv run python schemas/validate_definitions.py example_definitions/
+
+      - name: Commit to git
+        run: |
+          set -x -e -o pipefail
+
+          git add example_definitions/**/*.yaml schemas/json_schema.json
+          git commit -m "Github Actions: updated schema and definitions with new DOI URL"
+          git push
+
+      - name: Create tag and release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ inputs.version_tag }}
+          release_name: Release ${{ inputs.version_tag }}
+          body: ${{ inputs.release_body }}
+          draft: false
+ 
+      - name: Publish JSON Schema on Zenodo
+        run: |
+          cd .github/workflows
+          uv run python -m tools.publish_on_zenodo ${{ steps.draft_url.outputs.latest_draft_url }}
+  
+
 
           
