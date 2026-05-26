@@ -1,0 +1,9 @@
+{
+        "metadata": {
+            "title": "Interface schema",
+            "upload_type": "publication",
+            "publication_type": "standard",
+            "description": "Schema for the description of an interface for simulation code using IMAS",
+            "creators": [{"name": "Github Actions"}]
+        }
+    }

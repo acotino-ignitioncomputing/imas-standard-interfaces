@@ -1,15 +1,11 @@
 name: Create new DOI URL, update JSON Schema accordingly and publish on Zenodo 
 
 on:
-  pull_request_review:
-    types: [submitted]
-    branches: 
-      - main
-      - 'releases/**'
+  workflow_dispatch:
+    
 
 jobs:
   publish:
-    if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -39,14 +35,43 @@ jobs:
 
       - name: Run validation script before updating schema & example definitions
         run: uv run python schemas/validate_definitions.py example_definitions/
-    
-      - name: >
-          Update schema & example definitions, validate again, commit to git and
-          publish to Zenodo
+
+      - name: create draft deposition
+        uses: zenodraft/action@0.13.3
         env: 
-          ZENODO_API_KEY: ${{secrets.ZENODO_API_KEY}}
+          ZENODO_SANDBOX_ACCESS_TOKEN: ${{secrets.ZENODO_API_KEY}}
+        with:
+          sandbox: true
+          publish: false
+          concept: 498829 # 'concept id', supposed to be "identifier for all versions"
+          upsert-doi: true
+          upsert-location: doi # store in file CITATION.cff in root under key 'doi'
+
+      - name : update schema and example definitions with new doi
         run: |
-          cd .github/workflows
-          uv run python -m tools.publish_on_zenodo
+          cd .github/workflow
+          uv run python -m tools.update_doi_value
+      
+      - name: Run validation script again before publishing
+        run: uv run python schemas/validate_definitions.py example_definitions/
+
+      - name: Commit to git
+        run: |
+          set -x -e -o pipefail
+
+          git add example_definitions/**/*.yaml schemas/json_schema.json
+          git commit -m "Github Actions: updated schema and definitions with new DOI URL"
+          git push
+
+      - name: Publish to Zenodo
+        uses: zenodraft/action@0.13.3
+        env: 
+          ZENODO_SANDBOX_ACCESS_TOKEN: ${{secrets.ZENODO_API_KEY}}
+        with:
+          sandbox: true
+          publish: true
+          concept: 498829 # 'concept id', supposed to be "identifier for all versions"
+          filenames: schemas/json_schema.json
+          metadata: .github/workflows/.zenodo.json
 
           

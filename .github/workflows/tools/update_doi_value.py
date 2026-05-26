@@ -39,3 +39,12 @@ def update_doi_value(new_doi: str):
 
         with open(yaml_file_path, "w") as yaml_file:
             yaml_file.writelines(updated_lines)
+
+
+if __name__ == "__main__":
+    from tools.constants import CITATION_PATH
+
+    citation_dict = json.loads(CITATION_PATH.read_text())
+    new_doi = citation_dict["doi"]
+
+    update_doi_value(new_doi)

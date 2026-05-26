@@ -14,6 +14,8 @@ SCRIPT_PATH = REPOSITORY_PATH / "schemas" / "validate_definitions.py"
 
 SCHEMA_VERSION_KEY = "schema_version"
 
+CITATION_PATH = REPOSITORY_PATH / "CITATION.cff"
+
 # Sandbox of Zenodo. Used for testing
 ZENODO_URL = "https://sandbox.zenodo.org/api/deposit/depositions"  # Sandbox
 ZENODO_PREFIX = "10.5072"  # Sandbox
