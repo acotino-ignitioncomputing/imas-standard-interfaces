@@ -1,0 +1,35 @@
+name: Try_workflow_mechanics
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        required: true
+        type: string
+      release_body:
+        required: true
+        type: string
+        
+jobs:
+  publish_and_tag:
+    runs-on: ubuntu-latest
+    environment: zenodo_sandbox
+    env:
+      ZENODO_API_KEY: ${{secrets.ZENODO_SANDBOX_API_KEY}}
+    steps:
+      - name: Check env variables
+        run: |
+          echo "ZENODO_URL: $ZENODO_URL"
+          echo "ZENODO_PREFIX: $ZENODO_PREFIX"
+
+      - name: Check workflow inputs
+        id: some_idea
+        run: |
+          echo "tag_name: ${{ inputs.version_tag }}"
+          echo "release_body: ${{ inputs.release_body }}"
+          echo "some_var=https://990.nqwe" >> $GITHUB_OUTPUT
+
+      - name: Check stored variables
+        run: |
+          echo "some_var: ${{ steps.some_idea.outputs.some_var }}"
+  
