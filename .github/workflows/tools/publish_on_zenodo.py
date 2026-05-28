@@ -11,81 +11,36 @@ to commit the changes onto the branch using git.
 Documention of Zenodo's REST API: https://developers.zenodo.org/#rest-api
 """
 
+import click
 import requests
 import json
-import subprocess
 
 from tools.constants import (
     ZENODO_URL,
-    ZENODO_PREFIX,
     ZENODO_API_KEY,
     SCHEMA_FILENAME,
     SCHEMA_PATH,
-    SCRIPT_PATH,
-    SCHEMA_VERSION_KEY,
-    EXAMPLE_DEFINITIONS_FOLDER,
 )
-from tools.update_doi_value import update_doi_value
-from tools.commit_schema import commit_schema_to_git
 
 
-def main():
+def publish_on_zenodo(latest_draft_url: str):
 
     headers = {"Authorization": f"Bearer {ZENODO_API_KEY}"}
 
-    # Get list of depositions associated with API key
-    deposition_list = requests.get(ZENODO_URL, headers=headers).json()
+    # Get new version of deposition
+    response = requests.get(latest_draft_url, headers=headers)
+    # TODO: add error handling based on received HTTP error codes
+    new_deposition_dict = response.json()
 
-    if deposition_list:
-        # Create new version of latest deposition
-
-        links_dict = deposition_list[0]["links"]
-        response = requests.post(links_dict["newversion"], headers=headers)
-        # TODO: add error handling based on received HTTP error codes
-        latest_draft_url = response.json()["links"]["latest_draft"]
-
-        # Get new version of deposition
-        response = requests.get(latest_draft_url, headers=headers)
-        # TODO: add error handling based on received HTTP error codes
-        new_deposition_dict = response.json()
-
-    else:
-        # Create new empty deposition
-        new_deposition_dict = requests.post(ZENODO_URL, json={}, headers=headers).json()
-
-    # Store deposition-ID for constructing new DOI, and bucket-url for uploading file
+    # Store deposition-ID and bucket-url for uploading file
     new_deposition_id = new_deposition_dict["id"]
     bucket_url = new_deposition_dict["links"]["bucket"]
-
-    # New doi_url consists of zenodo-prefix and deposition-ID
-    new_doi = f"https://doi.org/{ZENODO_PREFIX}/zenodo.{new_deposition_id}"
-
-    # Update value of key SCHEMA_VERSION_KEY in JSON Schema and YAML files
-    # TODO: catch error and close version draft
-    update_doi_value(new_doi)
-
-    # Check that validation of example definitions against schema still succeeds
-    process = subprocess.run(
-        ["uv", "run", "python", SCRIPT_PATH, EXAMPLE_DEFINITIONS_FOLDER],
-        capture_output=True,
-    )
-    if process.returncode != 0:
-        raise Exception(
-            f"After updating the key '{SCHEMA_VERSION_KEY}' in schema and example"
-            + f" definitions, validation failed: \n\t {process.stderr}"
-        )
-
-    # Call script to push changed files to current branch
-    # TODO: catch error and close version draft
-    commit_schema_to_git()
 
     # Upload JSON Schema
     with open(SCHEMA_PATH, "rb") as json_schema_file:
         response = requests.put(
             f"{bucket_url}/{SCHEMA_FILENAME}", data=json_schema_file, headers=headers
         )
-
-    # TODO: error handling on HTTP code of response
 
     # TODO: Add proper metadata
     metadata = {
@@ -105,6 +60,12 @@ def main():
 
     # Publish new deposition
     requests.post(new_deposition_dict["links"]["publish"], headers=headers)
+
+
+@click.command()
+@click.argument("latest_draft_url")
+def main(latest_draft_url: str):
+    publish_on_zenodo(latest_draft_url)
 
 
 if __name__ == "__main__":

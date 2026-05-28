@@ -1,3 +1,4 @@
+import click
 import json
 
 from tools.constants import SCHEMA_PATH, SCHEMA_VERSION_KEY, EXAMPLE_DEFINITIONS_FOLDER
@@ -39,3 +40,13 @@ def update_doi_value(new_doi: str):
 
         with open(yaml_file_path, "w") as yaml_file:
             yaml_file.writelines(updated_lines)
+
+
+@click.command()
+@click.argument("new_doi")
+def main(new_doi: str):
+    update_doi_value(new_doi)
+
+
+if __name__ == "__main__":
+    main()
