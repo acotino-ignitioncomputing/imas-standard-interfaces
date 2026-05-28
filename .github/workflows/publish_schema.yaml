@@ -48,13 +48,13 @@ jobs:
         id: draft_url
         run: |
           cd .github/workflows
-          echo "latest_draft_url=$(uv run python -m tools.get_latest_draft_url)" >> $GITHUB_OUTPUT
+          echo "latest_draft_url=$(uv run --group zenodo_api python -m tools.get_latest_draft_url)" >> $GITHUB_OUTPUT
 
       - name: Construct new DOI
         id: new_doi_construction
         run: |
           cd .github/workflows
-          echo "new_doi=$(uv run python -m tools.construct_new_doi ${{ steps.draft_url.outputs.latest_draft_url }})" >> $GITHUB_OUTPUT
+          echo "new_doi=$(uv run --group zenodo_api python -m tools.construct_new_doi ${{ steps.draft_url.outputs.latest_draft_url }})" >> $GITHUB_OUTPUT
 
       - name: Update schema and example definitions based on new DOI
         run: |
@@ -85,7 +85,7 @@ jobs:
       - name: Publish JSON Schema on Zenodo
         run: |
           cd .github/workflows
-          uv run python -m tools.publish_on_zenodo ${{ steps.draft_url.outputs.latest_draft_url }}
+          uv run --group zenodo_api python -m tools.publish_on_zenodo ${{ steps.draft_url.outputs.latest_draft_url }}
   
 
 

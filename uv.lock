@@ -184,7 +184,7 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
-tests = [
+zenodo-api = [
     { name = "requests" },
 ]
 
@@ -197,7 +197,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-tests = [{ name = "requests", specifier = ">=2.32.5" }]
+zenodo-api = [{ name = "requests", specifier = ">=2.32.5" }]
 
 [[package]]
 name = "jsonschema"
