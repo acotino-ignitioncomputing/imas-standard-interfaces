@@ -1,4 +1,4 @@
-schema_version: placeholder_doi
+schema_version: https://doi.org/10.5072/zenodo.505550
 
 dd_version: [3.39.0, 3.42.0]
 
