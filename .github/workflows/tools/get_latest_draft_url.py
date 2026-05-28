@@ -24,10 +24,6 @@ def get_latest_draft_url() -> str:
     # Get list of depositions associated with API key
 
     response = requests.get(ZENODO_URL, headers=headers)
-    raise Exception(
-        f"headers[-10:]: {headers["Authorization"][-10:]}"
-        + f"\nresponse: {response.json()}"
-    )
     deposition_list = response.json()
 
     if deposition_list:
