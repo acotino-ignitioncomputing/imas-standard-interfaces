@@ -1,3 +1,6 @@
+# Run the function 'construct_new_doi' with e.g. the tool 'uv'
+#   cd .github/workflow
+#   uv run --group zenodo_api python -m tools.construct_new_doi [latest_draft_url]
 import click
 import requests
 from tools.constants import (
@@ -9,6 +12,8 @@ from tools.constants import (
 def construct_new_doi(latest_draft_url: str) -> str:
     """Construct new DOI URL from the deposition's ID (pointed by latest_draft_url) and
       Zenodo's prefix.
+
+    Documention of Zenodo's REST API: https://developers.zenodo.org/#rest-api
 
     Args:
         latest_draft_url: URL to (latest) version of deposition

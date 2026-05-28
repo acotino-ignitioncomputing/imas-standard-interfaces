@@ -13,6 +13,8 @@ def get_latest_draft_url() -> str:
     """Create a new (version of a) deposition using Zenodo's REST API and return the
     URL of this deposition as a string.
 
+    Documention of Zenodo's REST API: https://developers.zenodo.org/#rest-api
+
     Returns:
         The 'latest_draft' url of the deposition on Zenodo
     """

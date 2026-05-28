@@ -1,3 +1,6 @@
+# Run the function 'update_doi_value' with e.g. the tool 'uv'
+#   cd .github/workflow
+#   uv run --group zenodo_api python -m tools.update_doi_value [new_doi_url]
 import click
 import json
 

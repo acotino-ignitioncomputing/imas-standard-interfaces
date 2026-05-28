@@ -1,16 +1,6 @@
-"""
-The main-function of this script uses Zenodo's REST API to
-- create a new (version of a) deposition,
-- construct new DOI URL from this deposition's ID and Zenodo's prefix
-- upload the JSON Schema and publish the deposition.
-
-Before uploading, functions are called for updating the 'const'-value of key
-SCHEMA_VERSION_KEY in the JSON Schema & example definitions to the new DOI URL, and
-to commit the changes onto the branch using git.
-
-Documention of Zenodo's REST API: https://developers.zenodo.org/#rest-api
-"""
-
+# Run the function 'publish_on_zenodo' with e.g. the tool 'uv'
+#   cd .github/workflow
+#   uv run --group zenodo_api python -m tools.publish_on_zenodo [latest_draft_url]
 import click
 import requests
 import json
@@ -24,6 +14,13 @@ from tools.constants import (
 
 
 def publish_on_zenodo(latest_draft_url: str):
+    """Upload the JSON Schema and publish the deposition of latest_draft_url on Zenodo.
+
+    Documention of Zenodo's REST API: https://developers.zenodo.org/#rest-api
+
+    Args:
+        latest_draft_url: URL to (latest) version of deposition
+    """
 
     headers = {"Authorization": f"Bearer {ZENODO_API_KEY}"}
 
