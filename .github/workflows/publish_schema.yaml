@@ -17,6 +17,8 @@ jobs:
     environment: zenodo_sandbox
     env:
       ZENODO_API_KEY: ${{secrets.ZENODO_SANDBOX_API_KEY}}
+      ZENODO_URL: ${{ vars.ZENODO_URL}}
+      ZENODO_PREFIX: ${{ vars.ZENODO_PREFIX}}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
