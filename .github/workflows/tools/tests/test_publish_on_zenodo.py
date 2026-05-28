@@ -1,5 +1,5 @@
 """
-Test publishing using Zenodo's sandbox environment https://sandbox.zenodo.org
+Locally test publishing using Zenodo's sandbox environment https://sandbox.zenodo.org
 
 Run using
     cd .github/workflow
