@@ -9,13 +9,15 @@ on:
       release_body:
         required: true
         type: string
-        
+
 jobs:
   publish_and_tag:
     runs-on: ubuntu-latest
     environment: zenodo_sandbox
     env:
       ZENODO_API_KEY: ${{secrets.ZENODO_SANDBOX_API_KEY}}
+      ZENODO_URL: ${{ vars.ZENODO_URL}}
+      ZENODO_PREFIX: ${{ vars.ZENODO_PREFIX}}
     steps:
       - name: Check env variables
         run: |
