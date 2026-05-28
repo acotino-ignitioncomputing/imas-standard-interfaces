@@ -21,12 +21,14 @@ def get_latest_draft_url() -> str:
 
     headers = {"Authorization": f"Bearer {ZENODO_API_KEY}"}
 
-    print(f"HOOK13: ZENODO_URL = {ZENODO_URL}")
-
     # Get list of depositions associated with API key
-    deposition_list = requests.get(ZENODO_URL, headers=headers).json()
 
-    print(f"HOOK15: deposition_list = {deposition_list}")
+    response = requests.get(ZENODO_URL, headers=headers)
+    raise Exception(
+        f"headers[-10:]: {headers["Authorization"][-10:]}"
+        + f"\nresponse: {response.json()}"
+    )
+    deposition_list = response.json()
 
     if deposition_list:
         # Create new version of latest deposition
