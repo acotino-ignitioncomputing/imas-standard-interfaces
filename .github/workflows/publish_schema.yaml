@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.ref }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
@@ -74,14 +74,14 @@ jobs:
           echo "new_hash=$(git log -1 --format=%H)" >> $GITHUB_OUTPUT
 
       - name: Create tag and release
-        uses: actions/create-release@latest
+        uses: ncipollo/release-action@v1.21.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ inputs.version_tag }}
-          release_name: Release ${{ inputs.version_tag }}
-          body_path: RELEASE.md
-          commitish: ${{ steps.new_hash.outputs.new_hash }}
+          tag: ${{ inputs.version_tag }}
+          name: Release ${{ inputs.version_tag }}
+          bodyFile: RELEASE.md
+          commit: ${{ steps.new_hash.outputs.new_hash }}
           draft: false
  
       - name: Publish JSON Schema on Zenodo
