@@ -7,8 +7,7 @@ paths:
 - equilibrium/time_slice/boundary/elongation
 - equilibrium/time_slice/boundary/elongation_lower
 - equilibrium/time_slice/boundary/elongation_upper
-- equilibrium/time_slice/boundary/geometric_axis/r
-- equilibrium/time_slice/boundary/geometric_axis/z
+- equilibrium/time_slice/boundary/geometric_axis
 - equilibrium/time_slice/boundary/minor_radius
 - equilibrium/time_slice/boundary/triangularity_lower
 - equilibrium/time_slice/boundary/triangularity_upper
