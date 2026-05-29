@@ -64,28 +64,22 @@ jobs:
       - name: Run validation script again before commiting and publishing
         run: uv run python schemas/validate_definitions.py example_definitions/
 
-      - name: Check current commit hash
-        id: getHash
-        run: |
-          echo "github.head_ref: ${{ github.head_ref }}"
-          echo "github.sha: ${{ github.sha }}"
-          echo "git log: $(git log -1 --format=%H)"
-          echo "git_hash=$(git log -1 --format=%H)" >> $GITHUB_OUTPUT
-
-      - name: Commit to git
+      - name: Commit to git and store new commit hash
+        id: new_hash
         run: |
           set -x -e -o pipefail
 
           git add example_definitions/**/*.yaml schemas/json_schema.json
           git commit -m "Github Actions: updated schema and definitions with new DOI URL"
           git push
+          echo "new_hash=$(git log -1 --format=%H)" >> $GITHUB_OUTPUT
 
-      - name: Check current commit hash again
+      - name: Check current commit hash
         run: |
           echo "github.head_ref: ${{ github.head_ref }}"
           echo "github.sha: ${{ github.sha }}"
           echo "git log: $(git log -1 --format=%H)"
-          echo "git_hash: ${{ steps.getHash.outputs.git_hash }}"
+          echo "git_hash: ${{ steps.new_hash.outputs.new_hash }}"
 
       - name: Create tag and release
         uses: actions/create-release@latest
@@ -95,6 +89,7 @@ jobs:
           tag_name: ${{ inputs.version_tag }}
           release_name: Release ${{ inputs.version_tag }}
           body: Some textual description ... Change with file path
+          commitish: ${{ steps.new_hash.outputs.new_hash }}
           draft: false
  
       - name: Publish JSON Schema on Zenodo
