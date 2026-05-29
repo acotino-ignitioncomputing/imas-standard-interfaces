@@ -1,0 +1,94 @@
+name: Create new DOI URL, update JSON Schema accordingly and publish on Zenodo 
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        required: true
+        type: string
+
+
+jobs:
+  publish_and_tag:
+    runs-on: ubuntu-latest
+    environment: zenodo_sandbox
+    env:
+      ZENODO_API_KEY: ${{secrets.ZENODO_SANDBOX_API_KEY}}
+      ZENODO_URL: ${{ vars.ZENODO_URL}}
+      ZENODO_PREFIX: ${{ vars.ZENODO_PREFIX}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.5.16"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: |
+          uv version
+          uv sync
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+
+      - name: Run validation script before updating schema & example definitions
+        run: uv run python schemas/validate_definitions.py example_definitions/
+
+      - name: Get url for uploading new version of schema
+        id: draft_url
+        run: |
+          cd .github/workflows
+          echo "latest_draft_url=$(uv run --group zenodo_api python -m tools.get_latest_draft_url)" >> $GITHUB_OUTPUT
+
+      - name: Construct new DOI
+        id: new_doi_construction
+        run: |
+          cd .github/workflows
+          echo "new_doi=$(uv run --group zenodo_api python -m tools.construct_new_doi ${{ steps.draft_url.outputs.latest_draft_url }})" >> $GITHUB_OUTPUT
+
+      - name: Update schema and example definitions based on new DOI
+        run: |
+          cd .github/workflows
+          uv run python -m tools.update_doi_value ${{ steps.new_doi_construction.outputs.new_doi }}
+          
+      - name: Run validation script again before commiting and publishing
+        run: uv run python schemas/validate_definitions.py example_definitions/
+
+      - name: Commit to git and store new commit hash
+        id: new_hash
+        run: |
+          set -x -e -o pipefail
+
+          git add example_definitions/**/*.yaml schemas/json_schema.json
+          git commit -m "Github Actions: updated schema and definitions with new DOI URL"
+          git push
+          echo "new_hash=$(git log -1 --format=%H)" >> $GITHUB_OUTPUT
+
+      - name: Create tag and release
+        uses: ncipollo/release-action@v1.21.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag: ${{ inputs.version_tag }}
+          name: Release ${{ inputs.version_tag }}
+          bodyFile: RELEASE.md
+          commit: ${{ steps.new_hash.outputs.new_hash }}
+          draft: false
+ 
+      - name: Publish JSON Schema on Zenodo
+        run: |
+          cd .github/workflows
+          uv run --group zenodo_api python -m tools.publish_on_zenodo ${{ steps.draft_url.outputs.latest_draft_url }}
+  
+
+
+          
