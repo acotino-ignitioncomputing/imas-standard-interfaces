@@ -8,7 +8,6 @@ on:
         type: string
 
 
-
 jobs:
   publish_and_tag:
     runs-on: ubuntu-latest
@@ -74,13 +73,6 @@ jobs:
           git push
           echo "new_hash=$(git log -1 --format=%H)" >> $GITHUB_OUTPUT
 
-      - name: Check current commit hash
-        run: |
-          echo "github.head_ref: ${{ github.head_ref }}"
-          echo "github.sha: ${{ github.sha }}"
-          echo "git log: $(git log -1 --format=%H)"
-          echo "git_hash: ${{ steps.new_hash.outputs.new_hash }}"
-
       - name: Create tag and release
         uses: actions/create-release@latest
         env:
@@ -88,7 +80,7 @@ jobs:
         with:
           tag_name: ${{ inputs.version_tag }}
           release_name: Release ${{ inputs.version_tag }}
-          body: Some textual description ... Change with file path
+          body_path: RELEASE.md
           commitish: ${{ steps.new_hash.outputs.new_hash }}
           draft: false
  
