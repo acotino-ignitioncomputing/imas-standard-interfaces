@@ -6,9 +6,6 @@ on:
       version_tag:
         required: true
         type: string
-      release_body:
-        required: true
-        type: string
 
 
 jobs:
@@ -66,13 +63,15 @@ jobs:
       - name: Run validation script again before commiting and publishing
         run: uv run python schemas/validate_definitions.py example_definitions/
 
-      - name: Commit to git
+      - name: Commit to git and store new commit hash
+        id: new_hash
         run: |
           set -x -e -o pipefail
 
           git add example_definitions/**/*.yaml schemas/json_schema.json
           git commit -m "Github Actions: updated schema and definitions with new DOI URL"
           git push
+          echo "new_hash=$(git log -1 --format=%H)" >> $GITHUB_OUTPUT
 
       - name: Create tag and release
         uses: actions/create-release@latest
@@ -81,7 +80,8 @@ jobs:
         with:
           tag_name: ${{ inputs.version_tag }}
           release_name: Release ${{ inputs.version_tag }}
-          body: ${{ inputs.release_body }}
+          body_path: RELEASE.md
+          commitish: ${{ steps.new_hash.outputs.new_hash }}
           draft: false
  
       - name: Publish JSON Schema on Zenodo
