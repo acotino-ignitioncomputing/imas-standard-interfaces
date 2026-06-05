@@ -2,7 +2,7 @@
 Dictionary"""
 
 import jsonschema
-from imas import IDSFactory, util
+from imas import dd_zip, IDSFactory, util
 from pathlib import Path
 import click
 import json
@@ -11,6 +11,8 @@ import yaml
 # Global parameters used for consistent amount of spacing, independent of user config
 SPACING_2 = "  "
 SPACING_4 = "    "
+
+VALID_DD_VERSIONS = dd_zip.dd_xml_versions()
 
 
 def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
@@ -97,11 +99,73 @@ def extract_paths(paths: list) -> list:
     return sorted(path_list)
 
 
+def check_version_within_range(version_str: str, range: list[str, str]) -> bool:
+    version_digits = [int(d) for d in version_str.split(".")]
+
+    min_version_digits = [int(d) for d in range[0].split(".")]
+    max_version_digits = [int(d) for d in range[1].split(".")]
+
+    if (
+        version_digits[0] < min_version_digits[0]
+        or version_digits[0] > max_version_digits[0]
+    ):
+        return False
+
+    if (
+        version_digits[0] == min_version_digits[0]
+        and version_digits[1] < min_version_digits[1]
+    ):
+        return False
+
+    if (
+        version_digits[0] == max_version_digits[0]
+        and version_digits[1] > max_version_digits[1]
+    ):
+        return False
+
+    if (
+        version_digits[0] == min_version_digits[0]
+        and version_digits[1] == min_version_digits[1]
+        and version_digits[2] < min_version_digits[2]
+    ):
+        return False
+
+    if (
+        version_digits[0] == max_version_digits[0]
+        and version_digits[1] == max_version_digits[1]
+        and version_digits[2] > max_version_digits[2]
+    ):
+        return False
+
+    return True
+
+
+def get_valid_dd_versions(definition: dict) -> list:
+    valid_dd_versions = [
+        version_str
+        for version_str in VALID_DD_VERSIONS
+        if check_version_within_range(version_str, definition["dd_version_range"])
+    ]
+
+    if not valid_dd_versions:
+        print(
+            f"{SPACING_2}No valid versions of the Data Dictionary fall within the"
+            + f" provided range {definition['dd_version_range']}"
+        )
+
+    return valid_dd_versions
+
+
 def check_ids_name(definition: dict) -> bool:
     """Only allow IDS names that are in the Data Dictionary."""
 
+    dd_versions_to_check = get_valid_dd_versions(definition)
+
+    if not dd_versions_to_check:
+        return False
+
     correct_ids_names = True
-    for dd_version in definition["dd_version"]:
+    for dd_version in dd_versions_to_check:
 
         ids_names_list = IDSFactory(dd_version).ids_names()
 
@@ -122,9 +186,15 @@ def check_ids_name(definition: dict) -> bool:
 
 def check_ids_paths_in_dd(definition: dict) -> bool:
     """Each IDS path must be present in the provided version of Data Dictionary."""
+
+    dd_versions_to_check = get_valid_dd_versions(definition)
+
+    if not dd_versions_to_check:
+        return False
+
     all_paths_valid = True
 
-    for dd_version in definition["dd_version"]:
+    for dd_version in dd_versions_to_check:
 
         # Collect all IDS paths
         path_list = extract_paths(definition["paths"])
