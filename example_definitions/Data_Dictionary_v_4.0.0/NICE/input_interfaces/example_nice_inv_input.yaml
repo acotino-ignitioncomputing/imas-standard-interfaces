@@ -1,6 +1,10 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [4.0.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.42.2, 4.0.0]
 
 paths:
 - equilibrium/ids_properties/version_put/data_dictionary
