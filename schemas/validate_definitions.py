@@ -77,12 +77,17 @@ def extract_paths(paths: list) -> list:
     # Collect all IDS paths from dictionary
     path_list = []
 
-    for string_or_dict in path_list:
+    for string_or_dict in paths:
         # Extract paths from string(s) or dictionaries
         if type(string_or_dict) is str:
             path_list.append(string_or_dict)
         elif type(string_or_dict) is dict:
-            path_list += extract_paths(string_or_dict.values())
+            key = list(string_or_dict.keys())[0]
+            if key not in ["all_or_none", "any_of", "all_of"]:
+                # Only key of dictionary is an IDS path
+                path_list.append(key)
+            else:
+                path_list += extract_paths(string_or_dict[key])
         else:
             raise (
                 Exception(
@@ -107,7 +112,8 @@ def check_ids_name(definition: dict) -> bool:
             ids_name = ids_path.split("/")[0]
             if ids_name not in ids_names_list:
                 print(
-                    f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
+                    f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary"
+                    + f" version {dd_version}\n"
                 )
                 correct_ids_names = False
 
@@ -136,7 +142,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
             if ids_path not in valid_paths_list:
                 print(
                     f"{SPACING_2}IDS path {ids_path} is not in IDS {ids_name} for "
-                    + f"Data Dictionary version {dd_version}."
+                    + f"Data Dictionary version {dd_version}.\n"
                 )
                 all_paths_valid = False
 
@@ -211,6 +217,7 @@ def main(input_path: str):
         print(f"{SPACING_2}All checks passed")
 
     if incorrect_definitions:
+        print("\n")
         raise Exception(
             "\nIssues were found in the following file(s)"
             + f"\n{SPACING_2}"
