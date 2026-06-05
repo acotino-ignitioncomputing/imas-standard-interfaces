@@ -1,97 +1,101 @@
 { 
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "Interface schema", 
-     "description": "Schema for input or output interface. Validate using python -m json.tool json_schema_new.json",  
-     "type": "object",
-     "required": ["dd_version", "paths","schema_version"],
-     "additionalProperties": false,
-     "properties": {
-
-        "schema_version": {
-            "description": "DOI URL of this schema's version",
-            "type": "string",
-            "const": "placeholder_doi"
-
-        },
-
-        "dd_version": {
-          "description": "List of versions of Data Dictionary",
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-              "type": "string"
-          }
-        },
-
-        "paths": {
-            "description": "List of (sets of) IDS paths that must be present in the dataset and whose data array must be non-empty. If an IDS path has child paths then it is implied that each child path must be present and have non-empty data array.",
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "type": ["string","object"],
-                "minProperties": 1,
-                "maxProperties": 1,
-                "additionalProperties": false,
-                "properties": {
-                    "all_or_none": {
-                        "description": "Either all listed IDS paths must be present or all must be absent.",
-                        "type": "array",
-                        "uniqueItems": true,
-                        "minItems": 1,
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-
-                    "any_of": {
-                        "description": "At least one of the listed (sets of) IDS paths must be present.",
-                        "type": "array",
-                        "minItems": 2,
-                        "items": {
-                            "type": ["string","object"],
-                            "minProperties": 1,
-                            "maxProperties": 1,
-                            "properties": {
-                                "all_of": {
-                                    "description": "All the listed IDS paths are considered as a set. Either they all need to be present, or the path(s) in some other entry of the above 'any_of' key must be present.",
-                                    "type": "array",
-                                    "uniqueItems": true,
-                                    "minItems": 2,
-                                    "items": {
-                                        "type": "string"
-                                    }
+    "description": "Schema for input or output interface. Validate using python -m json.tool json_schema_new.json",  
+    "type": "object",
+    "required": ["dd_version", "paths","schema_version"],
+    "additionalProperties": false,
+    "properties": {
+       "schema_version": {
+           "description": "DOI URL of this schema's version",
+           "type": "string",
+           "const": "placeholder_doi"
+       },
+       "dd_version": {
+         "description": "List of versions of Data Dictionary",
+         "type": "array",
+         "minItems": 1,
+         "uniqueItems": true,
+         "items": {
+             "type": "string"
+         }
+       },
+       "paths": {
+           "description": "List of (sets of) IDS paths that must be present in the dataset and whose data array must be non-empty. If an IDS path has child paths then it is implied that each child path must be present and have non-empty data array.",
+           "type": "array",
+           "minItems": 1,
+           "items": {
+               "type": ["string","object"],
+               "minProperties": 1,
+               "maxProperties": 1,
+               "patternProperties": {
+                   "^(?!any_of)(?!all_or_none)": {
+                       "$id": "subschema_for_constraint_IDS_path",
+                       "description": "An IDS path with constraints",
+                       "type": "object",
+                       "additionalProperties": false,
+                       "minProperties": 1,
+                       "maxProperties": 1,
+                       "properties": {
+                           "allowed_values": {
+                               "description": "Maps to a sequence of mappings having the IDS path as key, which maps to a sequence of values (integer, float or string) that are allowed to be present in the data array at the IDS path. When specified, the data array must only consist of the listed values.",
+                               "type": "array",
+                               "items": {
+                                   "type": ["integer","string", "number"]
                                 }
                             }
                         }
-                    }
-
-                }
-            }
-                     
-        },
-
-        "constraints": {
-            "description": "List of constraints. IDS paths listed here do not need to be present.",
-            "type": "object",
-            "properties": {
-
-                "allowed_values": {
-                    "description": "Maps to a sequence of mappings having the IDS path as key, which maps to a sequence of values (integer, float or string) that are allowed to be present in the data array at the IDS path. When specified, the data array must only consist of the listed values.",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {
-                                "type": ["integer","string", "number"]
+                   }
+               },
+               "properties": {
+                   "all_or_none": {
+                       "description": "Either all listed IDS paths must be present or all must be absent.",
+                       "type": "array",
+                       "uniqueItems": true,
+                       "minItems": 1,
+                       "items": {
+                           "type": ["string", "object"],
+                           "minProperties": 1,
+                           "maxProperties": 1,
+                           "additionalProperties": {
+                                "$ref": "subschema_for_constraint_IDS_path"
                             }
-                        }
-                    }
-                }
-            }
-        }
+                       }
+                   },
+                   "any_of": {
+                       "description": "At least one of the listed (sets of) IDS paths must be present.",
+                       "type": "array",
+                       "minItems": 2,
+                       "items": {
+                           "type": ["string","object"],
+                           "minProperties": 1,
+                           "maxProperties": 1,
+                           "patternProperties": {
+                                "^(?!all_of)": {
+                                    "$ref": "subschema_for_constraint_IDS_path"
+                                }
+                           },
+                           "properties": {
+                               "all_of": {
+                                   "description": "All the listed IDS paths are considered as a set. Either they all need to be present, or the path(s) in some other entry of the above 'any_of' key must be present.",
+                                   "type": "array",
+                                   "uniqueItems": true,
+                                   "minItems": 2,
+                                   "items": {
+                                       "type": ["string", "object"],
+                                       "minProperties": 1,
+                                       "maxProperties": 1,
+                                       "additionalProperties": {
+                                           "$ref": "subschema_for_constraint_IDS_path"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+                    
+       }
      }
-     }
-
+}
