@@ -1,7 +1,7 @@
 { 
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "Interface schema", 
-    "description": "Schema for input or output interface. Validate using python -m json.tool json_schema_new.json",  
+    "description": "Schema for input or output interface. Validate using python -m json.tool json_schema.json",  
     "type": "object",
     "required": ["dd_version_range", "paths","schema_major_version", "schema_minor_version","schema_patch_version","doi_url"],
     "additionalProperties": false,
