@@ -29,7 +29,10 @@
         },
        "doi_url": {
            "description": "DOI URL of this schema's version",
-           "type": "string"
+           "anyOf": [
+            {"const": "placeholder_doi_url"},
+            {"type": "string"}
+           ]
        },
        "dd_version_range": {
          "description": "Range of versions of Data Dictionary that this schema targets, indicated by [min_version, max_version]",
