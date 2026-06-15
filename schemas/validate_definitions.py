@@ -4,6 +4,7 @@ Dictionary"""
 import jsonschema
 from imas import dd_zip, IDSFactory, util
 from pathlib import Path
+from packaging.version import Version
 import click
 import json
 import yaml
@@ -99,52 +100,14 @@ def extract_paths(paths: list) -> list:
     return sorted(path_list)
 
 
-def check_version_within_range(version_str: str, version_range: list[str, str]) -> bool:
-    version_digits = [int(d) for d in version_str.split(".")]
-
-    min_version_digits = [int(d) for d in version_range[0].split(".")]
-    max_version_digits = [int(d) for d in version_range[1].split(".")]
-
-    if (
-        version_digits[0] < min_version_digits[0]
-        or version_digits[0] > max_version_digits[0]
-    ):
-        return False
-
-    if (
-        version_digits[0] == min_version_digits[0]
-        and version_digits[1] < min_version_digits[1]
-    ):
-        return False
-
-    if (
-        version_digits[0] == max_version_digits[0]
-        and version_digits[1] > max_version_digits[1]
-    ):
-        return False
-
-    if (
-        version_digits[0] == min_version_digits[0]
-        and version_digits[1] == min_version_digits[1]
-        and version_digits[2] < min_version_digits[2]
-    ):
-        return False
-
-    if (
-        version_digits[0] == max_version_digits[0]
-        and version_digits[1] == max_version_digits[1]
-        and version_digits[2] > max_version_digits[2]
-    ):
-        return False
-
-    return True
-
-
 def get_valid_dd_versions(definition: dict) -> list:
+    min_version_str, max_version_str = definition["dd_version_range"]
+    min_version, max_version = Version(min_version_str), Version(max_version_str)
+
     valid_dd_versions = [
         version_str
         for version_str in VALID_DD_VERSIONS
-        if check_version_within_range(version_str, definition["dd_version_range"])
+        if Version(version_str) >= min_version and Version(version_str) <= max_version
     ]
 
     if not valid_dd_versions:
