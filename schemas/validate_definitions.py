@@ -76,14 +76,14 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
 
 
 def extract_paths(paths: list) -> list:
-    # Collect all IDS paths from dictionary
+    # Collect all IDS paths from list of strings and dictionaries
     path_list = []
 
     for string_or_dict in paths:
         # Extract paths from string(s) or dictionaries
-        if type(string_or_dict) is str:
+        if isinstance(string_or_dict, str):
             path_list.append(string_or_dict)
-        elif type(string_or_dict) is dict:
+        elif isinstance(string_or_dict, dict):
             key = list(string_or_dict.keys())[0]
             if key not in ["all_or_none", "any_of", "all_of"]:
                 # Only key of dictionary is an IDS path
@@ -99,11 +99,11 @@ def extract_paths(paths: list) -> list:
     return sorted(path_list)
 
 
-def check_version_within_range(version_str: str, range: list[str, str]) -> bool:
+def check_version_within_range(version_str: str, version_range: list[str, str]) -> bool:
     version_digits = [int(d) for d in version_str.split(".")]
 
-    min_version_digits = [int(d) for d in range[0].split(".")]
-    max_version_digits = [int(d) for d in range[1].split(".")]
+    min_version_digits = [int(d) for d in version_range[0].split(".")]
+    max_version_digits = [int(d) for d in version_range[1].split(".")]
 
     if (
         version_digits[0] < min_version_digits[0]
