@@ -7,7 +7,12 @@ from pathlib import Path
 from packaging.version import Version
 import click
 import json
+import logging
+import sys
 import yaml
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # Global parameters used for consistent amount of spacing, independent of user config
 SPACING_2 = "  "
@@ -22,7 +27,7 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
 
     json_path = error.json_path
 
-    print(f"{SPACING_2}Error at YAML path {json_path}\n")
+    logger.warning(f"{SPACING_2}Error at YAML path {json_path}\n")
 
     if error.schema["type"] == "array" and error.validator == "uniqueItems":
         # Duplicate IDS paths in sequence
@@ -36,12 +41,14 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
             if list_of_paths.count(IDS_path) > 1 and IDS_path not in duplicate_paths:
                 duplicate_paths.append(IDS_path)
 
-        print(f"{SPACING_2}The following IDS paths were duplicated in the sequence:")
-        print(f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n")
+        logger.warning(
+            f"{SPACING_2}The following IDS paths were duplicated in the sequence:"
+        )
+        logger.warning(f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n")
 
     elif error.schema["type"] == "array" and error.validator == "minItems":
         # Certain sequences must have length 2 or greater
-        print(f"{SPACING_4}This sequence must have 2 or more entries\n")
+        logger.warning(f"{SPACING_4}This sequence must have 2 or more entries\n")
 
     elif (
         json_path == "$.paths"
@@ -50,13 +57,13 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
         == error.validator_value["description"]
     ):
         # Only one 'all_of' key is allowed under 'paths'
-        print(
+        logger.warning(
             f"{SPACING_4}Multiple 'all_of' keys are present directly under 'paths', but at most"
             + " one is allowed.\n"
         )
 
     else:
-        print(f"{SPACING_4}" + error.message + "\n")
+        logger.warning(f"{SPACING_4}" + error.message + "\n")
 
 
 def validate_against_schema(definition: dict, schema: dict) -> bool:
@@ -111,7 +118,7 @@ def get_valid_dd_versions(definition: dict) -> list:
     ]
 
     if not valid_dd_versions:
-        print(
+        logger.warning(
             f"{SPACING_2}No valid versions of the Data Dictionary fall within the"
             + f" provided range {definition['dd_version_range']}"
         )
@@ -138,7 +145,7 @@ def check_ids_name(definition: dict) -> bool:
         for ids_path in path_list:
             ids_name = ids_path.split("/")[0]
             if ids_name not in ids_names_list:
-                print(
+                logger.warning(
                     f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary"
                     + f" version {dd_version}\n"
                 )
@@ -173,7 +180,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
             valid_paths_list = util.find_paths(ids_instance, "")
 
             if ids_path not in valid_paths_list:
-                print(
+                logger.warning(
                     f"{SPACING_2}IDS path {ids_path} is not in IDS {ids_name} for "
                     + f"Data Dictionary version {dd_version}.\n"
                 )
@@ -184,7 +191,8 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
 
 @click.command()
 @click.argument("input_path")
-def main(input_path: str):
+@click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
+def main(input_path: str, silent: bool):
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to provided Data Dictionary version.
@@ -193,6 +201,12 @@ def main(input_path: str):
     INPUT_PATH  absolute or relative path to YAML file or to folder containing YAML
     files at some depth-level.
     """
+
+    # Set log level to ERROR in silent-mode
+    if silent:
+        logger.setLevel(logging.ERROR)
+    else:
+        logger.setLevel(logging.WARNING)
 
     # Load schema
     schema_path = Path(__file__).parents[0] / "json_schema.json"
@@ -216,7 +230,7 @@ def main(input_path: str):
                 f"The folder '{input_path}' seems to contain no YAML files at any level"
             )
         else:
-            print(f"Searching for YAML files in folder {input_path.name}")
+            logger.warning(f"Searching for YAML files in folder {input_path.name}")
     elif input_path.is_file():
         list_of_files = [input_path]
     else:
@@ -230,7 +244,7 @@ def main(input_path: str):
         with open(file_path) as file:
             definition_dict = yaml.safe_load(file)
 
-        print(f"\nValidating {file_path.name}...")
+        logger.warning(f"\nValidating {file_path.name}...")
 
         # Correctness with respect to JSON Schema
         if not validate_against_schema(definition_dict, schema_dict):
@@ -247,17 +261,22 @@ def main(input_path: str):
             incorrect_definitions.append(file_path.name)
             continue
 
-        print(f"{SPACING_2}All checks passed")
+        logger.warning(f"{SPACING_2}All checks passed")
 
     if incorrect_definitions:
-        print("\n")
-        raise Exception(
+        if silent:
+            # Ensure exiting with non-zero exit code
+            sys.exit(1)
+
+        logger.warning(
             "\nIssues were found in the following file(s)"
             + f"\n{SPACING_2}"
             + f"\n{SPACING_2}".join(incorrect_definitions)
         )
+
+        sys.exit(1)
     else:
-        print("\nNo issues found")
+        logger.warning("\nNo issues found")
 
 
 if __name__ == "__main__":
