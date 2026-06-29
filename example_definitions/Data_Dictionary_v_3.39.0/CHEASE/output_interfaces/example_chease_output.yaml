@@ -1,13 +1,18 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [3.39.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.39.0, 3.39.0]
 
 paths:
 - equilibrium/code/name
 - equilibrium/code/output_flag
 - equilibrium/code/parameters
 - equilibrium/code/version
-- equilibrium/ids_properties/homogeneous_time
+- equilibrium/ids_properties/homogeneous_time:
+    allowed_values: [1]
 - equilibrium/time_slice/boundary/elongation
 - equilibrium/time_slice/boundary/elongation_lower
 - equilibrium/time_slice/boundary/elongation_upper
@@ -111,7 +116,3 @@ paths:
 - equilibrium/time_slice/profiles_2d/z
 - equilibrium/vacuum_toroidal_field/b0
 - equilibrium/vacuum_toroidal_field/r0
-
-constraints:
-  allowed_values:
-  - equilibrium/ids_properties/homogeneous_time: [1]

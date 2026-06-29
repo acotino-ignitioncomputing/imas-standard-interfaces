@@ -1,6 +1,10 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [4.0.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [4.0.0, 4.0.0]
 
 paths:
 - core_profiles/code/description
@@ -19,7 +23,8 @@ paths:
 - core_profiles/global_quantities/v_loop
 - core_profiles/ids_properties/comment
 - core_profiles/ids_properties/creation_date
-- core_profiles/ids_properties/homogeneous_time
+- core_profiles/ids_properties/homogeneous_time:
+    allowed_values: [1]
 - core_profiles/profiles_1d/conductivity_parallel
 - core_profiles/profiles_1d/electrons/density
 - core_profiles/profiles_1d/electrons/density_fast
@@ -54,7 +59,8 @@ paths:
 - core_profiles/vacuum_toroidal_field/b0
 - core_profiles/vacuum_toroidal_field/r0
 - equilibrium/ids_properties/comment
-- equilibrium/ids_properties/homogeneous_time
+- equilibrium/ids_properties/homogeneous_time:
+    allowed_values: [1]
 - equilibrium/time_slice/boundary/geometric_axis/r
 - equilibrium/time_slice/boundary/minor_radius
 - equilibrium/time_slice/global_quantities/ip
@@ -83,8 +89,3 @@ paths:
 - equilibrium/time_slice/profiles_1d/triangularity_upper
 - equilibrium/time_slice/profiles_1d/volume
 - equilibrium/vacuum_toroidal_field
-
-constraints:
-  allowed_values:
-  - core_profiles/ids_properties/homogeneous_time: [1]
-  - equilibrium/ids_properties/homogeneous_time: [1]

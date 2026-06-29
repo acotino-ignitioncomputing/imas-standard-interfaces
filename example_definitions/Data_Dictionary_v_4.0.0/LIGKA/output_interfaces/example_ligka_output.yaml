@@ -1,6 +1,10 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [4.0.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [4.0.0, 4.0.0]
 
 paths:
 - core_profiles/profiles_1d/electrons/temperature
@@ -22,10 +26,13 @@ paths:
 - equilibrium/vacuum_toroidal_field
 - mhd_linear/code/name
 - mhd_linear/ids_properties/creation_date
-- mhd_linear/ids_properties/homogeneous_time
+- mhd_linear/ids_properties/homogeneous_time:
+    allowed_values: [0, 1]
 - mhd_linear/ids_properties/provider
-- mhd_linear/model_type/index
-- mhd_linear/time_slice/toroidal_mode/ballooning_type/index
+- mhd_linear/model_type/index:
+    allowed_values: [11, 12, 16, 23, 24, 35]
+- mhd_linear/time_slice/toroidal_mode/ballooning_type/index:
+    allowed_values: [0, 1]
 - mhd_linear/time_slice/toroidal_mode/frequency
 - mhd_linear/time_slice/toroidal_mode/growthrate
 - mhd_linear/time_slice/toroidal_mode/m_pol_dominant
@@ -36,7 +43,8 @@ paths:
 - mhd_linear/time_slice/toroidal_mode/plasma/grid/dim1
 - mhd_linear/time_slice/toroidal_mode/plasma/grid/dim2
 - mhd_linear/time_slice/toroidal_mode/plasma/grid_type/description
-- mhd_linear/time_slice/toroidal_mode/plasma/grid_type/index
+- mhd_linear/time_slice/toroidal_mode/plasma/grid_type/index:
+    allowed_values: [24]
 - mhd_linear/time_slice/toroidal_mode/plasma/phi_potential_perturbed
 - mhd_linear/time_slice/toroidal_mode/plasma/psi_potential_perturbed
 - mhd_linear/time_slice/toroidal_mode/plasma/tau_alfven
@@ -59,10 +67,3 @@ paths:
 - any_of:
   - core_profiles/profiles_1d/ion/density
   - core_profiles/profiles_1d/ion/density_thermal
-
-constraints:
-  allowed_values:
-  - mhd_linear/model_type/index: [11, 12, 16, 23, 24, 35]
-  - mhd_linear/time_slice/toroidal_mode/plasma/grid_type/index: [24]
-  - mhd_linear/time_slice/toroidal_mode/ballooning_type/index: [0, 1]
-  - mhd_linear/ids_properties/homogeneous_time: [0, 1]

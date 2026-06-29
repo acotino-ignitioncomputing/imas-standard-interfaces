@@ -1,11 +1,16 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [3.42.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.42.0, 3.42.0]
 
 paths:
 - equilibrium/code/name
 - equilibrium/ids_properties/creation_date
-- equilibrium/ids_properties/homogeneous_time
+- equilibrium/ids_properties/homogeneous_time:
+    allowed_values: [1]
 - equilibrium/ids_properties/provider
 - equilibrium/time_slice/boundary/geometric_axis
 - equilibrium/time_slice/boundary/lcfs
@@ -14,7 +19,8 @@ paths:
 - equilibrium/time_slice/coordinate_system/grid/dim1
 - equilibrium/time_slice/coordinate_system/grid/dim2
 - equilibrium/time_slice/coordinate_system/grid_type/description
-- equilibrium/time_slice/coordinate_system/grid_type/index
+- equilibrium/time_slice/coordinate_system/grid_type/index:
+    allowed_values: [21]
 - equilibrium/time_slice/coordinate_system/jacobian
 - equilibrium/time_slice/coordinate_system/r
 - equilibrium/time_slice/coordinate_system/tensor_contravariant
@@ -50,13 +56,10 @@ paths:
 - equilibrium/time_slice/profiles_2d/b_field_z
 - equilibrium/time_slice/profiles_2d/grid/dim1
 - equilibrium/time_slice/profiles_2d/grid/dim2
-- equilibrium/time_slice/profiles_2d/grid_type/index
+- equilibrium/time_slice/profiles_2d/grid_type/index:
+    allowed_values: [1]
 - equilibrium/time_slice/profiles_2d/psi
 - equilibrium/time_slice/profiles_2d/r
 - equilibrium/time_slice/profiles_2d/z
 - equilibrium/vacuum_toroidal_field
-constraints:
-  allowed_values:
-  - equilibrium/ids_properties/homogeneous_time: [1]
-  - equilibrium/time_slice/profiles_2d/grid_type/index: [1]
-  - equilibrium/time_slice/coordinate_system/grid_type/index: [21]
+

@@ -1,6 +1,10 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [3.42.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.42.0, 3.42.0]
 
 paths:
 - magnetics/b_field_pol_probe/area
@@ -15,26 +19,26 @@ paths:
 - magnetics/flux_loop/flux/data
 - magnetics/flux_loop/name
 - magnetics/flux_loop/position
+- magnetics/ids_properties/homogeneous_time:
+    allowed_values: [0,1]
 - magnetics/ip/data
 - pf_active/circuit/connections
 - pf_active/circuit/current/data
-- pf_active/coil/element/geometry/geometry_type
+- pf_active/coil/element/geometry/geometry_type:
+    allowed_values: [2, 3, 5, 6]
 - pf_active/coil/element/turns_with_sign
 - pf_active/coil/name
+- pf_active/ids_properties/homogeneous_time:
+    allowed_values: [0,1]
 - pf_active/supply/name
+- pf_passive/ids_properties/homogeneous_time:
+    allowed_values: [0,1]
 - pf_passive/loop/current
-- pf_passive/loop/element/geometry/geometry_type
+- pf_passive/loop/element/geometry/geometry_type:
+    allowed_values: [2, 3, 5, 6]
 - pf_passive/loop/element/turns_with_sign
 - pf_passive/loop/name
 - tf/b_field_phi_vacuum_r/data
+- tf/ids_properties/homogeneous_time:
+    allowed_values: [0,1]
 - wall/description_2d/limiter/unit/outline
-
-
-constraints:
-  allowed_values:
-  - magnetics/ids_properties/homogeneous_time: [0,1]
-  - pf_active/coil/element/geometry/geometry_type: [2, 3, 5, 6]
-  - pf_active/ids_properties/homogeneous_time: [0,1]
-  - pf_passive/loop/element/geometry/geometry_type: [2, 3, 5, 6]
-  - pf_passive/ids_properties/homogeneous_time: [0,1]
-  - tf/ids_properties/homogeneous_time: [0,1]

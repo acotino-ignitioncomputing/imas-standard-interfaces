@@ -1,6 +1,10 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [4.0.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [4.0.0, 4.0.0]
 
 paths:
 - core_profiles/profiles_1d/electrons/temperature
@@ -20,6 +24,8 @@ paths:
 - distributions/distribution/profiles_1d/grid/rho_tor
 - distributions/distribution/profiles_1d/grid/rho_tor_norm
 - distributions/distribution/species/type/name
+- equilibrium/ids_properties/homogeneous_time:
+    allowed_values: [0, 1]
 - equilibrium/time_slice/boundary/geometric_axis/r
 - equilibrium/time_slice/boundary/geometric_axis/z
 - equilibrium/time_slice/boundary/minor_radius
@@ -46,6 +52,8 @@ paths:
 - equilibrium/time_slice/profiles_2d/grid/dim2
 - equilibrium/time_slice/profiles_2d/grid_type/index
 - equilibrium/vacuum_toroidal_field
+- mhd_linear/ids_properties/homogeneous_time:
+    allowed_values: [0, 1]
 - mhd_linear/time_slice/toroidal_mode/ballooning_type/index
 - mhd_linear/time_slice/toroidal_mode/perturbation_type/index
 - mhd_linear/time_slice/toroidal_mode/plasma/velocity_perturbed/coordinate1/coefficients_real
@@ -70,8 +78,3 @@ paths:
 - any_of:
   - core_profiles/profiles_1d/ion/density
   - core_profiles/profiles_1d/ion/density_thermal
-
-constraints:
-  allowed_values:
-  - equilibrium/ids_properties/homogeneous_time: [0, 1]
-  - mhd_linear/ids_properties/homogeneous_time: [0, 1]

@@ -1,8 +1,14 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [3.39.0, 3.42.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.39.0, 3.42.0]
 
 paths:
+- equilibrium/ids_properties/homogeneous_time:
+    allowed_values: [0, 1]
 - equilibrium/time
 - equilibrium/time_slice/boundary/elongation
 - equilibrium/time_slice/boundary/elongation_lower
@@ -46,7 +52,3 @@ paths:
 - any_of:
   - equilibrium/time_slice/boundary/lcfs/z
   - equilibrium/time_slice/boundary/outline/z
-
-constraints:
-  allowed_values:
-  - equilibrium/ids_properties/homogeneous_time: [0, 1]
