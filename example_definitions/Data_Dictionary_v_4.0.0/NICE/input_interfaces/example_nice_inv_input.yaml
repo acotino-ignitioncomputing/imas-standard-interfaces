@@ -1,35 +1,36 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [4.0.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.42.2, 4.0.0]
 
 paths:
-- all_of:
-  - equilibrium/ids_properties/version_put/data_dictionary
-  - equilibrium/time
-  - equilibrium/time_slice/boundary/outline/r
-  - equilibrium/time_slice/boundary/outline/z
-  - equilibrium/vacuum_toroidal_field/b0
-  - equilibrium/vacuum_toroidal_field/r0
-  - pf_active/coil/element/turns_with_sign
-  - pf_active/coil/resistance
-  - pf_active/ids_properties/version_put/data_dictionary
-  - pf_passive/ids_properties/version_put/data_dictionary
-  - pf_passive/loop/resistance
-  - wall/description_2d/limiter/unit/outline/r
-  - wall/description_2d/limiter/unit/outline/z
-  - wall/description_2d/mobile/unit/outline/r
-  - wall/description_2d/mobile/unit/outline/z
-  - wall/description_2d/vessel/unit/annular/centreline/r
-  - wall/description_2d/vessel/unit/annular/centreline/z
-  - wall/description_2d/vessel/unit/annular/resistivity
-  - wall/description_2d/vessel/unit/annular/thickness
-  - wall/ids_properties/version_put/data_dictionary
+- equilibrium/ids_properties/version_put/data_dictionary
+- equilibrium/time_slice/boundary/outline
+- equilibrium/vacuum_toroidal_field
+- pf_active/coil/element/turns_with_sign
+- pf_active/coil/element/geometry/geometry_type:
+    allowed_values: [1,2]
+- pf_active/coil/resistance
+- pf_active/ids_properties/version_put/data_dictionary
+- pf_passive/ids_properties/version_put/data_dictionary
+- pf_passive/loop/element/geometry/geometry_type:
+    allowed_values: [1,2]
+- pf_passive/loop/resistance
+- wall/description_2d/limiter/unit/outline
+- wall/description_2d/mobile/unit/outline/r
+- wall/description_2d/mobile/unit/outline/z
+- wall/description_2d/vessel/unit/annular/centreline
+- wall/description_2d/vessel/unit/annular/resistivity
+- wall/description_2d/vessel/unit/annular/thickness
+- wall/ids_properties/version_put/data_dictionary
 
 - all_or_none:
   - iron_core/ids_properties/version_put/data_dictionary
   - iron_core/segment/b_field
-  - iron_core/segment/geometry/outline/r
-  - iron_core/segment/geometry/outline/z
+  - iron_core/segment/geometry/outline
   - iron_core/segment/permeability_relative
 
 - any_of:
@@ -37,7 +38,3 @@ paths:
   - equilibrium/time_slice/profiles_1d/dpressure_dpsi
   - equilibrium/time_slice/profiles_1d/f_df_dpsi
 
-constraints:
-  allowed_values:
-  - pf_active/coil/element/geometry/geometry_type: [1,2]
-  - pf_passive/loop/element/geometry/geometry_type: [1, 2]

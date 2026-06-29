@@ -1,20 +1,22 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [3.39.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.39.0, 3.39.0]
 
 paths:
-- all_of:
-  - equilibrium/time_slice/profiles_2d/grid/dim1
-  - equilibrium/time_slice/profiles_2d/grid/dim2
-  - magnetics/b_field_pol_probe/length
-  - magnetics/b_field_pol_probe/poloidal_angle
-  - magnetics/b_field_pol_probe/position/r
-  - magnetics/b_field_pol_probe/position/z
-  - magnetics/flux_loop/position/r
-  - magnetics/flux_loop/position/z
-  - pf_active/coil/element/turns_with_sign
-
-constraints:
-  allowed_values:
-  - pf_active/coil/element/geometry/geometry_type: [2, 3, 5]
-  - pf_passive/loop/element/geometry/geometry_type: [2, 3]
+- equilibrium/time_slice/profiles_2d/grid/dim1
+- equilibrium/time_slice/profiles_2d/grid/dim2
+- magnetics/b_field_pol_probe/length
+- magnetics/b_field_pol_probe/poloidal_angle
+- magnetics/b_field_pol_probe/position/r
+- magnetics/b_field_pol_probe/position/z
+- magnetics/flux_loop/position/r
+- magnetics/flux_loop/position/z
+- pf_active/coil/element/geometry/geometry_type:
+    allowed_values: [2, 3, 5]
+- pf_active/coil/element/turns_with_sign
+- pf_passive/loop/element/geometry/geometry_type:
+    allowed_values: [2, 3]

@@ -1,17 +1,20 @@
-schema_version: placeholder_doi
+schema_major_version: 0
+schema_minor_version: 0
+schema_patch_version: 1
 
-dd_version: [3.39.0]
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.39.0, 3.39.0]
 
 paths:
-- all_of:
-  - equilibrium/time_slice/boundary/elongation
-  - equilibrium/time_slice/boundary/geometric_axis/r
-  - equilibrium/time_slice/boundary/minor_radius
-  - equilibrium/time_slice/boundary/type
-  - equilibrium/time_slice/boundary_separatrix/gap/value
-  - equilibrium/time_slice/global_quantities/current_centre/z
-  - equilibrium/time_slice/global_quantities/ip
-  - equilibrium/time_slice/time
-  - pf_active/coil/current/data
-  - pulse_schedule/position_control/gap/value/reference/data
-  - pulse_schedule/position_control/gap/value/reference/time
+- equilibrium/time_slice/boundary/elongation
+- equilibrium/time_slice/boundary/geometric_axis/r
+- equilibrium/time_slice/boundary/minor_radius
+- equilibrium/time_slice/boundary/type
+- equilibrium/time_slice/boundary_separatrix/gap/value
+- equilibrium/time_slice/global_quantities/current_centre/z
+- equilibrium/time_slice/global_quantities/ip
+- equilibrium/time_slice/time
+- pf_active/coil/current/data
+- pulse_schedule/position_control/gap/value/reference/data
+- pulse_schedule/position_control/gap/value/reference/time

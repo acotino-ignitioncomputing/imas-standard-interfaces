@@ -2,15 +2,23 @@
 Dictionary"""
 
 import jsonschema
-from imas import IDSFactory, util
+from imas import dd_zip, IDSFactory, util
 from pathlib import Path
+from packaging.version import Version
 import click
 import json
+import logging
+import sys
 import yaml
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # Global parameters used for consistent amount of spacing, independent of user config
 SPACING_2 = "  "
 SPACING_4 = "    "
+
+VALID_DD_VERSIONS = dd_zip.dd_xml_versions()
 
 
 def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
@@ -19,7 +27,7 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
 
     json_path = error.json_path
 
-    print(f"{SPACING_2}Error at YAML path {json_path}\n")
+    logger.warning(f"{SPACING_2}Error at YAML path {json_path}\n")
 
     if error.schema["type"] == "array" and error.validator == "uniqueItems":
         # Duplicate IDS paths in sequence
@@ -33,12 +41,14 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
             if list_of_paths.count(IDS_path) > 1 and IDS_path not in duplicate_paths:
                 duplicate_paths.append(IDS_path)
 
-        print(f"{SPACING_2}The following IDS paths were duplicated in the sequence:")
-        print(f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n")
+        logger.warning(
+            f"{SPACING_2}The following IDS paths were duplicated in the sequence:"
+        )
+        logger.warning(f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n")
 
     elif error.schema["type"] == "array" and error.validator == "minItems":
         # Certain sequences must have length 2 or greater
-        print(f"{SPACING_4}This sequence must have 2 or more entries\n")
+        logger.warning(f"{SPACING_4}This sequence must have 2 or more entries\n")
 
     elif (
         json_path == "$.paths"
@@ -47,13 +57,13 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
         == error.validator_value["description"]
     ):
         # Only one 'all_of' key is allowed under 'paths'
-        print(
+        logger.warning(
             f"{SPACING_4}Multiple 'all_of' keys are present directly under 'paths', but at most"
             + " one is allowed.\n"
         )
 
     else:
-        print(f"{SPACING_4}" + error.message + "\n")
+        logger.warning(f"{SPACING_4}" + error.message + "\n")
 
 
 def validate_against_schema(definition: dict, schema: dict) -> bool:
@@ -73,44 +83,71 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     return validation_correct
 
 
-def extract_paths(definition: dict) -> list:
-    # Collect all IDS paths
+def extract_paths(paths: list) -> list:
+    # Collect all IDS paths from list of strings and dictionaries
     path_list = []
 
-    for criterium_dict in definition["paths"]:
+    for string_or_dict in paths:
         # Extract paths from string(s) or dictionaries
-        for string_or_dict in criterium_dict.values():
-            for entry in string_or_dict:
-                if type(entry) is str:
-                    path_list.append(entry)
-                elif type(entry) is dict:
-                    for _, sublist in entry.items():
-                        path_list += sublist
-                else:
-                    raise (
-                        Exception(
-                            f"Invalid entry \n{SPACING_2}'{entry}'\n in {criterium_dict}"
-                        )
-                    )
+        if isinstance(string_or_dict, str):
+            path_list.append(string_or_dict)
+        elif isinstance(string_or_dict, dict):
+            key = list(string_or_dict.keys())[0]
+            if key not in ["all_or_none", "any_of", "all_of"]:
+                # Only key of dictionary is an IDS path
+                path_list.append(key)
+            else:
+                path_list += extract_paths(string_or_dict[key])
+        else:
+            raise (
+                Exception(
+                    f"Invalid entry \n{SPACING_2}'{string_or_dict}'\n in {string_or_dict}"
+                )
+            )
     return sorted(path_list)
+
+
+def get_valid_dd_versions(definition: dict) -> list:
+    min_version_str, max_version_str = definition["dd_version_range"]
+    min_version, max_version = Version(min_version_str), Version(max_version_str)
+
+    valid_dd_versions = [
+        version_str
+        for version_str in VALID_DD_VERSIONS
+        if Version(version_str) >= min_version and Version(version_str) <= max_version
+    ]
+
+    if not valid_dd_versions:
+        logger.warning(
+            f"{SPACING_2}No valid versions of the Data Dictionary fall within the"
+            + f" provided range {definition['dd_version_range']}"
+        )
+
+    return valid_dd_versions
 
 
 def check_ids_name(definition: dict) -> bool:
     """Only allow IDS names that are in the Data Dictionary."""
 
+    dd_versions_to_check = get_valid_dd_versions(definition)
+
+    if not dd_versions_to_check:
+        return False
+
     correct_ids_names = True
-    for dd_version in definition["dd_version"]:
+    for dd_version in dd_versions_to_check:
 
         ids_names_list = IDSFactory(dd_version).ids_names()
 
         # Collect all IDS paths
-        path_list = extract_paths(definition)
+        path_list = extract_paths(definition["paths"])
 
         for ids_path in path_list:
             ids_name = ids_path.split("/")[0]
             if ids_name not in ids_names_list:
-                print(
-                    f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary version {dd_version}"
+                logger.warning(
+                    f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary"
+                    + f" version {dd_version}\n"
                 )
                 correct_ids_names = False
 
@@ -119,12 +156,18 @@ def check_ids_name(definition: dict) -> bool:
 
 def check_ids_paths_in_dd(definition: dict) -> bool:
     """Each IDS path must be present in the provided version of Data Dictionary."""
+
+    dd_versions_to_check = get_valid_dd_versions(definition)
+
+    if not dd_versions_to_check:
+        return False
+
     all_paths_valid = True
 
-    for dd_version in definition["dd_version"]:
+    for dd_version in dd_versions_to_check:
 
         # Collect all IDS paths
-        path_list = extract_paths(definition)
+        path_list = extract_paths(definition["paths"])
 
         for full_ids_path in path_list:
             # Extract IDS name and path
@@ -137,9 +180,9 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
             valid_paths_list = util.find_paths(ids_instance, "")
 
             if ids_path not in valid_paths_list:
-                print(
+                logger.warning(
                     f"{SPACING_2}IDS path {ids_path} is not in IDS {ids_name} for "
-                    + f"Data Dictionary version {dd_version}."
+                    + f"Data Dictionary version {dd_version}.\n"
                 )
                 all_paths_valid = False
 
@@ -148,7 +191,8 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
 
 @click.command()
 @click.argument("input_path")
-def main(input_path: str):
+@click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
+def main(input_path: str, silent: bool):
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to provided Data Dictionary version.
@@ -157,6 +201,12 @@ def main(input_path: str):
     INPUT_PATH  absolute or relative path to YAML file or to folder containing YAML
     files at some depth-level.
     """
+
+    # Set log level to ERROR in silent-mode
+    if silent:
+        logger.setLevel(logging.ERROR)
+    else:
+        logger.setLevel(logging.WARNING)
 
     # Load schema
     schema_path = Path(__file__).parents[0] / "json_schema.json"
@@ -180,7 +230,7 @@ def main(input_path: str):
                 f"The folder '{input_path}' seems to contain no YAML files at any level"
             )
         else:
-            print(f"Searching for YAML files in folder {input_path.name}")
+            logger.warning(f"Searching for YAML files in folder {input_path.name}")
     elif input_path.is_file():
         list_of_files = [input_path]
     else:
@@ -194,7 +244,7 @@ def main(input_path: str):
         with open(file_path) as file:
             definition_dict = yaml.safe_load(file)
 
-        print(f"\nValidating {file_path.name}...")
+        logger.warning(f"\nValidating {file_path.name}...")
 
         # Correctness with respect to JSON Schema
         if not validate_against_schema(definition_dict, schema_dict):
@@ -211,16 +261,22 @@ def main(input_path: str):
             incorrect_definitions.append(file_path.name)
             continue
 
-        print(f"{SPACING_2}All checks passed")
+        logger.warning(f"{SPACING_2}All checks passed")
 
     if incorrect_definitions:
-        raise Exception(
+        if silent:
+            # Ensure exiting with non-zero exit code
+            sys.exit(1)
+
+        logger.warning(
             "\nIssues were found in the following file(s)"
             + f"\n{SPACING_2}"
             + f"\n{SPACING_2}".join(incorrect_definitions)
         )
+
+        sys.exit(1)
     else:
-        print("\nNo issues found")
+        logger.warning("\nNo issues found")
 
 
 if __name__ == "__main__":

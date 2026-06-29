@@ -13,14 +13,16 @@ present:
 - `dd_version`
 - [`paths`](#paths)
 
-The string-value of the key `schema_version` must be equal to the DOI of the
+The string-value of the key `schema_version` must be equal to the DOI URL of the
 schema.
 
 The key `dd_version` holds a list of versions of the IMAS Data Dictionary that
 the definition targets (e.g. `4.1.0`).
 
-The key [`paths`](#paths) contains  sets of IDS paths that must be present in
-the dataset and whose data array must be non-empty.
+The key [`paths`](#paths) contains (sets of) IDS paths that must be present in
+the dataset and whose data array must be non-empty. If an IDS path has child
+paths then it is implied that each child path must be present and have non-empty
+data array.
 
 Optionally, a [`constraint`](#constraints) key may be present at the top level,
 specifying any constraints on the data arrays at the specified IDS paths.
@@ -33,9 +35,9 @@ convention](https://imas-data-dictionary.readthedocs.io/en/latest/IDS-path-synta
 For example
 
 ```yaml
-- pf_active/coil/resistance # all coils
-- pf_passive/loop/element/geometry/geometry_type # first element of each coil
-- pulse_schedule/density_control/ion/element/z_n # elements 3 until 7 
+- pf_active/coil/resistance
+- pf_passive/loop/element/geometry/geometry_type 
+- pulse_schedule/density_control/ion/element/z_n
 ```
 
 In order to increase readability of the interface definitions, it is recommended
@@ -46,11 +48,9 @@ For more example interface definitions, see the YAML files in the folder `exampl
 
 ## Paths
 
-The mapping key `paths` maps to a sequence of mappings consisting of exactly one
-of the following keys:
+The mapping key `paths` maps to a sequence of IDS path and / or mappings
+consisting of exactly one of the following keys:
 
-- `all_of`: maps to a sequence of IDS paths that must be present in the
-dataset.
 - `all_or_none`: maps to a sequence of IDS paths of which either all paths must
 be present in the dataset or all must be absent.
 - `any_of`: indicates that at least one of the listed (sets of) IDS paths must
@@ -61,13 +61,11 @@ combination of the two. See [example 1](#example-1).
 The following additional requirements are imposed to prevent different
 descriptions of the same input / output dataset:
 
-- Under `paths` there can be at most one occurence of the key `all_of`. The key
-  `any_of` may hold multiple occurences of `all_of`.
 - The sequence under `all_or_none` and `any_of` must have 2 or more entries.
 - Under `any_of`, every occurence of `all_of` must map to a sequence of 2 or
   more entries.
-- The sequence of IDS paths under each occurence of `all_of` and `all_or_none`
-  must not have duplicate IDS paths.
+- Any sequence of IDS paths, either directly under `paths` or under each occurence
+  of `any_of`, `all_or_none` and `all_of`, must not have duplicate IDS paths.
 
 ### Example 1
 
@@ -77,16 +75,14 @@ schema_version: placeholder_doi
 dd_version: [4.0.0]
 
 paths:
-- all_of:
-  - equilibrium/time
-  - equilibrium/time_slice/global_quantities/ip
-  - equilibrium/vacuum_toroidal_field/b0
+- equilibrium/time
+- equilibrium/time_slice/global_quantities/ip
+- equilibrium/vacuum_toroidal_field/b0
 
 - all_or_none:
   - iron_core/ids_properties/version_put/data_dictionary
   - iron_core/segment/b_field
-  - iron_core/segment/geometry/outline/r
-  - iron_core/segment/geometry/outline/z
+  - iron_core/segment/geometry/outline
   - iron_core/segment/permeability_relative
 
 - any_of:
