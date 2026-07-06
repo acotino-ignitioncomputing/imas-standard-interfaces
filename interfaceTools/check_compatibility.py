@@ -97,10 +97,12 @@ def check_any_of_blocks(interface_A_dict, interface_B_dict):
                 break
             if isinstance(str_or_dict, dict) and "all_of" in str_or_dict:
                 # Top any_of-key is satisfied if every path under all_of-key is present
+                all_present = True
                 for path in str_or_dict["all_of"]:
                     if path not in mandatory_paths_list_A:
-                        continue
-                any_present = True
+                        all_present = False
+                        break
+                any_present = all_present
 
         if not any_present:
             missing_any_of += extract_paths(d["any_of"])
@@ -215,9 +217,9 @@ def check_compatibility(path_interface_A: str, path_interface_B: str, silent: bo
 
     if (
         missing_mandatory_paths
-        and missing_all_or_none
-        and missing_any_of
-        and missing_allowed_values
+        or missing_all_or_none
+        or missing_any_of
+        or missing_allowed_values
     ):
         logger.warning("\nInterfaces are not compatible")
 
