@@ -28,10 +28,10 @@ def check_mandatory_paths(interface_A_dict, interface_B_dict):
             interface_B
     """
     mandatory_paths_list_A = [
-        path for path in interface_A_dict if isinstance(path, str)
+        path for path in interface_A_dict["paths"] if isinstance(path, str)
     ]
     mandatory_paths_list_B = [
-        path for path in interface_B_dict if isinstance(path, str)
+        path for path in interface_B_dict["paths"] if isinstance(path, str)
     ]
 
     return [
@@ -52,12 +52,12 @@ def check_all_or_none_block(interface_A_dict, interface_B_dict):
             present or absent in interface A
     """
     mandatory_paths_list_A = [
-        path for path in interface_A_dict if isinstance(path, str)
+        path for path in interface_A_dict["paths"] if isinstance(path, str)
     ]
 
     all_or_none_list: list[list[str]] = [
         entry["all_or_none"]
-        for entry in interface_B_dict
+        for entry in interface_B_dict["paths"]
         if isinstance(entry, dict) and "all_or_none" in entry
     ]
 
@@ -65,8 +65,8 @@ def check_all_or_none_block(interface_A_dict, interface_B_dict):
     for sublist in all_or_none_list:
         is_present = [(path in mandatory_paths_list_A) for path in sublist]
 
-        # Check if all present or all absent
-        if all(is_present) or not any(is_present):
+        # Check if there was a present path and an absent path
+        if all(is_present) != any(is_present):
             missing_all_or_none += sublist
 
     return missing_all_or_none
@@ -79,19 +79,19 @@ def check_any_of_blocks(interface_A_dict, interface_B_dict):
     # Any of the paths listed under an any_of-block should be in interface_A
 
     mandatory_paths_list_A = [
-        path for path in interface_A_dict if isinstance(path, str)
+        path for path in interface_A_dict["paths"] if isinstance(path, str)
     ]
 
     optional_path_list: list[dict] = [
         entry
-        for entry in interface_B_dict
+        for entry in interface_B_dict["paths"]
         if isinstance(entry, dict) and "any_of" in entry
     ]
 
     missing_any_of = []
     for d in optional_path_list:
         any_present = False
-        for str_or_dict in d.values():
+        for str_or_dict in d["any_of"]:
             if isinstance(str_or_dict, str) and str_or_dict in mandatory_paths_list_A:
                 any_present = True
                 break
@@ -103,7 +103,7 @@ def check_any_of_blocks(interface_A_dict, interface_B_dict):
                 any_present = True
 
         if not any_present:
-            missing_any_of.append(extract_paths(d))
+            missing_any_of += extract_paths(d["any_of"])
 
     return missing_any_of
 
@@ -166,11 +166,11 @@ def check_compatibility(path_interface_A: str, path_interface_B: str, silent: bo
     if any(
         [
             isinstance(entry, dict) and ("any_of" in entry or "all_or_none" in entry)
-            for entry in interface_A_dict
+            for entry in interface_A_dict["paths"]
         ]
     ):
         logger.warning(
-            f"WARNING: interface {path_interface_A} lists optional paths "
+            f"WARNING: interface '{path_interface_A}' lists optional paths "
             + "such that 'compatibility' is ill-defined."
         )
 
@@ -179,7 +179,8 @@ def check_compatibility(path_interface_A: str, path_interface_B: str, silent: bo
 
     if missing_mandatory_paths:
         logger.warning(
-            f"{SPACING_2}Following mandatory paths are missing:"
+            f"\n{SPACING_2}Following mandatory paths are missing:"
+            + f"\n{SPACING_4}"
             + f"\n{SPACING_4}".join(missing_mandatory_paths)
         )
 
@@ -192,8 +193,9 @@ def check_compatibility(path_interface_A: str, path_interface_B: str, silent: bo
     # Logging based on missing_all_or_none
     if missing_all_or_none:
         logger.warning(
-            f"{SPACING_2}Following paths are under an all_or_none-key, but not all are "
-            + f"present or absent in interface {path_interface_A}:"
+            f"\n{SPACING_2}Following paths are under an all_or_none-key, but not all are "
+            + f"present or absent in interface '{path_interface_A}':\n"
+            + f"\n{SPACING_4}"
             + f"\n{SPACING_4}".join(missing_all_or_none)
         )
 
@@ -202,8 +204,9 @@ def check_compatibility(path_interface_A: str, path_interface_B: str, silent: bo
 
     if missing_any_of:
         logger.warning(
-            f"{SPACING_2}The following paths are listed as a subset under an any_of-block,"
-            f" but no subset was contained in interface {path_interface_A}:"
+            f"\n{SPACING_2}The following paths are listed as a subset under an any_of-block,"
+            f" but no subset was contained in interface '{path_interface_A}':\n"
+            + f"\n{SPACING_4}"
             + f"\n{SPACING_4}".join(missing_any_of)
         )
 
