@@ -189,7 +189,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     return all_paths_valid
 
 
-def validate_definitions(input_path: str, silent: bool):
+def validate_definitions(input_path: str, silent: bool) -> int:
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to provided Data Dictionary version.
@@ -197,6 +197,9 @@ def validate_definitions(input_path: str, silent: bool):
     Arguments:\n
     INPUT_PATH  absolute or relative path to YAML file or to folder containing YAML
     files at some depth-level.
+
+    return:
+        int, representing exit code, where 0 is success and 1 is fail
     """
 
     # Set log level to ERROR in silent-mode
@@ -267,26 +270,25 @@ def validate_definitions(input_path: str, silent: bool):
         logger.warning(f"{SPACING_2}All checks passed")
 
     if incorrect_definitions:
-        if silent:
-            # Ensure exiting with non-zero exit code
-            sys.exit(1)
-
         logger.warning(
             "\nIssues were found in the following file(s)"
             + f"\n{SPACING_2}"
             + f"\n{SPACING_2}".join(incorrect_definitions)
         )
 
-        sys.exit(1)
+        return 1
     else:
         logger.warning("\nNo issues found")
+
+        return 0
 
 
 @click.command()
 @click.argument("input_path")
 @click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
 def main(input_path: str, silent: bool):
-    validate_definitions(input_path, silent)
+    exit_code = validate_definitions(input_path, silent)
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
