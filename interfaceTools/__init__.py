@@ -1,3 +1,3 @@
-from .validate_definitions import main
+from .validate_definitions import validate_definitions
 
-__all__ = ["main"]
+__all__ = ["validate_definitions"]

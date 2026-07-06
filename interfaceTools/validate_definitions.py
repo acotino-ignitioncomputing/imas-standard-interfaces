@@ -189,10 +189,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     return all_paths_valid
 
 
-@click.command()
-@click.argument("input_path")
-@click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
-def main(input_path: str, silent: bool):
+def validate_definitions(input_path: str, silent: bool):
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to provided Data Dictionary version.
@@ -209,7 +206,7 @@ def main(input_path: str, silent: bool):
         logger.setLevel(logging.WARNING)
 
     # Load schema
-    schema_path = Path(__file__).parents[0] / "json_schema.json"
+    schema_path = Path(__file__).parents[1] / "schemas" / "json_schema.json"
     with open(schema_path) as file:
         schema_dict = json.load(file)
 
@@ -277,6 +274,13 @@ def main(input_path: str, silent: bool):
         sys.exit(1)
     else:
         logger.warning("\nNo issues found")
+
+
+@click.command()
+@click.argument("input_path")
+@click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
+def main(input_path: str, silent: bool):
+    validate_definitions(input_path, silent)
 
 
 if __name__ == "__main__":
