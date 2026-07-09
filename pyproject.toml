@@ -15,5 +15,8 @@ dependencies = [
     "pyyaml>=6.0.3",
 ]
 
-[tool.setuptools]
-packages = ["interfaceTools"]
+[tool.setuptools.packages.find]
+where = ["."]
+
+[project.scripts]
+validate_definitions = "interfaceTools.validate_definitions:main"
