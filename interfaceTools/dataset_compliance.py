@@ -68,13 +68,52 @@ def check_presence_mandatory_paths(
     # Check if paths are present in dataset
     for IDS_name, mandatory_paths in mandatory_paths_dict.items():
         for IDS_path in mandatory_paths:
-            # Construct path specific to NetCDF4 dataset of IMAS data
+            # Construct path-string specific to NetCDF4 dataset of IMAS data
             netcdf_path = IDS_path.replace("/", ".")
 
             if netcdf_path not in dataset[f"{IDS_name}/0"].variables:
                 missing_mandatory_paths.append(f"{IDS_name}/{IDS_path}")
 
     return missing_mandatory_paths
+
+
+def check_non_empty_mandatory_paths(
+    interface_dict: dict, dataset: netCDF4.Dataset, missing_mandatory_paths: list
+) -> list:
+    mandatory_paths_dict = extract_mandatory_paths(interface_dict["paths"])
+
+    empty_mandatory_paths = []
+    # Check if paths are present in dataset
+    for IDS_name, mandatory_paths in mandatory_paths_dict.items():
+        for IDS_path in mandatory_paths:
+            if f"{IDS_name}/{IDS_path}" not in missing_mandatory_paths:
+                # Construct path-string specific to NetCDF4 dataset of IMAS data
+                netcdf_path = IDS_path.replace("/", ".")
+                netcdf_variable = dataset[f"{IDS_name}/0/{netcdf_path}"]
+
+                # Check if data array at netcdf_path has non-empty shape
+                if len(netcdf_variable.shape) == 0 or netcdf_variable.shape[0] == 0:
+                    empty_mandatory_paths.append(f"{IDS_name}/{IDS_path}")
+                    continue
+
+                # Check if data array contains only FillValues
+                if (
+                    "_FillValue" in netcdf_variable.ncattrs()
+                    and netcdf_variable._FillValue != ""
+                ):
+                    one_non_fill_value = False
+                    for value in netcdf_variable:
+
+                        if (
+                            not value.mask.all()
+                        ):  # This is True for a FillValue, else False
+                            one_non_fill_value = True
+                            break
+
+                    if not one_non_fill_value:
+                        empty_mandatory_paths.append(f"{IDS_name}/{IDS_path}")
+
+    return empty_mandatory_paths
 
 
 def dataset_compliance(
@@ -118,7 +157,17 @@ def dataset_compliance(
         )
 
     # Check if present data arrays are non-empty
-    # (provide missing_mandatory_paths and skip these)
+    empty_mandatory_paths = check_non_empty_mandatory_paths(
+        interface_dict, dataset, missing_mandatory_paths
+    )
+
+    if empty_mandatory_paths:
+        logger.warning(
+            f"\n{SPACING_2}Following mandatory paths have an empty data array or"
+            + " the data array is filled with only FillValues:"
+            + f"\n{SPACING_4}"
+            + f"\n{SPACING_4}".join(empty_mandatory_paths)
+        )
 
     # Check all_or_none criteria...
 
