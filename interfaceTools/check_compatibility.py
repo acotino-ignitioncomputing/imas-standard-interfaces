@@ -6,7 +6,7 @@ import logging
 import sys
 import yaml
 
-from validate_definitions import validate_definitions, extract_paths
+from .validate_definitions import validate_definitions, extract_paths
 
 # Global parameters used for consistent amount of spacing, independent of user config
 SPACING_2 = "  "
