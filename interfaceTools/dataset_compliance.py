@@ -5,7 +5,7 @@ import click
 import logging
 import sys
 import yaml
-import netCDF4
+from imas import DBEntry, util
 
 from validate_definitions import validate_definitions
 
@@ -17,12 +17,13 @@ SPACING_2 = "  "
 SPACING_4 = "    "
 
 
-def extract_mandatory_paths(paths: list) -> dict:
+def extract_mandatory_paths(paths: list, dataset: DBEntry) -> dict:
     """Construct dictionary of mandatory IDS paths, so outside any optional-path-key,
     where keys are IDS names and values are lists of IDS paths
 
     Args:
         paths: paths-key of dictionary-representation of YAML file satisfying the schema
+        dataset: IMAS Python DBEntry, mainly used for accessing path-search functions
 
     Returns:
         dict: {IDS-name: [mandatory paths]}
@@ -44,83 +45,48 @@ def extract_mandatory_paths(paths: list) -> dict:
             if IDS_name not in mandatory_paths_dict:
                 mandatory_paths_dict[IDS_name] = []
 
-            mandatory_paths_dict[IDS_name].append(IDS_path)
+            # Get all child paths by searching for 'IDS_path' and selecting those paths
+            # of the form IDS_path/other_string
+            mandatory_paths_dict[IDS_name] += [
+                child_path
+                for child_path in util.find_paths(
+                    dataset.get(IDS_name, lazy=True), IDS_path
+                )
+                if "/" in child_path.replace(IDS_path, "")
+            ]
 
-    # TODO: also add child paths of parent paths
     return mandatory_paths_dict
 
 
-def check_presence_mandatory_paths(
-    interface_dict: dict, dataset: netCDF4.Dataset
-) -> list:
+def check_mandatory_paths(interface_dict: dict, dataset: DBEntry) -> list:
     """Check which mandatory paths of interface_dict are in dataset.
 
     Args:
         interface_dict: dictionary-representation of YAML file satisfying the schema
-        dataset: netCDF4-dataset of IMAS data
+        dataset: IMAS Python DBEntry
 
     Returns:
         List[str]: missing IDS paths
     """
-    mandatory_paths_dict = extract_mandatory_paths(interface_dict["paths"])
+    mandatory_paths_dict = extract_mandatory_paths(interface_dict["paths"], dataset)
 
     missing_mandatory_paths = []
     # Check if paths are present in dataset
     for IDS_name, mandatory_paths in mandatory_paths_dict.items():
-        for IDS_path in mandatory_paths:
-            # Construct path-string specific to NetCDF4 dataset of IMAS data
-            netcdf_path = IDS_path.replace("/", ".")
-
-            if netcdf_path not in dataset[f"{IDS_name}/0"].variables:
-                missing_mandatory_paths.append(f"{IDS_name}/{IDS_path}")
+        present_paths = dataset.list_filled_paths(IDS_name)
+        missing_mandatory_paths += [
+            f"{IDS_name}/{IDS_path}"
+            for IDS_path in mandatory_paths
+            if IDS_path not in present_paths
+        ]
 
     return missing_mandatory_paths
-
-
-def check_non_empty_mandatory_paths(
-    interface_dict: dict, dataset: netCDF4.Dataset, missing_mandatory_paths: list
-) -> list:
-    mandatory_paths_dict = extract_mandatory_paths(interface_dict["paths"])
-
-    empty_mandatory_paths = []
-    # Check if paths are present in dataset
-    for IDS_name, mandatory_paths in mandatory_paths_dict.items():
-        for IDS_path in mandatory_paths:
-            if f"{IDS_name}/{IDS_path}" not in missing_mandatory_paths:
-                # Construct path-string specific to NetCDF4 dataset of IMAS data
-                netcdf_path = IDS_path.replace("/", ".")
-                netcdf_variable = dataset[f"{IDS_name}/0/{netcdf_path}"]
-
-                # Check if data array at netcdf_path has non-empty shape
-                if len(netcdf_variable.shape) == 0 or netcdf_variable.shape[0] == 0:
-                    empty_mandatory_paths.append(f"{IDS_name}/{IDS_path}")
-                    continue
-
-                # Check if data array contains only FillValues
-                if (
-                    "_FillValue" in netcdf_variable.ncattrs()
-                    and netcdf_variable._FillValue != ""
-                ):
-                    one_non_fill_value = False
-                    for value in netcdf_variable:
-
-                        if (
-                            not value.mask.all()
-                        ):  # This is True for a FillValue, else False
-                            one_non_fill_value = True
-                            break
-
-                    if not one_non_fill_value:
-                        empty_mandatory_paths.append(f"{IDS_name}/{IDS_path}")
-
-    return empty_mandatory_paths
 
 
 def dataset_compliance(
     input_interface_path: str, input_dataset_path: str, silent: bool
 ) -> int:
     input_interface_path = Path(input_interface_path)
-    input_dataset_path = Path(input_dataset_path)
 
     # Set log level to ERROR in silent-mode
     if silent:
@@ -135,38 +101,22 @@ def dataset_compliance(
         )
         return 1
 
-    # Load interface def, (How to load dataset? nc -> xarray (or netcdf4?), hdf5 -> imas.DBEntry)
-    with open(input_interface_path) as file:
+    # Load interface definition
+    with input_interface_path.open() as file:
         interface_dict = yaml.safe_load(file)
 
-    # Check format dataset (support .nc, hdf5 maybe later) and load dataset accordingly
-    if input_dataset_path.suffix == ".nc":
-        dataset = netCDF4.Dataset(input_dataset_path, mode="r")
-    else:
-        logger.error("Data format of provided dataset is not supported")
-        return 1
+    # Load dataset
+    dataset = DBEntry(input_dataset_path, "r")
 
     # Check presence of mandatory paths in dataset
-    missing_mandatory_paths = check_presence_mandatory_paths(interface_dict, dataset)
+    missing_mandatory_paths = check_mandatory_paths(interface_dict, dataset)
 
     if missing_mandatory_paths:
         logger.warning(
-            f"\n{SPACING_2}Following mandatory paths are missing in the dataset:"
+            f"\n{SPACING_2}Following mandatory paths are either empty or missing in the"
+            + " dataset:"
             + f"\n{SPACING_4}"
             + f"\n{SPACING_4}".join(missing_mandatory_paths)
-        )
-
-    # Check if present data arrays are non-empty
-    empty_mandatory_paths = check_non_empty_mandatory_paths(
-        interface_dict, dataset, missing_mandatory_paths
-    )
-
-    if empty_mandatory_paths:
-        logger.warning(
-            f"\n{SPACING_2}Following mandatory paths have an empty data array or"
-            + " the data array is filled with only FillValues:"
-            + f"\n{SPACING_4}"
-            + f"\n{SPACING_4}".join(empty_mandatory_paths)
         )
 
     # Check all_or_none criteria...
@@ -175,7 +125,14 @@ def dataset_compliance(
 
     # Check allowed_values-criteria
 
-    return 0
+    dataset.close()
+
+    if missing_mandatory_paths:
+        logger.warning("\nDataset does not comply with interface")
+        return 1
+    else:
+        logger.warning("\nDataset complies with interface")
+        return 0
 
 
 @click.command()
