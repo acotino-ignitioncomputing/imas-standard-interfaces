@@ -6,6 +6,7 @@ import logging
 import sys
 import yaml
 from imas import DBEntry, util
+from imas.exception import DataEntryException
 
 from validate_definitions import validate_definitions
 
@@ -58,6 +59,19 @@ def extract_mandatory_paths(paths: list, dataset: DBEntry) -> dict:
     return mandatory_paths_dict
 
 
+def get_filled_paths(dataset: DBEntry, IDS_name: str) -> list:
+    """Wrapper for function `DBENtry.list_filled_paths` that catches the exception
+    DataEntryException and returns empty list. This exceptio occurs whenever the
+    IDS_name is not found.
+    """
+
+    try:
+        filled_paths = dataset.list_filled_paths(IDS_name)
+    except DataEntryException:
+        filled_paths = []
+    return filled_paths
+
+
 def check_mandatory_paths(interface_dict: dict, dataset: DBEntry) -> list:
     """Check which mandatory paths of interface_dict are in dataset.
 
@@ -73,7 +87,7 @@ def check_mandatory_paths(interface_dict: dict, dataset: DBEntry) -> list:
     missing_mandatory_paths = []
     # Check if paths are present in dataset
     for IDS_name, mandatory_paths in mandatory_paths_dict.items():
-        present_paths = dataset.list_filled_paths(IDS_name)
+        present_paths = get_filled_paths(dataset, IDS_name)
         missing_mandatory_paths += [
             f"{IDS_name}/{IDS_path}"
             for IDS_path in mandatory_paths
@@ -81,6 +95,35 @@ def check_mandatory_paths(interface_dict: dict, dataset: DBEntry) -> list:
         ]
 
     return missing_mandatory_paths
+
+
+def check_all_or_none_block(interface_dict: dict, dataset: DBEntry) -> list:
+
+    # Get list of sublists of IDS paths under an all_or_none-key
+    all_or_none_list: list[list[str]] = [
+        entry["all_or_none"]
+        for entry in interface_dict["paths"]
+        if isinstance(entry, dict) and "all_or_none" in entry
+    ]
+
+    missing_all_or_none = []
+    for sublist in all_or_none_list:
+        is_present_list: list[bool] = []
+
+        for full_path in sublist:
+            IDS_name = full_path.split("/")[0]
+            IDS_path = full_path.replace(f"{IDS_name}/", "")
+
+            present_paths = get_filled_paths(dataset, IDS_name)
+
+            # Collect whether IDS path is in dataset or not
+            is_present_list.append(IDS_path in present_paths)
+
+        # Check if there was a present path and an absent path
+        if all(is_present_list) != any(is_present_list):
+            missing_all_or_none += sublist
+
+    return missing_all_or_none
 
 
 def dataset_compliance(
@@ -119,7 +162,18 @@ def dataset_compliance(
             + f"\n{SPACING_4}".join(missing_mandatory_paths)
         )
 
-    # Check all_or_none criteria...
+    # Paths listed under all_or_none should either be all present or all absent in
+    # interface_A
+    missing_all_or_none = check_all_or_none_block(interface_dict, dataset)
+
+    # Logging based on missing_all_or_none
+    if missing_all_or_none:
+        logger.warning(
+            f"\n{SPACING_2}Following paths are under an all_or_none-key, but not all"
+            + " are present or absent in the dataset:\n"
+            + f"\n{SPACING_4}"
+            + f"\n{SPACING_4}".join(missing_all_or_none)
+        )
 
     # Check any_of-criteria
 
