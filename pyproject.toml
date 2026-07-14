@@ -20,3 +20,4 @@ where = ["."]
 
 [project.scripts]
 validate_definitions = "interfaceTools.validate_definitions:main"
+check_compatibility = "interfaceTools.check_compatibility:main"
