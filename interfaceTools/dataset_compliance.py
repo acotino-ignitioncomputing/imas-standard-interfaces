@@ -8,7 +8,7 @@ import yaml
 from imas import DBEntry, util
 from imas.exception import DataEntryException
 
-from validate_definitions import validate_definitions, extract_paths
+from .validate_definitions import validate_definitions, extract_paths
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
