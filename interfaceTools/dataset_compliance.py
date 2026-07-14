@@ -31,11 +31,19 @@ def get_filled_paths(dataset: DBEntry, IDS_name: str) -> list:
     return filled_paths
 
 
-def is_path_in_dataset(dataset, path):
-    # docs, typehints
-    IDS_name = path.split("/")[0]
+def is_path_in_dataset(dataset, full_IDS_path) -> bool:
+    """Helper function for checking if an IDS path is present in the dataset and is
+    non-empty
 
-    return path in get_filled_paths(dataset, IDS_name)
+    Args:
+        dataset: IMAS Python DBEntry
+        full_IDS_path: Path to IDS entry prepended with IDS name, IDS_name/some/path
+
+    """
+    IDS_name = full_IDS_path.split("/")[0]
+    IDS_path = full_IDS_path.replace(f"{IDS_name}/", "")
+
+    return IDS_path in get_filled_paths(dataset, IDS_name)
 
 
 def check_mandatory_paths(interface_dict: dict, dataset: DBEntry) -> list:
@@ -75,7 +83,17 @@ def check_mandatory_paths(interface_dict: dict, dataset: DBEntry) -> list:
 
 
 def check_all_or_none_block(interface_dict: dict, dataset: DBEntry) -> list:
-    """TODO: write docstring"""
+    """For each all_or_none-block in interface_dict, check if either all paths are
+    are present in dataset or none are present
+
+    Args:
+        interface_dict: dictionary-representation of YAML file satisfying the schema
+        dataset: IMAS Python DBEntry
+
+    Returns:
+        List[str]: IDS paths from an all_or_none-block in interface that are not all
+            present or absent in dataset
+    """
     # Get list of sublists of IDS paths under each all_or_none-key
     all_or_none_list: list[list[str]] = [
         entry["all_or_none"]
@@ -176,7 +194,7 @@ def dataset_compliance(
         )
 
     # Paths listed under all_or_none should either be all present or all absent in
-    # interface_A
+    # dataset
     missing_all_or_none = check_all_or_none_block(interface_dict, dataset)
 
     # Logging based on missing_all_or_none
