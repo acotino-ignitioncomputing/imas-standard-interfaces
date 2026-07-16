@@ -2,7 +2,7 @@
 Dictionary"""
 
 import jsonschema
-from imas import dd_zip, IDSFactory, util
+from imas import dd_zip, IDSFactory, util, setup_logging
 from pathlib import Path
 from packaging.version import Version
 import click
@@ -202,8 +202,14 @@ def validate_definitions(input_path: str, silent: bool):
     # Set log level to ERROR in silent-mode
     if silent:
         logger.setLevel(logging.ERROR)
+
+        # imas logger
+        setup_logging.logger.setLevel(logging.ERROR)
     else:
         logger.setLevel(logging.WARNING)
+
+        # imas logger
+        setup_logging.logger.setLevel(logging.WARNING)
 
     # Load schema
     schema_path = Path(__file__).parents[1] / "schemas" / "json_schema.json"
