@@ -22,45 +22,59 @@ VALID_DD_VERSIONS = dd_zip.dd_xml_versions()
 
 
 def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
-    # Error messages from the JSON Schema validator can be difficult to interpret.
-    # This functions tries to improve the message based on 'schema/jason_schema.json'
+    """Error messages from the JSON Schema validator can be difficult to interpret, so
+    this functions tries to improve these messages based on `schema/jason_schema.json`.
 
-    json_path = error.json_path
+    Args:
+        error: Instance of `ValidationError` returned by a jsonschema validator
+    """
+
+    json_path: str = error.json_path
 
     logger.warning(f"{SPACING_2}Error at YAML path {json_path}\n")
 
     if error.schema["type"] == "array" and error.validator == "uniqueItems":
         # Duplicate IDS paths in sequence
 
-        # Get list of paths
-        list_of_paths = error.instance
+        # Get list of paths and dictionaries
+        list_of_entries: list[str | dict] = error.instance
 
-        # Collect duplicate paths
+        # Collect duplicate paths and dictionaries
         duplicate_paths = []
-        for IDS_path in list_of_paths:
-            if list_of_paths.count(IDS_path) > 1 and IDS_path not in duplicate_paths:
-                duplicate_paths.append(IDS_path)
+        duplicate_dict = []
+        for entry in list_of_entries:
+            if isinstance(entry, str) or (
+                isinstance(entry, dict)
+                and "all_or_none" not in entry
+                and "any_of" not in entry
+            ):
+                # entry represents an IDS path.
+                IDS_path = list(entry.keys())[0] if isinstance(entry, dict) else entry
+                if list_of_entries.count(entry) > 1 and IDS_path not in duplicate_paths:
+                    duplicate_paths.append(IDS_path)
+            else:
+                # entry is any_of- or all_or_none-block
+                if list_of_entries.count(entry) > 1 and entry not in duplicate_dict:
+                    duplicate_dict.append(entry)
 
         logger.warning(
             f"{SPACING_2}The following IDS paths were duplicated in the sequence:"
         )
-        logger.warning(f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n")
+        if duplicate_paths:
+            logger.warning(
+                f"\n{SPACING_4}" + f"\n{SPACING_4}".join(duplicate_paths) + "\n"
+            )
+
+        if duplicate_dict:
+            logger.warning(
+                f"\n{SPACING_4}"
+                + f"\n{SPACING_4}".join(extract_paths(duplicate_dict))
+                + "\n"
+            )
 
     elif error.schema["type"] == "array" and error.validator == "minItems":
         # Certain sequences must have length 2 or greater
         logger.warning(f"{SPACING_4}This sequence must have 2 or more entries\n")
-
-    elif (
-        json_path == "$.paths"
-        and error.validator == "not"
-        and "Allow at most one occurence of the 'all_of'-key under 'paths'"
-        == error.validator_value["description"]
-    ):
-        # Only one 'all_of' key is allowed under 'paths'
-        logger.warning(
-            f"{SPACING_4}Multiple 'all_of' keys are present directly under 'paths', but at most"
-            + " one is allowed.\n"
-        )
 
     else:
         logger.warning(f"{SPACING_4}" + error.message + "\n")
