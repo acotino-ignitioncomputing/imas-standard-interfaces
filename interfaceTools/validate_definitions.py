@@ -83,6 +83,13 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
 def validate_against_schema(definition: dict, schema: dict) -> bool:
     """
     Check correctness of the layout of definition with respect to JSON Schema
+
+    Args:
+        definition: dictionary-representation of a YAML file
+        schema: dictionary-representation of the JSON schema
+
+    Returns:
+        bool: whether the definition is correct with respect to the schema
     """
 
     validator = jsonschema.Draft202012Validator(schema)
@@ -97,8 +104,15 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     return validation_correct
 
 
-def extract_paths(paths: list) -> list:
-    # Collect all IDS paths from list of strings and dictionaries
+def extract_paths(paths: list[str | dict]) -> list[str]:
+    """Collect all IDS paths from a list of strings and dictionaries.
+
+    Args:
+        paths: list of strings and / or dictionaries
+
+    Returns:
+        list of IDS paths
+    """
     path_list = []
 
     for string_or_dict in paths:
@@ -108,7 +122,7 @@ def extract_paths(paths: list) -> list:
         elif isinstance(string_or_dict, dict):
             key = list(string_or_dict.keys())[0]
             if key not in ["all_or_none", "any_of", "all_of"]:
-                # Only key of dictionary is an IDS path
+                # Based on json schema, any other key of dictionary is an IDS path
                 path_list.append(key)
             else:
                 path_list += extract_paths(string_or_dict[key])
@@ -121,7 +135,16 @@ def extract_paths(paths: list) -> list:
     return sorted(path_list)
 
 
-def get_valid_dd_versions(definition: dict) -> list:
+def get_valid_dd_versions(definition: dict) -> list[str]:
+    """Get list of valid versions of Data Dictionary based on the interval given in key
+    `dd_version_range`.
+
+    Args:
+        definition: dictionary-representation of YAML file satisfying the schema
+
+    Returns:
+        list of versions of Data Dictionary
+    """
     min_version_str, max_version_str = definition["dd_version_range"]
     min_version, max_version = Version(min_version_str), Version(max_version_str)
 
@@ -141,7 +164,14 @@ def get_valid_dd_versions(definition: dict) -> list:
 
 
 def check_ids_name(definition: dict) -> bool:
-    """Only allow IDS names that are in the Data Dictionary."""
+    """Check that only valid IDS names appear in the definition.
+
+    Args:
+        definition: dictionary-representation of YAML file satisfying the schema
+
+    Returns:
+        bool: whether any IDS name was invalid
+    """
 
     dd_versions_to_check = get_valid_dd_versions(definition)
 
@@ -169,7 +199,14 @@ def check_ids_name(definition: dict) -> bool:
 
 
 def check_ids_paths_in_dd(definition: dict) -> bool:
-    """Each IDS path must be present in the provided version of Data Dictionary."""
+    """Check if each IDS path is present in the provided version of the Data Dictionary.
+
+    Args:
+        definition: dictionary-representation of YAML file satisfying the schema
+
+    Returns:
+        bool: whether any IDS path was invalid
+    """
 
     dd_versions_to_check = get_valid_dd_versions(definition)
 
@@ -208,12 +245,13 @@ def validate_definitions(input_path: str, silent: bool) -> int:
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to provided Data Dictionary version.
 
-    Arguments:\n
-    INPUT_PATH  absolute or relative path to YAML file or to folder containing YAML
-    files at some depth-level.
+    Args:
+        input_path  absolute or relative path to YAML file or to folder containing YAML
+            files at some depth-level.
+        silent: if True, then all log messages are surpressed
 
-    return:
-        int, representing exit code, where 0 is success and 1 is fail
+    Return:
+        int: representing exit code, where 0 is success and 1 is fail
     """
 
     # Set log level to ERROR in silent-mode
