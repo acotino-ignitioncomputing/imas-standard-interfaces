@@ -11,7 +11,11 @@ import logging
 import sys
 import yaml
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("validateLogger")
+handler = logging.StreamHandler()
+formatter = logging.Formatter("%(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 # Global parameters used for consistent amount of spacing, independent of user config
@@ -243,7 +247,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
 def validate_definitions(input_path: str, silent: bool) -> int:
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
-    with respect to provided Data Dictionary version.
+    with respect to Data Dictionary version mentioned in each YAML file.
 
     Args:
         input_path:  absolute or relative path to YAML file or to folder containing YAML
@@ -253,7 +257,6 @@ def validate_definitions(input_path: str, silent: bool) -> int:
     Returns:
         int: representing exit code, where 0 is success and 1 is fail
     """
-
     # Set log level to ERROR in silent-mode
     if silent:
         logger.setLevel(logging.ERROR)
@@ -341,7 +344,7 @@ def validate_definitions(input_path: str, silent: bool) -> int:
 def main(input_path: str, silent: bool):
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
-    with respect to provided Data Dictionary version.
+    with respect to the Data Dictionary version mentioned in each YAML file.
 
     \b
     Args:
