@@ -23,7 +23,7 @@ VALID_DD_VERSIONS = dd_zip.dd_xml_versions()
 
 def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
     """Error messages from the JSON Schema validator can be difficult to interpret, so
-    this functions tries to improve these messages based on `schema/jason_schema.json`.
+    this function tries to improve these messages based on `schema/jason_schema.json`.
 
     Args:
         error: Instance of `ValidationError` returned by a jsonschema validator
@@ -246,11 +246,11 @@ def validate_definitions(input_path: str, silent: bool) -> int:
     with respect to provided Data Dictionary version.
 
     Args:
-        input_path  absolute or relative path to YAML file or to folder containing YAML
+        input_path:  absolute or relative path to YAML file or to folder containing YAML
             files at some depth-level.
-        silent: if True, then all log messages are surpressed
+        silent: if True, then all log messages are suppressed
 
-    Return:
+    Returns:
         int: representing exit code, where 0 is success and 1 is fail
     """
 
@@ -337,8 +337,29 @@ def validate_definitions(input_path: str, silent: bool) -> int:
 
 @click.command()
 @click.argument("input_path")
-@click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
+@click.option("-s", "--silent", is_flag=True, help="If set, suppress any log messages")
 def main(input_path: str, silent: bool):
+    """Validate the syntax of the provided YAML files with respect to the
+    JSON Schema. Also checks the correctness of the IDS names and paths
+    with respect to provided Data Dictionary version.
+
+    \b
+    Args:
+    \b
+    input_path: absolute or relative path to YAML file or to folder containing YAML
+    files at some depth-level.
+
+    ------------------------ Examples ------------------------
+
+    \b
+    To validate a single YAML file
+        $validate_definitions example_nice_inv_input.yaml
+
+    \b
+    To validate every YAML file inside a folder and its subfolders
+        $validate_definitions example_definitions/
+
+    """
     exit_code = validate_definitions(input_path, silent)
     sys.exit(exit_code)
 
