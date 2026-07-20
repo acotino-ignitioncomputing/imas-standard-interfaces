@@ -189,7 +189,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     return all_paths_valid
 
 
-def validate_definitions(input_path: str, silent: bool) -> int:
+def validate_definitions(input_path: Path, silent: bool) -> int:
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to provided Data Dictionary version.
@@ -220,14 +220,13 @@ def validate_definitions(input_path: str, silent: bool) -> int:
         schema_dict = json.load(file)
 
     # From input, get path of YAML-file or folder
-    input_path = Path(input_path)
+    # input_path = Path(input_path)
 
-    if not input_path.exists():
-        raise FileNotFoundError(
-            "Provided path does not point to an existing file or directory: "
-            + f"\n{SPACING_2}{input_path.name}"
-        )
-
+    # if not input_path.exists():
+    #     raise FileNotFoundError(
+    #         "Provided path does not point to an existing file or directory: "
+    #         + f"\n{SPACING_2}{input_path.name}"
+    #     )
     # Get list of YAML file(s)
     if input_path.is_dir():
         list_of_files = sorted(input_path.glob("**/*.yaml"))
@@ -237,7 +236,7 @@ def validate_definitions(input_path: str, silent: bool) -> int:
             )
         else:
             logger.warning(f"Searching for YAML files in folder {input_path.name}")
-    elif input_path.is_file():
+    elif input_path.is_file() or input_path == Path("-"):
         list_of_files = [input_path]
     else:
         raise Exception(
@@ -247,7 +246,7 @@ def validate_definitions(input_path: str, silent: bool) -> int:
     # Validate each YAML file and collect which were incorrect
     incorrect_definitions = []
     for file_path in list_of_files:
-        with open(file_path) as file:
+        with click.open_file(file_path) as file:
             definition_dict = yaml.safe_load(file)
 
         logger.warning(f"\nValidating {file_path.name}...")
@@ -284,9 +283,13 @@ def validate_definitions(input_path: str, silent: bool) -> int:
 
 
 @click.command()
-@click.argument("input_path")
+@click.argument(
+    "input_path",
+    type=click.Path(exists=True, allow_dash=True, path_type=Path),
+    default="-",
+)
 @click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
-def main(input_path: str, silent: bool):
+def main(input_path: Path, silent: bool):
     exit_code = validate_definitions(input_path, silent)
     sys.exit(exit_code)
 
