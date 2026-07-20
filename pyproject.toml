@@ -18,5 +18,8 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 
+[tool.setuptools.package-data]
+'interfaceTools' = ['../schemas/json_schema.json']
+
 [project.scripts]
 validate_definitions = "interfaceTools.validate_definitions:main"
