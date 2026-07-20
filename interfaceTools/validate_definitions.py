@@ -261,7 +261,7 @@ def validate_definitions(input_path: str, silent: bool) -> int:
         # imas logger
         setup_logging.logger.setLevel(logging.ERROR)
     else:
-        logger.setLevel(logging.WARNING)
+        logger.setLevel(logging.INFO)
 
         # imas logger
         setup_logging.logger.setLevel(logging.WARNING)
@@ -288,7 +288,7 @@ def validate_definitions(input_path: str, silent: bool) -> int:
                 f"The folder '{input_path}' seems to contain no YAML files at any level"
             )
         else:
-            logger.warning(f"Searching for YAML files in folder {input_path.name}")
+            logger.info(f"Searching for YAML files in folder {input_path.name}")
     elif input_path.is_file():
         list_of_files = [input_path]
     else:
@@ -302,7 +302,7 @@ def validate_definitions(input_path: str, silent: bool) -> int:
         with open(file_path) as file:
             definition_dict = yaml.safe_load(file)
 
-        logger.warning(f"\nValidating {file_path.name}...")
+        logger.info(f"\nValidating {file_path.name}...")
 
         # Correctness with respect to JSON Schema
         if not validate_against_schema(definition_dict, schema_dict):
@@ -319,7 +319,7 @@ def validate_definitions(input_path: str, silent: bool) -> int:
             incorrect_definitions.append(file_path.name)
             continue
 
-        logger.warning(f"{SPACING_2}All checks passed")
+        logger.info(f"{SPACING_2}All checks passed")
 
     if incorrect_definitions:
         logger.warning(
@@ -330,7 +330,7 @@ def validate_definitions(input_path: str, silent: bool) -> int:
 
         return 1
     else:
-        logger.warning("\nNo issues found")
+        logger.info("\nNo issues found")
 
         return 0
 
