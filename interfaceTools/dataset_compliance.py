@@ -8,7 +8,7 @@ import yaml
 from imas import DBEntry, util
 from imas.exception import DataEntryException
 
-from validate_definitions import validate_definitions, extract_paths
+from validate_definitions import validate_definitions_dict, extract_paths
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -166,10 +166,9 @@ def check_allowed_values(interface_dict: dict, dataset: DBEntry) -> list:
 
 
 def dataset_compliance(
-    input_dataset_path: str, input_interface_file, silent: bool
+    input_dataset_path: Path, input_interface_path: Path, silent: bool
 ) -> int:
     # input_interface_path = Path(input_interface_path)
-    breakpoint()
 
     # Set log level to ERROR in silent-mode
     if silent:
@@ -177,16 +176,16 @@ def dataset_compliance(
     else:
         logger.setLevel(logging.WARNING)
 
-    # Ensure interfaces validate against schema
-    # if validate_definitions(input_interface_path, silent=True) != 0:
-    #     logger.warning(
-    #         f"Interface '{input_interface_path}' does not validate against schema."
-    #     )
-    #     return 1
-
     # Load interface definition
-    # with input_interface_path.open() as file:
-    interface_dict = yaml.safe_load(input_interface_file)
+    with click.open_file(input_interface_path) as file:
+        interface_dict = yaml.safe_load(file)
+
+    # Ensure interfaces validate against schema
+    if validate_definitions_dict(interface_dict, silent=True) != 0:
+        logger.warning(
+            f"Interface '{input_interface_path.name}' does not validate against schema."
+        )
+        return 1
 
     # Load dataset
     dataset = DBEntry(input_dataset_path, "r")
@@ -245,11 +244,15 @@ def dataset_compliance(
 
 
 @click.command()
-@click.argument("input_dataset_path")
-@click.argument("input_interface_file", type=click.File(mode="r"), default="-")
+@click.argument("input_dataset_path", type=click.Path(exists=True, path_type=Path))
+@click.argument(
+    "input_interface_path",
+    type=click.Path(exists=True, allow_dash=True, path_type=Path),
+    default="-",
+)
 @click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
-def main(input_dataset_path: str, input_interface_file, silent: bool):
-    error_code = dataset_compliance(input_dataset_path, input_interface_file, silent)
+def main(input_dataset_path: Path, input_interface_path: Path, silent: bool):
+    error_code = dataset_compliance(input_dataset_path, input_interface_path, silent)
     sys.exit(error_code)
 
 
