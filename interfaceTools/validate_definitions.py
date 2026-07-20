@@ -214,11 +214,6 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
         # imas logger
         setup_logging.logger.setLevel(logging.WARNING)
 
-    # Load schema
-    schema_path = Path(__file__).parents[1] / "schemas" / "json_schema.json"
-    with open(schema_path) as file:
-        schema_dict = json.load(file)
-
     # From input, get path of YAML-file or folder
     # input_path = Path(input_path)
 
@@ -252,17 +247,7 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
         logger.warning(f"\nValidating {file_path.name}...")
 
         # Correctness with respect to JSON Schema
-        if not validate_against_schema(definition_dict, schema_dict):
-            incorrect_definitions.append(file_path.name)
-            continue
-
-        #  Check if IDS names are in Data Dictionary
-        if not check_ids_name(definition_dict):
-            incorrect_definitions.append(file_path.name)
-            continue
-
-        # Check if IDS paths are in Data Dictionary
-        if not check_ids_paths_in_dd(definition_dict):
+        if validate_definitions_dict(definition_dict, silent=silent) == 1:
             incorrect_definitions.append(file_path.name)
             continue
 
@@ -280,6 +265,39 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
         logger.warning("\nNo issues found")
 
         return 0
+
+
+def validate_definitions_dict(definition_dict: dict, silent=True) -> int:
+    # Set log level to ERROR in silent-mode
+    if silent:
+        logger.setLevel(logging.ERROR)
+
+        # imas logger
+        setup_logging.logger.setLevel(logging.ERROR)
+    else:
+        logger.setLevel(logging.WARNING)
+
+        # imas logger
+        setup_logging.logger.setLevel(logging.WARNING)
+
+    # Load schema
+    schema_path = Path(__file__).parents[1] / "schemas" / "json_schema.json"
+    with open(schema_path) as file:
+        schema_dict = json.load(file)
+
+    # Correctness with respect to JSON Schema
+    if not validate_against_schema(definition_dict, schema_dict):
+        return 1
+
+    #  Check if IDS names are in Data Dictionary
+    if not check_ids_name(definition_dict):
+        return 1
+
+    # Check if IDS paths are in Data Dictionary
+    if not check_ids_paths_in_dd(definition_dict):
+        return 1
+
+    return 0
 
 
 @click.command()
