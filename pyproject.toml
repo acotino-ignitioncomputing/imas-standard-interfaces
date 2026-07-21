@@ -22,4 +22,4 @@ where = ["."]
 'interfaceTools' = ['../schemas/json_schema.json']
 
 [project.scripts]
-validate_definitions = "interfaceTools.validate_definitions:main"
+imas-interfaces = "interfaceTools.cli:main"

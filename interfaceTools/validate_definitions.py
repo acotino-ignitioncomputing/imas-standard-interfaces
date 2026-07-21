@@ -356,11 +356,11 @@ def main(input_path: str, silent: bool):
 
     \b
     To validate a single YAML file
-        $validate_definitions example_nice_inv_input.yaml
+        $imas-interfaces validate example_nice_inv_input.yaml
 
     \b
     To validate every YAML file inside a folder and its subfolders
-        $validate_definitions example_definitions/
+        $imas-interfaces validate example_definitions/
 
     """
     exit_code = validate_definitions(input_path, silent)
