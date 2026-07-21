@@ -36,4 +36,4 @@ jobs:
           uv sync
 
       - name: Run validation script
-        run: uv run python interfaceTools/validate_definitions.py example_definitions/
+        run: uv run imas-interfaces validate example_definitions/

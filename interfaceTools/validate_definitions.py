@@ -5,10 +5,8 @@ import jsonschema
 from imas import dd_zip, IDSFactory, util, setup_logging
 from pathlib import Path
 from packaging.version import Version
-import click
 import json
 import logging
-import sys
 import yaml
 
 logger = logging.getLogger("validateLogger")
@@ -336,36 +334,3 @@ def validate_definitions(input_path: str, silent: bool) -> int:
         logger.info("\nNo issues found")
 
         return 0
-
-
-@click.command()
-@click.argument("input_path")
-@click.option("-s", "--silent", is_flag=True, help="If set, suppress any log messages")
-def main(input_path: str, silent: bool):
-    """Validate the syntax of the provided YAML files with respect to the
-    JSON Schema. Also checks the correctness of the IDS names and paths
-    with respect to the Data Dictionary version mentioned in each YAML file.
-
-    \b
-    Args:
-    \b
-    input_path: absolute or relative path to YAML file or to folder containing YAML
-    files at some depth-level.
-
-    ------------------------ Examples ------------------------
-
-    \b
-    To validate a single YAML file
-        $validate_definitions example_nice_inv_input.yaml
-
-    \b
-    To validate every YAML file inside a folder and its subfolders
-        $validate_definitions example_definitions/
-
-    """
-    exit_code = validate_definitions(input_path, silent)
-    sys.exit(exit_code)
-
-
-if __name__ == "__main__":
-    main()
