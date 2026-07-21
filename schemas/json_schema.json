@@ -43,6 +43,7 @@
             "description": "List of (sets of) IDS paths that must be present in the dataset and whose data array must be non-empty. If an IDS path has child paths then it is implied that each child path must be present and have non-empty data array.",
             "type": "array",
             "minItems": 1,
+            "uniqueItems": true,
             "items": {
                 "type": [
                     "string",
@@ -60,7 +61,7 @@
                         "maxProperties": 1,
                         "properties": {
                             "allowed_values": {
-                                "description": "Maps to a sequence of mappings having the IDS path as key, which maps to a sequence of values (integer, float or string) that are allowed to be present in the data array at the IDS path. When specified, the data array must only consist of the listed values.",
+                                "description": "Maps to a sequence of values (integer, float or string) that are allowed to be present in the data array at the IDS path. When specified, the data array must only consist of the listed values.",
                                 "type": "array",
                                 "items": {
                                     "type": [
@@ -94,6 +95,7 @@
                     "any_of": {
                         "description": "At least one of the listed (sets of) IDS paths must be present.",
                         "type": "array",
+                        "uniqueItems": true,
                         "minItems": 2,
                         "items": {
                             "type": [
