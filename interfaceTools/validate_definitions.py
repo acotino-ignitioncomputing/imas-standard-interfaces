@@ -1,14 +1,15 @@
 """Script for validating interface definitions against JSON Schema and IMAS Data
 Dictionary"""
 
-import jsonschema
-from imas import dd_zip, IDSFactory, util, setup_logging
-from pathlib import Path
-from packaging.version import Version
 import json
 import logging
-import yaml
+from pathlib import Path
+
 import click
+import jsonschema
+import yaml
+from imas import IDSFactory, dd_zip, setup_logging, util
+from packaging.version import Version
 
 logger = logging.getLogger("validateLogger")
 handler = logging.StreamHandler()
@@ -132,7 +133,8 @@ def extract_paths(paths: list[str | dict]) -> list[str]:
         else:
             raise (
                 Exception(
-                    f"Invalid entry \n{SPACING_2}'{string_or_dict}'\n in {string_or_dict}"
+                    f"Invalid entry \n{SPACING_2}'{string_or_dict}'\n"
+                    + f" in {string_or_dict}"
                 )
             )
     return sorted(path_list)
@@ -183,7 +185,6 @@ def check_ids_name(definition: dict) -> bool:
 
     correct_ids_names = True
     for dd_version in dd_versions_to_check:
-
         ids_names_list = IDSFactory(dd_version).ids_names()
 
         # Collect all IDS paths
@@ -219,7 +220,6 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     all_paths_valid = True
 
     for dd_version in dd_versions_to_check:
-
         # Collect all IDS paths
         path_list = extract_paths(definition["paths"])
 

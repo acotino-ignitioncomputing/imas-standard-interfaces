@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+
 import click
 
 from interfaceTools.validate_definitions import validate_definitions
