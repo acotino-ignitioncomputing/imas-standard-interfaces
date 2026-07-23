@@ -1,14 +1,15 @@
 """Script for validating interface definitions against JSON Schema and IMAS Data
 Dictionary"""
 
-import jsonschema
-from imas import dd_zip, IDSFactory, util, setup_logging
-from pathlib import Path
-from packaging.version import Version
 import json
 import logging
+import sys
+from pathlib import Path
+
+import jsonschema
 import yaml
-import click
+from imas import IDSFactory, dd_zip, setup_logging, util
+from packaging.version import Version
 
 logger = logging.getLogger("validateLogger")
 handler = logging.StreamHandler()
@@ -183,7 +184,6 @@ def check_ids_name(definition: dict) -> bool:
 
     correct_ids_names = True
     for dd_version in dd_versions_to_check:
-
         ids_names_list = IDSFactory(dd_version).ids_names()
 
         # Collect all IDS paths
@@ -219,7 +219,6 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     all_paths_valid = True
 
     for dd_version in dd_versions_to_check:
-
         # Collect all IDS paths
         path_list = extract_paths(definition["paths"])
 
@@ -294,10 +293,19 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
     # Validate each YAML file and collect which were incorrect
     incorrect_definitions = []
     for file_path in list_of_files:
-        with click.open_file(file_path) as file:
-            definition_dict = yaml.safe_load(file)
+        # Note: sys.stdin.isatty() checks if the standard input is interactive. If it is
+        # then reading this would freeze the script.
+        if file_path == Path("-") and not sys.stdin.isatty():
+            input_stream = sys.stdin.read()
+            definition_dict = yaml.safe_load(input_stream)
+        elif file_path != Path("-"):
+            with open(file_path) as file:
+                definition_dict = yaml.safe_load(file)
+        else:
+            raise Exception(f"Incorrect input argument input_path: {input_path.name}")
 
-        logger.info(f"\nValidating {file_path.name}...")
+        file_path_name = file_path.name if file_path != Path("-") else "input stream"
+        logger.info(f"\nValidating {file_path_name}...")
 
         # Correctness with respect to JSON Schema
         if not validate_against_schema(definition_dict, schema_dict):

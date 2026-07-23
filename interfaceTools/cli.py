@@ -39,6 +39,11 @@ def validate(input_path: Path, silent: bool):
         $imas-interfaces validate example_definitions/
 
     """
+
+    # First check if standard input is indicated as 'interactive'
+    if input_path == Path("-") and sys.stdin.isatty():
+        raise click.UsageError("No input stream")
+
     exit_code = validate_definitions(input_path, silent)
     sys.exit(exit_code)
 
