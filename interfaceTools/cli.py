@@ -3,6 +3,7 @@ from pathlib import Path
 import click
 
 from interfaceTools.validate_definitions import validate_definitions
+from interfaceTools.check_dataset import dataset_checker
 
 
 @click.group()
@@ -46,6 +47,33 @@ def validate(input_path: Path, silent: bool):
 
     exit_code = validate_definitions(input_path, silent)
     sys.exit(exit_code)
+
+
+@main.command(name="check_dataset")
+@click.argument(
+    "dataset_path",
+    type=click.Path(exists=True, allow_dash=False, path_type=Path),
+)
+@click.argument(
+    "interface_path",
+    type=click.Path(exists=True, allow_dash=True, path_type=Path),
+    default="-",
+)
+@click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
+def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
+    """TODOOO
+
+    Args:
+        input_dataset_path: _description_
+        input_interface_path: _description_
+        silent: _description_
+    """
+    # First check if standard input is indicated as 'interactive'
+    if interface_path == Path("-") and sys.stdin.isatty():
+        raise click.UsageError("No input stream")
+
+    error_code = dataset_checker(dataset_path, interface_path, silent)
+    sys.exit(error_code)
 
 
 if __name__ == "__main__":
