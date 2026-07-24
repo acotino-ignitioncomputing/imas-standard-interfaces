@@ -242,6 +242,50 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     return all_paths_valid
 
 
+def validate_definitions_dict(definition_dict: dict, silent: bool) -> int:
+    """TODO
+
+    Args:
+        definition_dict: _description_
+        silent: _description_
+
+    Returns:
+        _description_
+    """
+
+    # Set log level to ERROR in silent-mode
+    if silent:
+        logger.setLevel(logging.ERROR)
+
+        # imas logger
+        setup_logging.logger.setLevel(logging.ERROR)
+    else:
+        logger.setLevel(logging.INFO)
+
+        # imas logger
+        setup_logging.logger.setLevel(logging.WARNING)
+
+    # Load schema
+    # TODO: ensure schema is loaded only once (using class, or place get-funct in utilities.py)
+    schema_path = Path(__file__).parents[1] / "schemas" / "json_schema.json"
+    with open(schema_path) as file:
+        schema_dict = json.load(file)
+
+    # Correctness with respect to JSON Schema
+    if not validate_against_schema(definition_dict, schema_dict):
+        return 1
+
+    #  Check if IDS names are in Data Dictionary
+    if not check_ids_name(definition_dict):
+        return 1
+
+    # Check if IDS paths are in Data Dictionary
+    if not check_ids_paths_in_dd(definition_dict):
+        return 1
+
+    return 0
+
+
 def validate_definitions(input_path: Path, silent: bool) -> int:
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
@@ -307,18 +351,7 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
         file_path_name = file_path.name if file_path != Path("-") else "input stream"
         logger.info(f"\nValidating {file_path_name}...")
 
-        # Correctness with respect to JSON Schema
-        if not validate_against_schema(definition_dict, schema_dict):
-            incorrect_definitions.append(file_path.name)
-            continue
-
-        #  Check if IDS names are in Data Dictionary
-        if not check_ids_name(definition_dict):
-            incorrect_definitions.append(file_path.name)
-            continue
-
-        # Check if IDS paths are in Data Dictionary
-        if not check_ids_paths_in_dd(definition_dict):
+        if validate_definitions_dict(definition_dict, silent) != 0:
             incorrect_definitions.append(file_path.name)
             continue
 
