@@ -16,6 +16,11 @@ dependencies = [
     "netCDF4>=1.7.0"
 ]
 
+[project.optional-dependencies]
+linting = [
+    "ruff",
+]
+
 [tool.setuptools.packages.find]
 where = ["."]
 
@@ -24,3 +29,23 @@ where = ["."]
 
 [project.scripts]
 imas-interfaces = "interfaceTools.cli:main"
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]

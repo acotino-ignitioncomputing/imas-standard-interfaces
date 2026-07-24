@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+
 import click
 
 from interfaceTools.validate_definitions import validate_definitions
@@ -27,7 +28,8 @@ def validate(input_path: Path, silent: bool):
     Args:
     \b
     input_path: absolute or relative path to YAML file or to folder containing YAML
-    files at some depth-level.
+    files at some depth-level. The contents of a YAML file could also be read from
+    stdin.
 
     ------------------------ Examples ------------------------
 
@@ -39,11 +41,15 @@ def validate(input_path: Path, silent: bool):
     To validate every YAML file inside a folder and its subfolders
         $imas-interfaces validate example_definitions/
 
+    \b
+    Using stdin
+        #cat example_nice_inv_input.yaml | imas-interfaces validate
+
     """
 
     # First check if standard input is indicated as 'interactive'
     if input_path == Path("-") and sys.stdin.isatty():
-        raise click.UsageError("No input stream")
+        raise click.UsageError("No input given")
 
     exit_code = validate_definitions(input_path, silent)
     sys.exit(exit_code)
@@ -62,7 +68,6 @@ def validate(input_path: Path, silent: bool):
 @click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
 def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
     """Checks whether the provided IMAS dataset complies with the given IMAS interface.
-    The dataset
 
     \b
     Args:
