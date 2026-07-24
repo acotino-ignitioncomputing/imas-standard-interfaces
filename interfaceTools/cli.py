@@ -26,7 +26,7 @@ def validate(input_path: Path, silent: bool):
     Args:
     \b
     input_path: absolute or relative path to YAML file or to folder containing YAML
-    files at some depth-level.
+    files at some depth-level. The contents of a YAML file could also be read from stdin.
 
     ------------------------ Examples ------------------------
 
@@ -37,6 +37,10 @@ def validate(input_path: Path, silent: bool):
     \b
     To validate every YAML file inside a folder and its subfolders
         $imas-interfaces validate example_definitions/
+
+    \b
+    Using stdin
+        #cat example_nice_inv_input.yaml | imas-interfaces validate
 
     """
 
