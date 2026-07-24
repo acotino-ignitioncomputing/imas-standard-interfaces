@@ -2,13 +2,11 @@
 
 from pathlib import Path
 import logging
-import sys
-import yaml
-from imas import DBEntry, util
+from imas import DBEntry, IDSFactory
 from imas.exception import DataEntryException
 
 from .validate_definitions import validate_definitions_dict
-from .utilities import extract_paths, load_interface_dict
+from .utilities import extract_paths, load_interface_dict, check_mandatory_paths
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,76 +16,33 @@ SPACING_2 = "  "
 SPACING_4 = "    "
 
 
-def get_filled_paths(dataset: DBEntry, IDS_name: str) -> list:
-    """Wrapper for function `DBENtry.list_filled_paths` that catches the exception
-    DataEntryException and returns empty list. This exceptio occurs whenever the
-    IDS_name is not found.
-    """
-
-    try:
-        filled_paths = dataset.list_filled_paths(IDS_name)
-    except DataEntryException:
-        filled_paths = []
-    return filled_paths
-
-
-def is_path_in_dataset(dataset, full_IDS_path) -> bool:
-    """Helper function for checking if an IDS path is present in the dataset and is
-    non-empty
+def get_present_paths(dataset: DBEntry, dd_version: str) -> list[str]:
+    """Gather all IDS paths that point to a non-empty data array in dataset. The
+    function `DBENtry.list_filled_paths` is encapsulated in a try-except statement
+    to catch the `DataEntryException` whenever an IDS name is not found in dataset.
 
     Args:
         dataset: IMAS Python DBEntry
-        full_IDS_path: Path to IDS entry prepended with IDS name, IDS_name/some/path
-
-    """
-    IDS_name = full_IDS_path.split("/")[0]
-    IDS_path = full_IDS_path.replace(f"{IDS_name}/", "")
-
-    return IDS_path in get_filled_paths(dataset, IDS_name)
-
-
-def check_mandatory_paths(interface_dict: dict, dataset: DBEntry) -> list:
-    """Check which mandatory paths of interface_dict are in dataset.
-
-    Args:
-        interface_dict: dictionary-representation of YAML file satisfying the schema
-        dataset: IMAS Python DBEntry
+        dd_version: version of Data Dictionary to use
 
     Returns:
-        List[str]: missing IDS paths
+        List of IDS paths that point to a non-empty data array in dataset
     """
-    mandatory_paths_list = [
-        path for path in interface_dict["paths"] if isinstance(path, str)
-    ]
+    IDS_names_list = IDSFactory(dd_version).ids_names()
 
-    # Get all child paths by searching for 'IDS_path' and selecting those paths
-    # of the form IDS_path/other_string
-    mandatory_child_paths_list = []
-    for full_IDS_path in mandatory_paths_list:
-        IDS_name = full_IDS_path.split("/")[0]
-        IDS_path = full_IDS_path.replace(f"{IDS_name}/", "")
+    list_of_present_paths = []
 
-        # Collect paths of the form IDS_name/IDS_path/other_string
-        potential_child_paths = [
-            f"{IDS_name}/{child_path}"
-            for child_path in util.find_paths(
-                dataset.get(IDS_name, lazy=True), IDS_path
-            )
-            if "/" in child_path.replace(IDS_path, "")
-        ]
+    for IDS_name in IDS_names_list:
+        try:
+            # Prepend IDS_name before each path to get full path
+            list_of_present_paths += [
+                f"{IDS_name}/{path}" for path in dataset.list_filled_paths(IDS_name)
+            ]
+        except DataEntryException:
+            # IDS name not found
+            continue
 
-        if potential_child_paths:
-            # only add the child paths
-            mandatory_child_paths_list += potential_child_paths
-        else:
-            # full_IDS_path was already a child path
-            mandatory_child_paths_list.append(full_IDS_path)
-
-    return [
-        path
-        for path in mandatory_child_paths_list
-        if not is_path_in_dataset(dataset, path)
-    ]
+    return list_of_present_paths
 
 
 def check_all_or_none_block(interface_dict: dict, dataset: DBEntry) -> list:
@@ -185,8 +140,16 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
     # Load dataset
     dataset = DBEntry(dataset_path, "r")
 
+    # Get present paths
+    dd_version = interface_dict["dd_version_range"][0]
+    list_of_present_paths = get_present_paths(dataset, dd_version)
+
     # Check presence of mandatory paths in dataset
-    missing_mandatory_paths = check_mandatory_paths(interface_dict, dataset)
+    missing_mandatory_paths = check_mandatory_paths(
+        interface_dict, list_of_present_paths
+    )
+
+    breakpoint()
 
     if missing_mandatory_paths:
         logger.warning(
