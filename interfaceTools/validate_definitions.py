@@ -133,7 +133,8 @@ def extract_paths(paths: list[str | dict]) -> list[str]:
         else:
             raise (
                 Exception(
-                    f"Invalid entry \n{SPACING_2}'{string_or_dict}'\n in {string_or_dict}"
+                    f"Invalid entry \n{SPACING_2}'{string_or_dict}'\n in "
+                    f"{string_or_dict}"
                 )
             )
     return sorted(path_list)

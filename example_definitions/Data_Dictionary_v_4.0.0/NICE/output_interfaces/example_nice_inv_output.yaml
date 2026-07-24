@@ -1,6 +1,4 @@
-schema_major_version: 0
-schema_minor_version: 0
-schema_patch_version: 1
+schema_version: "0.1"
 
 doi_url: placeholder_doi_url
 
