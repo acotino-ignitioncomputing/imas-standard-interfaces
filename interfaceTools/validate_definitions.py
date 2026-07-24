@@ -3,6 +3,7 @@ Dictionary"""
 
 import json
 import logging
+import sys
 from pathlib import Path
 
 import jsonschema
@@ -242,7 +243,7 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     return all_paths_valid
 
 
-def validate_definitions(input_path: str, silent: bool) -> int:
+def validate_definitions(input_path: Path, silent: bool) -> int:
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to Data Dictionary version mentioned in each YAML file.
@@ -272,17 +273,9 @@ def validate_definitions(input_path: str, silent: bool) -> int:
     with open(schema_path) as file:
         schema_dict = json.load(file)
 
-    # From input, get path of YAML-file or folder
-    input_path = Path(input_path)
-
-    if not input_path.exists():
-        raise FileNotFoundError(
-            "Provided path does not point to an existing file or directory: "
-            + f"\n{SPACING_2}{input_path.name}"
-        )
-
     # Get list of YAML file(s)
     if input_path.is_dir():
+        # Search for YAML files in subfolders of directory
         list_of_files = sorted(input_path.glob("**/*.yaml"))
         if not list_of_files:
             raise Exception(
@@ -290,7 +283,8 @@ def validate_definitions(input_path: str, silent: bool) -> int:
             )
         else:
             logger.info(f"Searching for YAML files in folder {input_path.name}")
-    elif input_path.is_file():
+    elif input_path.is_file() or input_path == Path("-"):
+        # input_path points to single YAML file or represents input stream ('-')
         list_of_files = [input_path]
     else:
         raise Exception(
@@ -300,10 +294,19 @@ def validate_definitions(input_path: str, silent: bool) -> int:
     # Validate each YAML file and collect which were incorrect
     incorrect_definitions = []
     for file_path in list_of_files:
-        with open(file_path) as file:
-            definition_dict = yaml.safe_load(file)
+        # Note: sys.stdin.isatty() checks if the standard input is interactive. If it is
+        # then reading this would freeze the script.
+        if file_path == Path("-") and not sys.stdin.isatty():
+            input_stream = sys.stdin.read()
+            definition_dict = yaml.safe_load(input_stream)
+        elif file_path != Path("-"):
+            with open(file_path) as file:
+                definition_dict = yaml.safe_load(file)
+        else:
+            raise Exception(f"Incorrect input argument input_path: {input_path.name}")
 
-        logger.info(f"\nValidating {file_path.name}...")
+        file_path_name = file_path.name if file_path != Path("-") else "input stream"
+        logger.info(f"\nValidating {file_path_name}...")
 
         # Correctness with respect to JSON Schema
         if not validate_against_schema(definition_dict, schema_dict):

@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 import click
 
@@ -11,9 +12,13 @@ def main():
 
 
 @main.command(name="validate")
-@click.argument("input_path")
+@click.argument(
+    "input_path",
+    type=click.Path(exists=True, allow_dash=True, path_type=Path),
+    default="-",
+)
 @click.option("-s", "--silent", is_flag=True, help="If set, suppress any log messages")
-def validate(input_path: str, silent: bool):
+def validate(input_path: Path, silent: bool):
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to the Data Dictionary version mentioned in each YAML file.
@@ -22,7 +27,8 @@ def validate(input_path: str, silent: bool):
     Args:
     \b
     input_path: absolute or relative path to YAML file or to folder containing YAML
-    files at some depth-level.
+    files at some depth-level. The contents of a YAML file could also be read from
+    stdin.
 
     ------------------------ Examples ------------------------
 
@@ -34,7 +40,16 @@ def validate(input_path: str, silent: bool):
     To validate every YAML file inside a folder and its subfolders
         $imas-interfaces validate example_definitions/
 
+    \b
+    Using stdin
+        #cat example_nice_inv_input.yaml | imas-interfaces validate
+
     """
+
+    # First check if standard input is indicated as 'interactive'
+    if input_path == Path("-") and sys.stdin.isatty():
+        raise click.UsageError("No input given")
+
     exit_code = validate_definitions(input_path, silent)
     sys.exit(exit_code)
 
