@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+
 import click
 
 from interfaceTools.validate_definitions import validate_definitions
@@ -26,7 +27,8 @@ def validate(input_path: Path, silent: bool):
     Args:
     \b
     input_path: absolute or relative path to YAML file or to folder containing YAML
-    files at some depth-level. The contents of a YAML file could also be read from stdin.
+    files at some depth-level. The contents of a YAML file could also be read from
+    stdin.
 
     ------------------------ Examples ------------------------
 
