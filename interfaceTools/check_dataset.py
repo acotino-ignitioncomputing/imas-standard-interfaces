@@ -25,9 +25,9 @@ SPACING_4 = "    "
 
 
 def get_present_paths(dataset: DBEntry, dd_version: str) -> list[str]:
-    """Gather all IDS paths that point to a non-empty data array in dataset. The
+    """Gather all IDS paths in the dataset that point to a non-empty data array. The
     function `DBENtry.list_filled_paths` is encapsulated in a try-except statement
-    to catch the `DataEntryException` whenever an IDS name is not found in dataset.
+    to catch the `DataEntryException` whenever an IDS name is not present in the dataset
 
     Args:
         dataset: IMAS Python DBEntry
@@ -77,11 +77,13 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
             f"Interface '{interface_path}' does not validate against schema."
         )
         return 1
+
     # Load dataset
     dataset = DBEntry(dataset_path, "r")
 
-    # Get present paths
     dd_version = interface_dict["dd_version_range"][0]
+
+    # Get present paths
     list_of_present_paths = get_present_paths(dataset, dd_version)
 
     # Check presence of mandatory paths in dataset
@@ -108,8 +110,7 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
             + f"\n{SPACING_4}".join(extract_paths(missing_any_of))
         )
 
-    # Paths listed under all_or_none should either be all present or all absent in
-    # dataset
+    # Check the paths under each all_or_none-block
     missing_all_or_none = check_all_or_none_criterium(
         interface_dict, list_of_present_paths
     )

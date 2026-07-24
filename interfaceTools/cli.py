@@ -76,7 +76,7 @@ def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
         are supported.
     \b
     input_interface_path: Path to the YAML file containing the interface definition. The
-    contents of a YAML file could also be read from stdin
+        contents of a YAML file could also be read from stdin
 
 
     ------------------------ Examples ------------------------
@@ -92,7 +92,7 @@ def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
     """
     # First check if standard input is indicated as 'interactive'
     if interface_path == Path("-") and sys.stdin.isatty():
-        raise click.UsageError("No input stream")
+        raise click.UsageError("No input given")
 
     error_code = dataset_checker(dataset_path, interface_path, silent)
     sys.exit(error_code)
