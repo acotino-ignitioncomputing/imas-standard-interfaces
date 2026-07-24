@@ -46,7 +46,7 @@ def validate(input_path: Path, silent: bool):
 
     # First check if standard input is indicated as 'interactive'
     if input_path == Path("-") and sys.stdin.isatty():
-        raise click.UsageError("No input stream")
+        raise click.UsageError("No input given")
 
     exit_code = validate_definitions(input_path, silent)
     sys.exit(exit_code)
