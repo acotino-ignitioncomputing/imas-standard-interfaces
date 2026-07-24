@@ -3,13 +3,13 @@ Dictionary"""
 
 import json
 import logging
-import sys
 from pathlib import Path
 
 import jsonschema
-import yaml
 from imas import IDSFactory, dd_zip, setup_logging, util
 from packaging.version import Version
+
+from .utilities import extract_paths, get_schema_dict, load_interface_dict
 
 logger = logging.getLogger("validateLogger")
 handler = logging.StreamHandler()
@@ -106,37 +106,6 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
         print_nice_error_message(error)
 
     return validation_correct
-
-
-def extract_paths(paths: list[str | dict]) -> list[str]:
-    """Collect all IDS paths from a list of strings and dictionaries.
-
-    Args:
-        paths: list of strings and / or dictionaries
-
-    Returns:
-        list of IDS paths
-    """
-    path_list = []
-
-    for string_or_dict in paths:
-        # Extract paths from string(s) or dictionaries
-        if isinstance(string_or_dict, str):
-            path_list.append(string_or_dict)
-        elif isinstance(string_or_dict, dict):
-            key = list(string_or_dict.keys())[0]
-            if key not in ["all_or_none", "any_of", "all_of"]:
-                # Based on json schema, any other key of dictionary is an IDS path
-                path_list.append(key)
-            else:
-                path_list += extract_paths(string_or_dict[key])
-        else:
-            raise (
-                Exception(
-                    f"Invalid entry \n{SPACING_2}'{string_or_dict}'\n in {string_or_dict}"
-                )
-            )
-    return sorted(path_list)
 
 
 def get_valid_dd_versions(definition: dict) -> list[str]:
@@ -267,9 +236,8 @@ def validate_definitions_dict(definition_dict: dict, silent: bool) -> int:
 
     # Load schema
     # TODO: ensure schema is loaded only once (using class, or place get-funct in utilities.py)
-    schema_path = Path(__file__).parents[1] / "schemas" / "json_schema.json"
-    with open(schema_path) as file:
-        schema_dict = json.load(file)
+
+    schema_dict = get_schema_dict()
 
     # Correctness with respect to JSON Schema
     if not validate_against_schema(definition_dict, schema_dict):
@@ -337,16 +305,8 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
     # Validate each YAML file and collect which were incorrect
     incorrect_definitions = []
     for file_path in list_of_files:
-        # Note: sys.stdin.isatty() checks if the standard input is interactive. If it is
-        # then reading this would freeze the script.
-        if file_path == Path("-") and not sys.stdin.isatty():
-            input_stream = sys.stdin.read()
-            definition_dict = yaml.safe_load(input_stream)
-        elif file_path != Path("-"):
-            with open(file_path) as file:
-                definition_dict = yaml.safe_load(file)
-        else:
-            raise Exception(f"Incorrect input argument input_path: {input_path.name}")
+
+        definition_dict = load_interface_dict(file_path)
 
         file_path_name = file_path.name if file_path != Path("-") else "input stream"
         logger.info(f"\nValidating {file_path_name}...")

@@ -7,7 +7,8 @@ import yaml
 from imas import DBEntry, util
 from imas.exception import DataEntryException
 
-from .validate_definitions import validate_definitions_dict, extract_paths
+from .validate_definitions import validate_definitions_dict
+from .utilities import extract_paths, load_interface_dict
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -173,16 +174,7 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
         logger.setLevel(logging.WARNING)
 
     # Load interface definition.
-    if interface_path == Path("-") and not sys.stdin.isatty():
-        # Note: sys.stdin.isatty() checks if the standard input is interactive. If it is
-        # then reading this would freeze the script.
-        input_stream = sys.stdin.read()
-        interface_dict = yaml.safe_load(input_stream)
-    elif interface_path != Path("-"):
-        with interface_path.open() as file:
-            interface_dict = yaml.safe_load(file)
-    else:
-        raise Exception(f"Incorrect input argument input_path: {interface_path.name}")
+    interface_dict = load_interface_dict(interface_path)
 
     # Ensure interfaces validate against schema
     if validate_definitions_dict(interface_dict, silent=True) != 0:
