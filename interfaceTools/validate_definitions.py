@@ -1,7 +1,6 @@
 """Script for validating interface definitions against JSON Schema and IMAS Data
 Dictionary"""
 
-import json
 import logging
 from pathlib import Path
 
@@ -235,7 +234,7 @@ def validate_definitions_dict(definition_dict: dict, silent: bool) -> int:
         setup_logging.logger.setLevel(logging.WARNING)
 
     # Load schema
-    # TODO: ensure schema is loaded only once (using class, or place get-funct in utilities.py)
+    # TODO: ensure schema is loaded only once
 
     schema_dict = get_schema_dict()
 
@@ -278,11 +277,6 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
 
         # imas logger
         setup_logging.logger.setLevel(logging.WARNING)
-
-    # Load schema
-    schema_path = Path(__file__).parents[1] / "schemas" / "json_schema.json"
-    with open(schema_path) as file:
-        schema_dict = json.load(file)
 
     # Get list of YAML file(s)
     if input_path.is_dir():
