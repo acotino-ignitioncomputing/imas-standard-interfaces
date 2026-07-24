@@ -61,12 +61,29 @@ def validate(input_path: Path, silent: bool):
 )
 @click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
 def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
-    """TODOOO
+    """Checks whether the provided IMAS dataset complies with the given IMAS interface.
+    The dataset
 
+    \b
     Args:
-        input_dataset_path: _description_
-        input_interface_path: _description_
-        silent: _description_
+    \b
+    input_dataset_path: URI to the dataset entry. Only netCDF and HDF5 backends
+        are supported.
+    \b
+    input_interface_path: Path to the YAML file containing the interface definition. The
+    contents of a YAML file could also be read from stdin
+
+
+    ------------------------ Examples ------------------------
+
+    \b
+    Using a netCDF file
+        $imas-interfaces check_dataset iter-105027.nc example_efit++IMAS_input.yaml
+
+    \b
+    Using stdin
+        $cat example_efit++IMAS_input.yaml | imas-interfaces check_dataset iter.nc
+
     """
     # First check if standard input is indicated as 'interactive'
     if interface_path == Path("-") and sys.stdin.isatty():

@@ -54,6 +54,13 @@ def get_present_paths(dataset: DBEntry, dd_version: str) -> list[str]:
 
 
 def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> int:
+    """Checks whether the provided IMAS dataset complies with the given IMAS interface.
+
+    Args:
+        input_dataset_path: URI to the dataset entry. Only NetCDF and HDF5 backends
+        are supported.
+        input_interface_path: Path to the YAML file containing the interface definition
+    """
 
     # Set log level to ERROR in silent-mode
     if silent:

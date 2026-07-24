@@ -19,10 +19,10 @@ SPACING_4 = "    "
 
 ########################## Functions related to file loading ##########################
 def get_schema_dict() -> dict:
-    """TODO
+    """Load the JSON schema
 
     Returns:
-        _description_
+        Dictionary representation of JSON schema
     """
     with open(SCHEMA_PATH) as file:
         schema_dict = json.load(file)
@@ -30,16 +30,18 @@ def get_schema_dict() -> dict:
 
 
 def load_interface_dict(interface_file_path: Path) -> dict:
-    """TODO
+    """Load the interface definition from either a YAML file or standard input (if
+    interface_file_path equals "-")
 
     Args:
-        interface_file_path: _description_
+        interface_file_path: Path to YAML file. If equal to "-", then stdin is used
 
     Raises:
-        Exception: _description_
+        Exception: if interface_file_path equals "-" but stdin is indicated as
+        'interactive'
 
     Returns:
-        _description_
+        Dictionary representation of YAML file
     """
     # Note: sys.stdin.isatty() checks if the standard input is interactive. If it is
     # then reading this would freeze the script.

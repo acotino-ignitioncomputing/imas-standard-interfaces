@@ -305,7 +305,6 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
     # Validate each YAML file and collect which were incorrect
     incorrect_definitions = []
     for file_path in list_of_files:
-
         definition_dict = load_interface_dict(file_path)
 
         file_path_name = file_path.name if file_path != Path("-") else "input stream"
