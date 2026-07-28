@@ -108,8 +108,8 @@ def difference(path_interface_A: Path, path_interface_B: Path):
                     if all_present:
                         break
 
-                # All check failed for any_of-block
-                leftover_interface_dict["paths"].append(entry)
+            # All check failed for any_of-block
+            leftover_interface_dict["paths"].append(entry)
 
     # Output leftover interface file
     click.echo(yaml.safe_dump(leftover_interface_dict))

@@ -70,16 +70,24 @@ def check_mandatory_paths(interface_dict: dict, dataset: DBEntry) -> list:
         try:
             # Collect paths of the form IDS_name/IDS_path/other_string
             potential_child_paths = [
-                f"{IDS_name}/{child_path}"
+                child_path
                 for child_path in util.find_paths(
-                    dataset.get(IDS_name, lazy=True), IDS_path
+                    dataset.get(IDS_name, lazy=True), f"{IDS_path}/"
                 )
-                if "/" in child_path.replace(IDS_path, "")
             ]
 
             if potential_child_paths:
                 # only add the child paths
-                mandatory_child_paths_list += potential_child_paths
+                for child_path in potential_child_paths:
+                    if (
+                        len(
+                            util.find_paths(
+                                dataset.get(IDS_name, lazy=True), child_path
+                            )
+                        )
+                        == 1
+                    ):
+                        mandatory_child_paths_list.append(f"{IDS_name}/{child_path}")
             else:
                 # full_IDS_path was already a child path
                 mandatory_child_paths_list.append(full_IDS_path)
