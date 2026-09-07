@@ -93,8 +93,8 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
 
         if missing_mandatory_paths:
             logger.warning(
-                f"\n{SPACING_2}Following mandatory paths are either empty or missing in the"
-                + " dataset:\n"
+                f"\n{SPACING_2}Following mandatory paths are either empty or missing in"
+                + " the dataset:\n"
                 + f"\n{SPACING_4}"
                 + f"\n{SPACING_4}".join(missing_mandatory_paths)
             )
@@ -118,8 +118,8 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
         # Logging based on missing_all_or_none
         if missing_all_or_none:
             logger.warning(
-                f"\n{SPACING_2}Following paths are under an all_or_none-key, but not all"
-                + " are present or absent in the dataset:\n"
+                f"\n{SPACING_2}Following paths are under an all_or_none-key, but not"
+                + " all are present or absent in the dataset:\n"
                 + f"\n{SPACING_4}"
                 + f"\n{SPACING_4}".join(extract_paths(missing_all_or_none))
             )
