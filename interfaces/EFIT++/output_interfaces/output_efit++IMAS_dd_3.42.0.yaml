@@ -1,0 +1,92 @@
+schema_version: "0.1"
+
+doi_url: placeholder_doi_url
+
+dd_version_range: [3.42.0, 3.42.0]
+
+paths:
+- equilibrium/code/name
+- equilibrium/code/output_flag
+- equilibrium/ids_properties/homogeneous_time:
+    allowed_values: [1]
+- equilibrium/time
+- equilibrium/time_slice/boundary/active_limiter_point
+- equilibrium/time_slice/boundary/elongation
+- equilibrium/time_slice/boundary/geometric_axis
+- equilibrium/time_slice/boundary/minor_radius
+- equilibrium/time_slice/boundary/outline
+- equilibrium/time_slice/boundary/psi_norm
+- equilibrium/time_slice/boundary/strike_point
+- equilibrium/time_slice/boundary/triangularity
+- equilibrium/time_slice/boundary/triangularity_lower
+- equilibrium/time_slice/boundary/triangularity_upper
+- equilibrium/time_slice/boundary/type
+- equilibrium/time_slice/boundary/x_point
+- equilibrium/time_slice/constraints/bpol_probe/chi_squared
+- equilibrium/time_slice/constraints/bpol_probe/measured
+- equilibrium/time_slice/constraints/bpol_probe/reconstructed
+- equilibrium/time_slice/constraints/bpol_probe/weight
+- equilibrium/time_slice/constraints/diamagnetic_flux/chi_squared
+- equilibrium/time_slice/constraints/diamagnetic_flux/measured
+- equilibrium/time_slice/constraints/diamagnetic_flux/reconstructed
+- equilibrium/time_slice/constraints/diamagnetic_flux/weight
+- equilibrium/time_slice/constraints/flux_loop/chi_squared
+- equilibrium/time_slice/constraints/flux_loop/measured
+- equilibrium/time_slice/constraints/flux_loop/reconstructed
+- equilibrium/time_slice/constraints/flux_loop/weight
+- equilibrium/time_slice/constraints/ip/chi_squared
+- equilibrium/time_slice/constraints/ip/measured
+- equilibrium/time_slice/constraints/ip/reconstructed
+- equilibrium/time_slice/constraints/ip/weight
+- equilibrium/time_slice/constraints/pf_current/chi_squared
+- equilibrium/time_slice/constraints/pf_current/measured
+- equilibrium/time_slice/constraints/pf_current/reconstructed
+- equilibrium/time_slice/constraints/pf_current/weight
+- equilibrium/time_slice/constraints/pf_passive_current/chi_squared
+- equilibrium/time_slice/constraints/pf_passive_current/measured
+- equilibrium/time_slice/constraints/pf_passive_current/reconstructed
+- equilibrium/time_slice/constraints/pf_passive_current/weight
+- equilibrium/time_slice/convergence/grad_shafranov_deviation_expression/index
+- equilibrium/time_slice/convergence/grad_shafranov_deviation_value
+- equilibrium/time_slice/convergence/iterations_n
+- equilibrium/time_slice/global_quantities/area
+- equilibrium/time_slice/global_quantities/beta_normal
+- equilibrium/time_slice/global_quantities/beta_pol
+- equilibrium/time_slice/global_quantities/beta_tor
+- equilibrium/time_slice/global_quantities/energy_mhd
+- equilibrium/time_slice/global_quantities/ip
+- equilibrium/time_slice/global_quantities/li_3
+- equilibrium/time_slice/global_quantities/magnetic_axis/b_field_tor
+- equilibrium/time_slice/global_quantities/magnetic_axis/r
+- equilibrium/time_slice/global_quantities/magnetic_axis/z
+- equilibrium/time_slice/global_quantities/psi_axis
+- equilibrium/time_slice/global_quantities/psi_boundary
+- equilibrium/time_slice/global_quantities/q_95
+- equilibrium/time_slice/global_quantities/q_axis
+- equilibrium/time_slice/global_quantities/q_min/value
+- equilibrium/time_slice/global_quantities/volume
+- equilibrium/time_slice/profiles_1d/dpressure_dpsi
+- equilibrium/time_slice/profiles_1d/elongation
+- equilibrium/time_slice/profiles_1d/f
+- equilibrium/time_slice/profiles_1d/f_df_dpsi
+- equilibrium/time_slice/profiles_1d/j_tor
+- equilibrium/time_slice/profiles_1d/phi
+- equilibrium/time_slice/profiles_1d/pressure
+- equilibrium/time_slice/profiles_1d/psi
+- equilibrium/time_slice/profiles_1d/q
+- equilibrium/time_slice/profiles_1d/r_inboard
+- equilibrium/time_slice/profiles_1d/r_outboard
+- equilibrium/time_slice/profiles_1d/rho_volume_norm
+- equilibrium/time_slice/profiles_1d/triangularity_lower
+- equilibrium/time_slice/profiles_1d/triangularity_upper
+- equilibrium/time_slice/profiles_1d/volume
+- equilibrium/time_slice/profiles_2d/grid/dim1
+- equilibrium/time_slice/profiles_2d/grid/dim2
+- equilibrium/time_slice/profiles_2d/grid_type/description
+- equilibrium/time_slice/profiles_2d/grid_type/index:
+    allowed_values: [1]
+- equilibrium/time_slice/profiles_2d/grid_type/name:
+    allowed_values: ["rectangular"]
+- equilibrium/time_slice/profiles_2d/j_tor
+- equilibrium/time_slice/profiles_2d/psi
+- equilibrium/vacuum_toroidal_field
