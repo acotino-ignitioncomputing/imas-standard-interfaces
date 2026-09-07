@@ -7,9 +7,10 @@ from imas import DBEntry, IDSFactory
 
 from .utilities import (
     check_all_or_none_criterium,
-    check_any_of_criteria,
+    check_any_criteria,
     check_mandatory_paths,
     extract_paths,
+    get_schema_dict,
     load_interface_dict,
 )
 from .validate_definitions import validate_definitions_dict
@@ -69,11 +70,14 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
     else:
         logger.setLevel(logging.WARNING)
 
+    # Load schema
+    schema_dict = get_schema_dict()
+
     # Load interface definition.
     interface_dict = load_interface_dict(interface_path)
 
     # Ensure interfaces validate against schema
-    if validate_definitions_dict(interface_dict, silent=True) != 0:
+    if validate_definitions_dict(interface_dict, schema_dict, silent=True) != 0:
         logger.warning(
             f"Interface '{interface_path}' does not validate against schema."
         )
@@ -81,7 +85,7 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
 
     # Load dataset
     with DBEntry(dataset_path, "r") as dataset:
-        dd_version = interface_dict["dd_version_range"][0]
+        dd_version = interface_dict["dd_version_interface"]
 
         # Get present paths
         list_of_present_paths = get_present_paths(dataset, dd_version)
@@ -99,15 +103,15 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
                 + f"\n{SPACING_4}".join(missing_mandatory_paths)
             )
 
-        # Check the paths under each any_of-block
-        missing_any_of = check_any_of_criteria(interface_dict, list_of_present_paths)
+        # Check the paths under each any-block
+        missing_any = check_any_criteria(interface_dict, list_of_present_paths)
 
-        if missing_any_of:
+        if missing_any:
             logger.warning(
                 f"\n{SPACING_2}The following paths are listed as a subset under an"
-                f" any_of-block but no subset was contained in the dataset:\n"
+                f" any-block but no subset was contained in the dataset:\n"
                 + f"\n{SPACING_4}"
-                + f"\n{SPACING_4}".join(extract_paths(missing_any_of))
+                + f"\n{SPACING_4}".join(extract_paths(missing_any))
             )
 
         # Check the paths under each all_or_none-block
@@ -124,14 +128,14 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
                 + f"\n{SPACING_4}".join(extract_paths(missing_all_or_none))
             )
 
-        # TODO: Lastly, check for allowed_values
+        # TODO: Lastly, check for each path with constraints
         # missing_allowed_values = check_allowed_values(interface_dict, dataset)
         missing_allowed_values = []
 
     if (
         missing_mandatory_paths
         or missing_all_or_none
-        or missing_any_of
+        or missing_any
         or missing_allowed_values
     ):
         logger.warning("\nDataset does not comply with interface")

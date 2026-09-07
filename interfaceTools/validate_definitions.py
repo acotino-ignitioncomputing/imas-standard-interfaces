@@ -8,7 +8,12 @@ import jsonschema
 from imas import IDSFactory, dd_zip, setup_logging, util
 from packaging.version import Version
 
-from .utilities import extract_paths, get_schema_dict, load_interface_dict
+from .utilities import (
+    split_ids_path,
+    extract_paths,
+    get_schema_dict,
+    load_interface_dict,
+)
 
 logger = logging.getLogger("validateLogger")
 handler = logging.StreamHandler()
@@ -36,7 +41,11 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
 
     logger.warning(f"{SPACING_2}Error at YAML path {json_path}\n")
 
-    if error.schema["type"] == "array" and error.validator == "uniqueItems":
+    if (
+        "type" in error.schema
+        and error.schema["type"] == "array"
+        and error.validator == "uniqueItems"
+    ):
         # Duplicate IDS paths in sequence
 
         # Get list of paths and dictionaries
@@ -75,7 +84,11 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
                 + "\n"
             )
 
-    elif error.schema["type"] == "array" and error.validator == "minItems":
+    elif (
+        "type" in error.schema
+        and error.schema["type"] == "array"
+        and error.validator == "minItems"
+    ):
         # Certain sequences must have length 2 or greater
         logger.warning(f"{SPACING_4}This sequence must have 2 or more entries\n")
 
@@ -107,34 +120,6 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     return validation_correct
 
 
-def get_valid_dd_versions(definition: dict) -> list[str]:
-    """Get list of valid versions of Data Dictionary based on the interval given in key
-    `dd_version_range`.
-
-    Args:
-        definition: dictionary-representation of YAML file satisfying the schema
-
-    Returns:
-        list of versions of Data Dictionary
-    """
-    min_version_str, max_version_str = definition["dd_version_range"]
-    min_version, max_version = Version(min_version_str), Version(max_version_str)
-
-    valid_dd_versions = [
-        version_str
-        for version_str in VALID_DD_VERSIONS
-        if Version(version_str) >= min_version and Version(version_str) <= max_version
-    ]
-
-    if not valid_dd_versions:
-        logger.warning(
-            f"{SPACING_2}No valid versions of the Data Dictionary fall within the"
-            + f" provided range {definition['dd_version_range']}"
-        )
-
-    return valid_dd_versions
-
-
 def check_ids_name(definition: dict) -> bool:
     """Check that only valid IDS names appear in the definition.
 
@@ -145,26 +130,23 @@ def check_ids_name(definition: dict) -> bool:
         bool: whether any IDS name was invalid
     """
 
-    dd_versions_to_check = get_valid_dd_versions(definition)
-
-    if not dd_versions_to_check:
-        return False
+    dd_version = definition["dd_version_interface"]
 
     correct_ids_names = True
-    for dd_version in dd_versions_to_check:
-        ids_names_list = IDSFactory(dd_version).ids_names()
 
-        # Collect all IDS paths
-        path_list = extract_paths(definition["paths"])
+    ids_names_list = IDSFactory(dd_version).ids_names()
 
-        for ids_path in path_list:
-            ids_name = ids_path.split("/")[0]
-            if ids_name not in ids_names_list:
-                logger.warning(
-                    f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary"
-                    + f" version {dd_version}\n"
-                )
-                correct_ids_names = False
+    # Collect all IDS paths
+    path_list = extract_paths(definition["paths"])
+
+    for ids_path in path_list:
+        ids_name = ids_path.split("/")[0]
+        if ids_name not in ids_names_list:
+            logger.warning(
+                f"{SPACING_2}IDS name '{ids_name}' is not in Data Dictionary"
+                + f" version {dd_version}\n"
+            )
+            correct_ids_names = False
 
     return correct_ids_names
 
@@ -179,44 +161,42 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
         bool: whether any IDS path was invalid
     """
 
-    dd_versions_to_check = get_valid_dd_versions(definition)
-
-    if not dd_versions_to_check:
-        return False
+    dd_version = definition["dd_version_interface"]
 
     all_paths_valid = True
 
-    for dd_version in dd_versions_to_check:
-        # Collect all IDS paths
-        path_list = extract_paths(definition["paths"])
+    # Collect all IDS paths
+    path_list = extract_paths(definition["paths"])
 
-        for full_ids_path in path_list:
-            # Extract IDS name and path
-            ids_name = full_ids_path.split("/")[0]
-            ids_path = full_ids_path.replace(f"{ids_name}/", "")
+    for full_IDS_path in path_list:
+        # Extract IDS name and path
+        IDS_name, IDS_path = split_ids_path(full_IDS_path)
 
-            # Create empty IDS to extract valid paths
-            ids_instance = IDSFactory(dd_version).new(ids_name)
+        # Create empty IDS to extract valid paths
+        ids_instance = IDSFactory(dd_version).new(IDS_name)
 
-            valid_paths_list = util.find_paths(ids_instance, "")
+        valid_paths_list = util.find_paths(ids_instance, "")
 
-            if ids_path not in valid_paths_list:
-                logger.warning(
-                    f"{SPACING_2}IDS path {ids_path} is not in IDS {ids_name} for "
-                    + f"Data Dictionary version {dd_version}.\n"
-                )
-                all_paths_valid = False
+        if IDS_path not in valid_paths_list:
+            logger.warning(
+                f"{SPACING_2}IDS path {IDS_path} is not in IDS {IDS_name} for "
+                + f"Data Dictionary version {dd_version}.\n"
+            )
+            all_paths_valid = False
 
     return all_paths_valid
 
 
-def validate_definitions_dict(definition_dict: dict, silent: bool) -> int:
+def validate_definitions_dict(
+    definition_dict: dict, schema_dict: dict, silent: bool
+) -> int:
     """Validate the dictionary representation of a YAML file with respect to the
     JSON Schema. Also check the correctness of the IDS names and paths with respect
     respect to Data Dictionary version mentioned in the YAML file.
 
     Args:
         definition_dict: dictionary representation of a YAML file
+        schema_dict: dictionary representation of the JSON Schema
         silent: If set to True, surpress all log messages.
 
     Returns:
@@ -235,15 +215,9 @@ def validate_definitions_dict(definition_dict: dict, silent: bool) -> int:
         # imas logger
         setup_logging.logger.setLevel(logging.WARNING)
 
-    # Load schema
-    # TODO: ensure schema is loaded only once
-
-    schema_dict = get_schema_dict()
-
     # Correctness with respect to JSON Schema
     if not validate_against_schema(definition_dict, schema_dict):
         return 1
-
     #  Check if IDS names are in Data Dictionary
     if not check_ids_name(definition_dict):
         return 1
@@ -280,6 +254,9 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
         # imas logger
         setup_logging.logger.setLevel(logging.WARNING)
 
+    # Load schema
+    schema_dict = get_schema_dict()
+
     # Get list of YAML file(s)
     if input_path.is_dir():
         # Search for YAML files in subfolders of directory
@@ -306,7 +283,7 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
         file_path_name = file_path.name if file_path != Path("-") else "input stream"
         logger.info(f"\nValidating {file_path_name}...")
 
-        if validate_definitions_dict(definition_dict, silent) != 0:
+        if validate_definitions_dict(definition_dict, schema_dict, silent) != 0:
             incorrect_definitions.append(file_path.name)
             continue
 

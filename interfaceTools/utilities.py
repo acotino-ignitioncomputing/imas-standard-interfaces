@@ -1,5 +1,6 @@
 """General utility functions"""
 
+import re
 import json
 import sys
 from pathlib import Path
@@ -60,6 +61,40 @@ def load_interface_dict(interface_file_path: Path) -> dict:
 
 
 ####################### Functions related to Data Dictionary ########################
+def strip_path_indexing(full_IDS_path: str) -> str:
+    """Remove the path indexing as described in
+    https://imas-data-dictionary.readthedocs.io/en/latest/IDS-path-syntax.html
+
+    Args:
+        full_IDS_path: IDS path of the form IDS_name/IDS_node_path
+
+    Returns:
+        a string equal to full_IDS_path without the path indexing
+    """
+
+    return re.sub("\([0-9\-\:]{1,}\)", "", full_IDS_path)
+
+
+def split_ids_path(full_IDS_path: str) -> tuple[str, str]:
+    """Given a full IDS path of the form IDS_name/IDS_node_path where IDS_node_path may
+    contain path indexing, return the tuple (IDS_name, IDS_stripped_path) where
+    IDS_stripped_path equals IDS_node_path without the path indexing.
+
+    Args:
+        full_IDS_path: IDS path of the form IDS_name/IDS_node_path
+
+    Returns:
+        2-tuple of strings
+    """
+    # Remove path indexing
+    full_IDS_path = strip_path_indexing(full_IDS_path)
+
+    IDS_name = full_IDS_path.split("/")[0]
+    IDS_path = full_IDS_path.replace(f"{IDS_name}/", "")
+
+    return IDS_name, IDS_path
+
+
 def get_all_child_paths(full_IDS_path: str, dd_version: str) -> list:
     """Given a full IDS path of the form IDS_name/IDS_node_path, return list of all
     lowest level child paths that start with full_IDS_path.
@@ -71,8 +106,7 @@ def get_all_child_paths(full_IDS_path: str, dd_version: str) -> list:
     Returns:
         list of all lowest level child paths having the form IDS_name/IDS_node_path.
     """
-    IDS_name = full_IDS_path.split("/")[0]
-    IDS_path = full_IDS_path.replace(f"{IDS_name}/", "")
+    IDS_name, IDS_path = split_ids_path(full_IDS_path)
 
     # Create empty IDS to extract child paths
     ids_instance = IDSFactory(dd_version).new(IDS_name)
@@ -96,53 +130,77 @@ def get_all_child_paths(full_IDS_path: str, dd_version: str) -> list:
 
 
 #################### Functions on keys of interface dictionaries ######################
-def split_path_allowed_values(IDS_path_with_allowed_values: dict) -> tuple[str, list]:
-    """Splits the IDS path with allowed_values-criterium into the IDS path and the
-    list of allowed values.
+def check_all_criterium(
+    all_block: dict, list_of_present_paths: list[str], dd_version: str
+) -> list[str]:
+    """Checks if all paths in all_block['all'] are present in list_of_present_paths
+    and returns a list of paths which were absent.
+    It is assumed that no path in list_of_present_paths contains path indexing.
 
     Args:
-        IDS_path_with_allowed_values: dictionary whose key is an IDS path and whose
-        value is the dictionary {allowed_values: [...]}
+        all_block: dictionary with key 'all', as dictated by the schema
+        list_of_present_paths: list of full IDS paths of the form IDS_name/IDS_node_path
+        dd_version: version of Data Dictionary
 
     Returns:
-        tuple of the IDS path as a string and its allowed values as a list
+        list of
     """
 
-    IDS_path = tuple(IDS_path_with_allowed_values.keys())[0]
-    allowed_values_list = IDS_path_with_allowed_values[IDS_path]["allowed_values"]
+    # Gather all mandatory paths. Paths that are dictionaries have (a) constraint(s)
+    mandatory_paths_list = []
+    for entry in all_block["all"]:
+        if isinstance(entry, str):
+            # Strip path indexing...
+            mandatory_paths_list.append(strip_path_indexing(entry))
 
-    return (IDS_path, allowed_values_list)
+        else:
+            # IDS path constraints
+            path = tuple(entry.keys())[0]
+            mandatory_paths_list.append(strip_path_indexing(path))
+
+    # Replace parent paths with child paths
+    mandatory_child_paths_list = []
+
+    for full_IDS_path in mandatory_paths_list:
+        mandatory_child_paths_list += get_all_child_paths(full_IDS_path, dd_version)
+
+    return [
+        path for path in mandatory_child_paths_list if path not in list_of_present_paths
+    ]
 
 
-def is_any_of_block_satisfied(
-    any_of_block: dict[str, list], list_of_present_paths: list[str]
+def is_any_block_satisfied(
+    any_block: dict[str, dict], list_of_present_paths: list[str], dd_version: str
 ) -> bool:
-    """Return True if any of the subset of paths listed in any_of_block['any_of'] is
-    present in list_of_present_paths.
+    """Return True if there is a subset of paths in any_block['any'] that is present
+    in list_of_present_paths. It is assumed that no path in list_of_present_paths
+    contains path indexing.
 
     Args:
-        any_of_block: dictionary with key 'any_of', as dictated by the schema
+        any_block: dictionary with key 'any', as dictated by the schema
         list_of_present_paths: list of full IDS paths of the form IDS_name/IDS_node_path
+        dd_version: version of Data Dictionary
     """
-    # Check if any subset is contained in list_of_present_paths
-    for entry in any_of_block:
+    # Check if there is a subset contained in list_of_present_paths
+    for entry in any_block:
         if isinstance(entry, str):
             # Single IDS path
             if entry in list_of_present_paths:
                 return True
-        elif isinstance(entry, dict) and "all_of" in entry:
+        elif isinstance(entry, dict) and "all" in entry:
             # Subset of paths. All must be present
-            subset = entry["all_of"]
-            if all([path in list_of_present_paths for path in subset]):
-                return True
+            missing_paths = check_all_criterium(
+                entry, list_of_present_paths, dd_version
+            )
+            return len(missing_paths) == 0
         else:
-            raise Exception(f"Illegal entry under any_of-key: {entry=}")
+            raise Exception(f"Illegal entry under any-key: {entry=}")
 
     return False
 
 
 def is_all_or_none_satisfied(
-    all_or_none_block: dict[list], list_of_present_paths: list[str]
+    all_or_none_block: dict[list], list_of_present_paths: list[str], dd_version: str
 ) -> bool:
     """Return True if all of the paths listed in all_or_none_block['all_or_none'] are
     either present or absent in list_of_present_paths.
@@ -150,11 +208,17 @@ def is_all_or_none_satisfied(
     Args:
         all_or_none_block: dictionary with key 'all_or_none', as dictated by the schema
         list_of_present_paths: list of full IDS paths of the form IDS_name/IDS_node_path
+        dd_version: version of Data Dictionary
     """
+    # Get all child paths
+    paths_in_block = []
+    for full_IDS_path in all_or_none_block["all_or_none"]:
+        paths_in_block += get_all_child_paths(
+            strip_path_indexing(full_IDS_path), dd_version
+        )
+
     # Check the presence of each path
-    path_presence = [
-        path in list_of_present_paths for path in all_or_none_block["all_or_none"]
-    ]
+    path_presence = [path in list_of_present_paths for path in paths_in_block]
 
     return all(path_presence) == any(path_presence)
 
@@ -177,7 +241,7 @@ def extract_paths(paths: list[str | dict]) -> list[str]:
             path_list.append(string_or_dict)
         elif isinstance(string_or_dict, dict):
             key = list(string_or_dict.keys())[0]
-            if key not in ["all_or_none", "any_of", "all_of"]:
+            if key not in ["all_or_none", "any", "all"]:
                 # Based on json schema, any other key of dictionary is an IDS path
                 path_list.append(key)
             else:
@@ -205,37 +269,19 @@ def check_mandatory_paths(
         list of full IDS paths that are mandatory in interface_dict but not present in
         list_of_present_paths
     """
-    # Gather all mandatory paths. Handle paths with an allowed_values criterium
-    mandatory_paths_list = []
+    # Get top-level all-block
     for entry in interface_dict["paths"]:
-        if isinstance(entry, str):
-            mandatory_paths_list.append(entry)
-
-        if (
-            isinstance(entry, dict)
-            and "any_of" not in entry
-            and "all_or_none" not in entry
-        ):
-            # IDS path with allowed_values criterium
-            path, _ = split_path_allowed_values(entry)
-            mandatory_paths_list.append(path)
-
-    # Replace parent paths with child paths
-    mandatory_child_paths_list = []
-    dd_version = interface_dict["dd_version_range"][0]
-
-    for full_IDS_path in mandatory_paths_list:
-        mandatory_child_paths_list += get_all_child_paths(full_IDS_path, dd_version)
-
-    return [
-        path for path in mandatory_child_paths_list if path not in list_of_present_paths
-    ]
+        if "all" in entry:
+            return check_all_criterium(
+                entry, list_of_present_paths, interface_dict["dd_version_interface"]
+            )
+    return []
 
 
-def check_any_of_criteria(
+def check_any_criteria(
     interface_dict: dict, list_of_present_paths: list[str]
 ) -> list[dict]:
-    """Checks each any_of-criterium in interface_dict and returns a list of any_of-dicts
+    """Checks each any-criterium in interface_dict and returns a list of any-dicts
     who contain no subset of IDS paths that are present in list_of_present_paths.
 
     Args:
@@ -243,20 +289,18 @@ def check_any_of_criteria(
         list_of_present_paths: list of full IDS paths of the form IDS_name/IDS_node_path
 
     Returns:
-        List of dictionaries with key 'all_of' where none of their listed subset of
+        List of dictionaries with key 'any' where none of their listed subset of
         paths is in list_of_present_paths
     """
-    # Get list of any_of-blocks
-    any_of_blocks = [
-        entry
-        for entry in interface_dict["paths"]
-        if isinstance(entry, dict) and "any_of" in entry
-    ]
+    dd_version = interface_dict["dd_version_interface"]
+
+    # Get list of any-blocks
+    any_blocks = [entry for entry in interface_dict["paths"] if "any" in entry]
 
     return [
         block
-        for block in any_of_blocks
-        if not is_any_of_block_satisfied(block, list_of_present_paths)
+        for block in any_blocks
+        if not is_any_block_satisfied(block, list_of_present_paths, dd_version)
     ]
 
 
@@ -274,15 +318,15 @@ def check_all_or_none_criterium(
         List of dictionaries with key 'all_or_none' where some of the listed paths are
         present in list_of_present_paths and some are absent.
     """
+    dd_version = interface_dict["dd_version_interface"]
+
     # Get list of all_or_none-blocks
     all_or_none_blocks = [
-        entry
-        for entry in interface_dict["paths"]
-        if isinstance(entry, dict) and "all_or_none" in entry
+        entry for entry in interface_dict["paths"] if "all_or_none" in entry
     ]
 
     return [
         block
         for block in all_or_none_blocks
-        if not is_all_or_none_satisfied(block, list_of_present_paths)
+        if not is_all_or_none_satisfied(block, list_of_present_paths, dd_version)
     ]
