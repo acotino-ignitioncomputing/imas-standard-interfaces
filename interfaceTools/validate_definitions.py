@@ -211,14 +211,16 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
 
 
 def validate_definitions_dict(definition_dict: dict, silent: bool) -> int:
-    """TODO
+    """Validate the dictionary representation of a YAML file with respect to the
+    JSON Schema. Also check the correctness of the IDS names and paths with respect
+    respect to Data Dictionary version mentioned in the YAML file.
 
     Args:
-        definition_dict: _description_
-        silent: _description_
+        definition_dict: dictionary representation of a YAML file
+        silent: If set to True, surpress all log messages.
 
     Returns:
-        _description_
+        0 if no issues were found, 1 otherwise
     """
 
     # Set log level to ERROR in silent-mode

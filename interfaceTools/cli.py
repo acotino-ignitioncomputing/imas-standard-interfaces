@@ -65,7 +65,7 @@ def validate(input_path: Path, silent: bool):
     type=click.Path(exists=True, allow_dash=True, path_type=Path),
     default="-",
 )
-@click.option("-s", "--silent", is_flag=True, help="If set, supress any log messages")
+@click.option("-s", "--silent", is_flag=True, help="If set, suppress any log messages")
 def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
     """Checks whether the provided IMAS dataset complies with the given IMAS interface.
 
@@ -78,7 +78,7 @@ def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
     interface_path: Path to the YAML file containing the interface definition. The
         contents of a YAML file could also be read from stdin
 
-    silent: If set to True, surpress all log messages.
+    silent: If set to True, suppress all log messages.
 
 
     ------------------------ Examples ------------------------

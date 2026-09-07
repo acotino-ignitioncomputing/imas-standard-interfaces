@@ -60,7 +60,7 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
         dataset_path: URI to the dataset entry. Only NetCDF and HDF5 backends
         are supported.
         interface_path: Path to the YAML file containing the interface definition
-        silent: If set to True, surpress all log messages.
+        silent: If set to True, suppress all log messages.
     """
 
     # Set log level to ERROR in silent-mode

@@ -115,7 +115,7 @@ def split_path_allowed_values(IDS_path_with_allowed_values: dict) -> tuple[str, 
 
 
 def is_any_of_block_satisfied(
-    any_of_block: dict[list], list_of_present_paths: list[str]
+    any_of_block: dict[str, list], list_of_present_paths: list[str]
 ) -> bool:
     """Return True if any of the subset of paths listed in any_of_block['any_of'] is
     present in list_of_present_paths.
@@ -227,7 +227,9 @@ def check_mandatory_paths(
     for full_IDS_path in mandatory_paths_list:
         mandatory_child_paths_list += get_all_child_paths(full_IDS_path, dd_version)
 
-    return [path for path in mandatory_paths_list if path not in list_of_present_paths]
+    return [
+        path for path in mandatory_child_paths_list if path not in list_of_present_paths
+    ]
 
 
 def check_any_of_criteria(
