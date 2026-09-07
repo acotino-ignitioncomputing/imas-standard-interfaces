@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 
 from imas import DBEntry, IDSFactory
-from imas.exception import DataEntryException
 
 from .utilities import (
     check_all_or_none_criterium,
@@ -41,14 +40,15 @@ def get_present_paths(dataset: DBEntry, dd_version: str) -> list[str]:
     list_of_present_paths = []
 
     for IDS_name in IDS_names_list:
-        try:
+        all_occurrences = dataset.list_all_occurrences(IDS_name)
+        for occurrence in all_occurrences:
             # Prepend IDS_name before each path to get full path
             list_of_present_paths += [
-                f"{IDS_name}/{path}" for path in dataset.list_filled_paths(IDS_name)
+                f"{IDS_name}/{path}"
+                for path in dataset.list_filled_paths(
+                    ids_name=IDS_name, occurrence=occurrence
+                )
             ]
-        except DataEntryException:
-            # IDS name not found
-            continue
 
     return list_of_present_paths
 
