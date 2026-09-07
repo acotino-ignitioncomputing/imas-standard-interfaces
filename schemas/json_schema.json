@@ -50,7 +50,7 @@
                         "value_range": {
                             "description": "An interval indicating a range of values that are allowed in to be present in the data array at the IDS path. Infinity is indicated with 'inf'.",
                             "type": "string",
-                            "pattern": "(\\(|\\[)\\-{0,1}((inf)|([0-9\\.]{1,})),\\-{0,1}((inf)|([0-9\\.]{1,}))(\\)|\\])"
+                            "pattern": "(\\(|\\[)\\-{0,1}((inf)|([0-9\\.]{1,})), {0,1}\\-{0,1}((inf)|([0-9\\.]{1,}))(\\)|\\])"
                         },
                         "same_shape_as": {
                             "description": "IDS path whose data array must have the same shape as the data array at the IDS path in question.",
@@ -148,32 +148,27 @@
                         "type": "array",
                         "uniqueItems": true,
                         "minItems": 2,
-                        "anyOf": [
-                            {
-                                "items": {
+                        "items": {
+                            "anyOf": [
+                                {
                                     "$ref": "#/$defs/subschema_for_constraint_IDS_path"
-                                }
-                            },
-                            {
-                                "items": {
+                                },
+                                {
                                     "type": "object",
                                     "minProperties": 1,
-                                    "maxProperties": 1,
                                     "additionalProperties": false,
                                     "properties": {
-                                        "all":{
-                                            "description": "All listed IDS paths are considered as a single set.",
+                                        "all": {
                                             "type": "array",
-                                            "uniqueItems": true,
-                                            "minItems": 2,
                                             "items": {
                                                 "$ref": "#/$defs/subschema_for_constraint_IDS_path"
                                             }
                                         }
                                     }
                                 }
-                            }
-                        ]
+
+                            ]
+                        }
                     }
                 }
             }
