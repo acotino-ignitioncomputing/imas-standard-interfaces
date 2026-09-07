@@ -58,7 +58,7 @@ def validate(input_path: Path, silent: bool):
 @main.command(name="check_dataset")
 @click.argument(
     "dataset_path",
-    type=click.Path(exists=True, allow_dash=False, path_type=Path),
+    type=click.Path(exists=False, allow_dash=False, path_type=Path),
 )
 @click.argument(
     "interface_path",
@@ -72,11 +72,13 @@ def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
     \b
     Args:
     \b
-    input_dataset_path: URI to the dataset entry. Only netCDF and HDF5 backends
+    dataset_path: URI to the dataset entry. Only netCDF and HDF5 backends
         are supported.
     \b
-    input_interface_path: Path to the YAML file containing the interface definition. The
+    interface_path: Path to the YAML file containing the interface definition. The
         contents of a YAML file could also be read from stdin
+
+    silent: If set to True, surpress all log messages.
 
 
     ------------------------ Examples ------------------------

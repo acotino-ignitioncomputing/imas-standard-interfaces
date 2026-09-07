@@ -57,9 +57,10 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
     """Checks whether the provided IMAS dataset complies with the given IMAS interface.
 
     Args:
-        input_dataset_path: URI to the dataset entry. Only NetCDF and HDF5 backends
+        dataset_path: URI to the dataset entry. Only NetCDF and HDF5 backends
         are supported.
-        input_interface_path: Path to the YAML file containing the interface definition
+        interface_path: Path to the YAML file containing the interface definition
+        silent: If set to True, surpress all log messages.
     """
 
     # Set log level to ERROR in silent-mode
@@ -79,56 +80,53 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
         return 1
 
     # Load dataset
-    dataset = DBEntry(dataset_path, "r")
+    with DBEntry(dataset_path, "r") as dataset:
+        dd_version = interface_dict["dd_version_range"][0]
 
-    dd_version = interface_dict["dd_version_range"][0]
+        # Get present paths
+        list_of_present_paths = get_present_paths(dataset, dd_version)
 
-    # Get present paths
-    list_of_present_paths = get_present_paths(dataset, dd_version)
-
-    # Check presence of mandatory paths in dataset
-    missing_mandatory_paths = check_mandatory_paths(
-        interface_dict, list_of_present_paths
-    )
-
-    if missing_mandatory_paths:
-        logger.warning(
-            f"\n{SPACING_2}Following mandatory paths are either empty or missing in the"
-            + " dataset:\n"
-            + f"\n{SPACING_4}"
-            + f"\n{SPACING_4}".join(missing_mandatory_paths)
+        # Check presence of mandatory paths in dataset
+        missing_mandatory_paths = check_mandatory_paths(
+            interface_dict, list_of_present_paths
         )
 
-    # Check the paths under each any_of-block
-    missing_any_of = check_any_of_criteria(interface_dict, list_of_present_paths)
+        if missing_mandatory_paths:
+            logger.warning(
+                f"\n{SPACING_2}Following mandatory paths are either empty or missing in the"
+                + " dataset:\n"
+                + f"\n{SPACING_4}"
+                + f"\n{SPACING_4}".join(missing_mandatory_paths)
+            )
 
-    if missing_any_of:
-        logger.warning(
-            f"\n{SPACING_2}The following paths are listed as a subset under an"
-            f" any_of-block but no subset was contained in the dataset:\n"
-            + f"\n{SPACING_4}"
-            + f"\n{SPACING_4}".join(extract_paths(missing_any_of))
+        # Check the paths under each any_of-block
+        missing_any_of = check_any_of_criteria(interface_dict, list_of_present_paths)
+
+        if missing_any_of:
+            logger.warning(
+                f"\n{SPACING_2}The following paths are listed as a subset under an"
+                f" any_of-block but no subset was contained in the dataset:\n"
+                + f"\n{SPACING_4}"
+                + f"\n{SPACING_4}".join(extract_paths(missing_any_of))
+            )
+
+        # Check the paths under each all_or_none-block
+        missing_all_or_none = check_all_or_none_criterium(
+            interface_dict, list_of_present_paths
         )
 
-    # Check the paths under each all_or_none-block
-    missing_all_or_none = check_all_or_none_criterium(
-        interface_dict, list_of_present_paths
-    )
+        # Logging based on missing_all_or_none
+        if missing_all_or_none:
+            logger.warning(
+                f"\n{SPACING_2}Following paths are under an all_or_none-key, but not all"
+                + " are present or absent in the dataset:\n"
+                + f"\n{SPACING_4}"
+                + f"\n{SPACING_4}".join(extract_paths(missing_all_or_none))
+            )
 
-    # Logging based on missing_all_or_none
-    if missing_all_or_none:
-        logger.warning(
-            f"\n{SPACING_2}Following paths are under an all_or_none-key, but not all"
-            + " are present or absent in the dataset:\n"
-            + f"\n{SPACING_4}"
-            + f"\n{SPACING_4}".join(extract_paths(missing_all_or_none))
-        )
-
-    # TODO: Lastly, check for allowed_values
-    # missing_allowed_values = check_allowed_values(interface_dict, dataset)
-    missing_allowed_values = []
-
-    dataset.close()
+        # TODO: Lastly, check for allowed_values
+        # missing_allowed_values = check_allowed_values(interface_dict, dataset)
+        missing_allowed_values = []
 
     if (
         missing_mandatory_paths
