@@ -47,7 +47,7 @@
                             ]
                         },
                         "value_range": {
-                            "description": "An interval indicating a range of values that are allowed in to be present in the data array at the IDS path. Infinity is indicated with 'inf'.",
+                            "description": "An interval indicating a range of values that are allowed to be present in the data array at the IDS path. Infinity is indicated with 'inf'.",
                             "type": "string",
                             "pattern": "(\\(|\\[)\\-{0,1}((inf)|([0-9\\.]{1,})), {0,1}\\-{0,1}((inf)|([0-9\\.]{1,}))(\\)|\\])"
                         },
