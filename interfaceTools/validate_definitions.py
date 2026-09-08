@@ -6,9 +6,10 @@ import logging
 from pathlib import Path
 
 import jsonschema
-from imas import IDSFactory, dd_zip, setup_logging, util
+from imas import IDSFactory, setup_logging, util
 
 from .utilities import (
+    VALID_DD_VERSIONS,
     split_ids_path,
     extract_paths,
     get_schema_dict,
@@ -24,8 +25,6 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
-
-VALID_DD_VERSIONS = dd_zip.dd_xml_versions()
 
 VALID_CONSTRAINTS = ["allowed_values", "value_range", "same_shape_as"]
 

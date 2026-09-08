@@ -5,6 +5,7 @@ import click
 
 from interfaceTools.check_dataset import dataset_checker
 from interfaceTools.validate_definitions import validate_definitions
+from interfaceTools.translate_definition import translate_definition
 
 
 @click.group()
@@ -104,6 +105,57 @@ def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
 
     error_code = dataset_checker(dataset_path, interface_path, silent)
     sys.exit(error_code)
+
+
+@main.command(name="translate")
+@click.argument(
+    "input_path",
+    type=click.Path(exists=True, allow_dash=True, path_type=Path),
+    default="-",
+)
+@click.argument(
+    "new_dd_version",
+    type=str,
+)
+@click.option(
+    "-o",
+    "--output",
+    type=click.Path(path_type=Path),
+    default=None,
+    help="Write output to a file instead of stdout.",
+)
+def translate(input_path: Path, new_dd_version: str, output: Path | None):
+    """Translates the IDS paths of the provided YAML file to the provided version of the
+    Data Dictionary and prints the results to screen.
+
+    Notes:
+    Path indexing is not transfered during translating.
+    All paths that could not be translated are placed in comments at the bottom.
+
+    \b
+    Args:
+    \b
+    input_path: absolute or relative path to YAML file. The contents of a YAML file
+    could also be read from stdin.
+    new_dd_version: target version of the Data Dictionary.
+
+    ------------------------ Examples ------------------------
+
+    \b
+    To translate a single YAML file to DD version 4.0.0
+        $imas-interfaces translate input_efit++IMAS_dd_3.42.0.yaml 4.0.0
+
+    \b
+    Save output to file
+        $imas-interfaces translate -o result.yaml input_efit++IMAS_dd_3.42.0.yaml 4.0.0
+    """
+
+    # First check if standard input is indicated as 'interactive'
+    if input_path == Path("-") and sys.stdin.isatty():
+        raise click.UsageError("No input given")
+
+    exit_code = translate_definition(input_path, new_dd_version, output)
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":

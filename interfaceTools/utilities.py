@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 import yaml
-from imas import IDSFactory, util
+from imas import IDSFactory, util, dd_zip
 
 # Path to the JSON schema describing the format of the interface definitions
 SCHEMA_PATH = Path(__file__).parents[1] / "schemas" / "json_schema.json"
@@ -16,6 +16,9 @@ SCHEMA_PATH = Path(__file__).parents[1] / "schemas" / "json_schema.json"
 # TODO: replace with proper formatter
 SPACING_2 = "  "
 SPACING_4 = "    "
+
+# All valid versions of Data Dictionary
+VALID_DD_VERSIONS = dd_zip.dd_xml_versions()
 
 
 ########################## Functions related to file loading ##########################

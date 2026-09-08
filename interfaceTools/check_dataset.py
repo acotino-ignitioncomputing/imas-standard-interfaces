@@ -88,47 +88,47 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
         # Get present paths
         list_of_present_paths = get_present_paths(dataset, dd_version)
 
-        # Check presence of mandatory paths in dataset
-        missing_mandatory_paths = check_mandatory_paths(
-            interface_dict, list_of_present_paths
+    # Check presence of mandatory paths in dataset
+    missing_mandatory_paths = check_mandatory_paths(
+        interface_dict, list_of_present_paths
+    )
+
+    if missing_mandatory_paths:
+        logger.warning(
+            f"\n{SPACING_2}Following mandatory paths are either empty or missing in"
+            + " the dataset:\n"
+            + f"\n{SPACING_4}"
+            + f"\n{SPACING_4}".join(missing_mandatory_paths)
         )
 
-        if missing_mandatory_paths:
-            logger.warning(
-                f"\n{SPACING_2}Following mandatory paths are either empty or missing in"
-                + " the dataset:\n"
-                + f"\n{SPACING_4}"
-                + f"\n{SPACING_4}".join(missing_mandatory_paths)
-            )
+    # Check the paths under each any-block
+    missing_any = check_any_criteria(interface_dict, list_of_present_paths)
 
-        # Check the paths under each any-block
-        missing_any = check_any_criteria(interface_dict, list_of_present_paths)
-
-        if missing_any:
-            logger.warning(
-                f"\n{SPACING_2}The following paths are listed as a subset under an"
-                f" any-block but no subset was contained in the dataset:\n"
-                + f"\n{SPACING_4}"
-                + f"\n{SPACING_4}".join(extract_paths(missing_any))
-            )
-
-        # Check the paths under each all_or_none-block
-        missing_all_or_none = check_all_or_none_criterium(
-            interface_dict, list_of_present_paths
+    if missing_any:
+        logger.warning(
+            f"\n{SPACING_2}The following paths are listed as a subset under an"
+            f" any-block but no subset was contained in the dataset:\n"
+            + f"\n{SPACING_4}"
+            + f"\n{SPACING_4}".join(extract_paths(missing_any))
         )
 
-        # Logging based on missing_all_or_none
-        if missing_all_or_none:
-            logger.warning(
-                f"\n{SPACING_2}Following paths are under an all_or_none-key, but not"
-                + " all are present or absent in the dataset:\n"
-                + f"\n{SPACING_4}"
-                + f"\n{SPACING_4}".join(extract_paths(missing_all_or_none))
-            )
+    # Check the paths under each all_or_none-block
+    missing_all_or_none = check_all_or_none_criterium(
+        interface_dict, list_of_present_paths
+    )
 
-        # TODO: Lastly, check for each path with constraints
-        # missing_allowed_values = check_allowed_values(interface_dict, dataset)
-        missing_allowed_values = []
+    # Logging based on missing_all_or_none
+    if missing_all_or_none:
+        logger.warning(
+            f"\n{SPACING_2}Following paths are under an all_or_none-key, but not"
+            + " all are present or absent in the dataset:\n"
+            + f"\n{SPACING_4}"
+            + f"\n{SPACING_4}".join(extract_paths(missing_all_or_none))
+        )
+
+    # TODO: Lastly, check for each path with constraints
+    # missing_allowed_values = check_allowed_values(interface_dict, dataset)
+    missing_allowed_values = []
 
     if (
         missing_mandatory_paths
