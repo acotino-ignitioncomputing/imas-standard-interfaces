@@ -1,66 +1,70 @@
+code_name: TORAX
+executable_name: run_simulation_main.py
+url: https://github.com/google-deepmind/torax/tree/main 
+code_version: v1.7.3 (4aea2377385ba4dfe37b0ef4396374162af1314b)
+interface_source_files:
+- torax/_src/imas_tools/input/core_profiles.py
+- torax/_src/imas_tools/input/core_sources.py
+- torax/_src/imas_tools/input/equilibrium.py
+
 schema_version: "0.1"
-
 doi_url: placeholder_doi_url
-
-dd_version_range: [4.0.0, 4.0.0]
+dd_version_interface: 4.0.0
 
 paths:
-- core_profiles/global_quantities/ip
-- core_profiles/global_quantities/v_loop
-- core_profiles/profiles_1d/electrons/density
-- core_profiles/profiles_1d/electrons/temperature
-- core_profiles/profiles_1d/grid/psi
-- core_profiles/profiles_1d/grid/rho_tor_norm
-- core_profiles/profiles_1d/ion/density
-- core_profiles/profiles_1d/ion/name
-- core_profiles/profiles_1d/time
-- core_profiles/profiles_1d/zeff
-- core_sources/source/identifier/name
-- core_sources/source/profiles_1d/electrons/energy
-- core_sources/source/profiles_1d/electrons/particles
-- core_sources/source/profiles_1d/grid/rho_tor_norm
-- core_sources/source/profiles_1d/j_parallel
-- core_sources/source/profiles_1d/time
-- core_sources/source/profiles_1d/total_ion_energy
-- equilibrium/time
-- equilibrium/time_slice/boundary/minor_radius
-- equilibrium/time_slice/boundary/type
-- equilibrium/time_slice/global_quantities/ip
-- equilibrium/time_slice/global_quantities/magnetic_axis/z
-- equilibrium/time_slice/profiles_1d/elongation
-- equilibrium/time_slice/profiles_1d/f
-- equilibrium/time_slice/profiles_1d/gm1
-- equilibrium/time_slice/profiles_1d/gm2
-- equilibrium/time_slice/profiles_1d/gm3
-- equilibrium/time_slice/profiles_1d/gm4
-- equilibrium/time_slice/profiles_1d/gm5
-- equilibrium/time_slice/profiles_1d/gm7
-- equilibrium/time_slice/profiles_1d/j_phi
-- equilibrium/time_slice/profiles_1d/phi
-- equilibrium/time_slice/profiles_1d/psi
-- equilibrium/time_slice/profiles_1d/r_inboard
-- equilibrium/time_slice/profiles_1d/r_outboard
-- equilibrium/time_slice/profiles_1d/triangularity_lower
-- equilibrium/time_slice/profiles_1d/triangularity_upper
-- equilibrium/vacuum_toroidal_field
-
-- any_of:
+- all:
+  - core_profiles/global_quantities/ip
+  - core_profiles/global_quantities/v_loop
+  - core_profiles/profiles_1d/electrons/density
+  - core_profiles/profiles_1d/electrons/temperature
+  - core_profiles/profiles_1d/grid/psi
+  - core_profiles/profiles_1d/grid/rho_tor_norm
+  - core_profiles/profiles_1d/ion/density
+  - core_profiles/profiles_1d/ion/name
+  - core_profiles/profiles_1d/time
+  - core_profiles/profiles_1d/zeff
+  - core_sources/source/identifier/name
+  - core_sources/source/profiles_1d/electrons/energy
+  - core_sources/source/profiles_1d/electrons/particles
+  - core_sources/source/profiles_1d/grid/rho_tor_norm
+  - core_sources/source/profiles_1d/j_parallel
+  - core_sources/source/profiles_1d/time
+  - core_sources/source/profiles_1d/total_ion_energy
+  - equilibrium/time
+  - equilibrium/time_slice/boundary/minor_radius
+  - equilibrium/time_slice/boundary/type
+  - equilibrium/time_slice/global_quantities/ip
+  - equilibrium/time_slice/global_quantities/magnetic_axis/z
+  - equilibrium/time_slice/profiles_1d/elongation
+  - equilibrium/time_slice/profiles_1d/f
+  - equilibrium/time_slice/profiles_1d/gm1
+  - equilibrium/time_slice/profiles_1d/gm2
+  - equilibrium/time_slice/profiles_1d/gm3
+  - equilibrium/time_slice/profiles_1d/gm4
+  - equilibrium/time_slice/profiles_1d/gm5
+  - equilibrium/time_slice/profiles_1d/gm7
+  - equilibrium/time_slice/profiles_1d/j_phi
+  - equilibrium/time_slice/profiles_1d/phi
+  - equilibrium/time_slice/profiles_1d/psi
+  - equilibrium/time_slice/profiles_1d/r_inboard
+  - equilibrium/time_slice/profiles_1d/r_outboard
+  - equilibrium/time_slice/profiles_1d/triangularity_lower
+  - equilibrium/time_slice/profiles_1d/triangularity_upper
+  - equilibrium/vacuum_toroidal_field
+- any:
   - core_profiles/profiles_1d/ion/temperature
   - core_profiles/profiles_1d/t_i_average
-
-- any_of:
+- any:
   - equilibrium/time_slice/profiles_1d/dvolume_dpsi
   - equilibrium/time_slice/profiles_1d/volume
-
-- any_of:
+- any:
   - equilibrium/time_slice/profiles_1d/dpsi_drho_tor
   - equilibrium/time_slice/profiles_1d/rho_tor
-
-- any_of:
+- any:
   - equilibrium/time_slice/profiles_1d/phi
   - equilibrium/time_slice/profiles_1d/rho_tor_norm
-
-- any_of:
+- any:
   - equilibrium/time_slice/profiles_1d/gm9
   - equilibrium/time_slice/profiles_1d/r_inboard
   - equilibrium/time_slice/profiles_1d/r_outboard
+

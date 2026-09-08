@@ -1,63 +1,69 @@
+code_name: HELENA
+executable_name: helena
+url: https://git.iter.org/projects/EQ/repos/helena/browse
+code_version: develop (ded52e77f3bfd9d57804bee519e60d314f163f51)
+interface_source_files:
+- src/ids/helena_to_ids.f90
+
 schema_version: "0.1"
-
 doi_url: placeholder_doi_url
-
-dd_version_range: [3.42.0, 3.42.0]
+dd_version_interface: 3.42.0
 
 paths:
-- equilibrium/code/name
-- equilibrium/ids_properties/creation_date
-- equilibrium/ids_properties/homogeneous_time:
-    allowed_values: [1]
-- equilibrium/ids_properties/provider
-- equilibrium/time_slice/boundary/geometric_axis
-- equilibrium/time_slice/boundary/lcfs
-- equilibrium/time_slice/boundary/minor_radius
-- equilibrium/time_slice/boundary/outline
-- equilibrium/time_slice/coordinate_system/grid/dim1
-- equilibrium/time_slice/coordinate_system/grid/dim2
-- equilibrium/time_slice/coordinate_system/grid_type/description
-- equilibrium/time_slice/coordinate_system/grid_type/index:
-    allowed_values: [21]
-- equilibrium/time_slice/coordinate_system/jacobian
-- equilibrium/time_slice/coordinate_system/r
-- equilibrium/time_slice/coordinate_system/tensor_contravariant
-- equilibrium/time_slice/coordinate_system/z
-- equilibrium/time_slice/global_quantities/area
-- equilibrium/time_slice/global_quantities/beta_normal
-- equilibrium/time_slice/global_quantities/beta_pol
-- equilibrium/time_slice/global_quantities/beta_tor
-- equilibrium/time_slice/global_quantities/ip
-- equilibrium/time_slice/global_quantities/li_3
-- equilibrium/time_slice/global_quantities/magnetic_axis/b_field_phi
-- equilibrium/time_slice/global_quantities/magnetic_axis/r
-- equilibrium/time_slice/global_quantities/magnetic_axis/z
-- equilibrium/time_slice/global_quantities/psi_axis
-- equilibrium/time_slice/global_quantities/psi_boundary
-- equilibrium/time_slice/global_quantities/q_axis
-- equilibrium/time_slice/global_quantities/q_min/value
-- equilibrium/time_slice/global_quantities/volume
-- equilibrium/time_slice/global_quantities/w_mhd
-- equilibrium/time_slice/profiles_1d/area
-- equilibrium/time_slice/profiles_1d/dpressure_dpsi
-- equilibrium/time_slice/profiles_1d/f
-- equilibrium/time_slice/profiles_1d/f_df_dpsi
-- equilibrium/time_slice/profiles_1d/phi
-- equilibrium/time_slice/profiles_1d/pressure
-- equilibrium/time_slice/profiles_1d/psi
-- equilibrium/time_slice/profiles_1d/q
-- equilibrium/time_slice/profiles_1d/r_inboard
-- equilibrium/time_slice/profiles_1d/r_outboard
-- equilibrium/time_slice/profiles_1d/volume
-- equilibrium/time_slice/profiles_2d/b_field_phi
-- equilibrium/time_slice/profiles_2d/b_field_r
-- equilibrium/time_slice/profiles_2d/b_field_z
-- equilibrium/time_slice/profiles_2d/grid/dim1
-- equilibrium/time_slice/profiles_2d/grid/dim2
-- equilibrium/time_slice/profiles_2d/grid_type/index:
-    allowed_values: [1]
-- equilibrium/time_slice/profiles_2d/psi
-- equilibrium/time_slice/profiles_2d/r
-- equilibrium/time_slice/profiles_2d/z
-- equilibrium/vacuum_toroidal_field
+- all:
+  - equilibrium/code/name
+  - equilibrium/ids_properties/creation_date
+  - equilibrium/ids_properties/homogeneous_time:
+      allowed_values: [1]
+  - equilibrium/ids_properties/provider
+  - equilibrium/time_slice/boundary/geometric_axis
+  - equilibrium/time_slice/boundary/lcfs
+  - equilibrium/time_slice/boundary/minor_radius
+  - equilibrium/time_slice/boundary/outline
+  - equilibrium/time_slice/coordinate_system/grid/dim1
+  - equilibrium/time_slice/coordinate_system/grid/dim2
+  - equilibrium/time_slice/coordinate_system/grid_type/description
+  - equilibrium/time_slice/coordinate_system/grid_type/index:
+      allowed_values: [21]
+  - equilibrium/time_slice/coordinate_system/jacobian
+  - equilibrium/time_slice/coordinate_system/r
+  - equilibrium/time_slice/coordinate_system/tensor_contravariant
+  - equilibrium/time_slice/coordinate_system/z
+  - equilibrium/time_slice/global_quantities/area
+  - equilibrium/time_slice/global_quantities/beta_normal
+  - equilibrium/time_slice/global_quantities/beta_pol
+  - equilibrium/time_slice/global_quantities/beta_tor
+  - equilibrium/time_slice/global_quantities/ip
+  - equilibrium/time_slice/global_quantities/li_3
+  - equilibrium/time_slice/global_quantities/magnetic_axis/b_field_phi
+  - equilibrium/time_slice/global_quantities/magnetic_axis/r
+  - equilibrium/time_slice/global_quantities/magnetic_axis/z
+  - equilibrium/time_slice/global_quantities/psi_axis
+  - equilibrium/time_slice/global_quantities/psi_boundary
+  - equilibrium/time_slice/global_quantities/q_axis
+  - equilibrium/time_slice/global_quantities/q_min/value
+  - equilibrium/time_slice/global_quantities/volume
+  - equilibrium/time_slice/global_quantities/w_mhd
+  - equilibrium/time_slice/profiles_1d/area
+  - equilibrium/time_slice/profiles_1d/dpressure_dpsi
+  - equilibrium/time_slice/profiles_1d/f
+  - equilibrium/time_slice/profiles_1d/f_df_dpsi
+  - equilibrium/time_slice/profiles_1d/phi
+  - equilibrium/time_slice/profiles_1d/pressure
+  - equilibrium/time_slice/profiles_1d/psi
+  - equilibrium/time_slice/profiles_1d/q
+  - equilibrium/time_slice/profiles_1d/r_inboard
+  - equilibrium/time_slice/profiles_1d/r_outboard
+  - equilibrium/time_slice/profiles_1d/volume
+  - equilibrium/time_slice/profiles_2d/b_field_phi
+  - equilibrium/time_slice/profiles_2d/b_field_r
+  - equilibrium/time_slice/profiles_2d/b_field_z
+  - equilibrium/time_slice/profiles_2d/grid/dim1
+  - equilibrium/time_slice/profiles_2d/grid/dim2
+  - equilibrium/time_slice/profiles_2d/grid_type/index:
+      allowed_values: [1]
+  - equilibrium/time_slice/profiles_2d/psi
+  - equilibrium/time_slice/profiles_2d/r
+  - equilibrium/time_slice/profiles_2d/z
+  - equilibrium/vacuum_toroidal_field
 

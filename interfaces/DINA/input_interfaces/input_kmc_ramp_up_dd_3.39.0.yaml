@@ -1,26 +1,33 @@
+code_name: DINA
+executable_name: kmc.a
+url: https://git.iter.org/projects/SCEN/repos/dina/browse
+code_version: develop (07a042802cb828710f6cc38f49883903243e7fef)
+interface_source_files:
+- imas/interface/dina_imas.f90 (input)
+- imas/interface/params_imas.f90 (pulse_schedule input)
+
 schema_version: "0.1"
-
 doi_url: placeholder_doi_url
-
-dd_version_range: [3.39.0, 3.39.0]
+dd_version_interface: 3.39.0
 
 paths:
-- equilibrium/time_slice/boundary/elongation
-- equilibrium/time_slice/boundary/geometric_axis/r
-- equilibrium/time_slice/boundary/minor_radius
-- equilibrium/time_slice/boundary/type
-- equilibrium/time_slice/boundary_separatrix/gap/value
-- equilibrium/time_slice/global_quantities/current_centre/z
-- equilibrium/time_slice/global_quantities/ip
-- equilibrium/time_slice/time
-- pf_active/coil/current/data
-- pulse_schedule/flux_control/i_plasma/reference/data
-- pulse_schedule/pf_active/coil/current/reference/data
-- pulse_schedule/pf_active/coil/current/reference/time
-- pulse_schedule/pf_active/supply/voltage/reference/data
-- pulse_schedule/pf_active/supply/voltage/reference/time
-- pulse_schedule/position_control/elongation/reference/data
-- pulse_schedule/position_control/elongation/reference/time
-- pulse_schedule/position_control/gap/value/reference/data
-- pulse_schedule/position_control/gap/value/reference/time
+- all:
+  - equilibrium/time_slice/boundary/elongation
+  - equilibrium/time_slice/boundary/geometric_axis/r
+  - equilibrium/time_slice/boundary/minor_radius
+  - equilibrium/time_slice/boundary/type
+  - equilibrium/time_slice/boundary_separatrix/gap/value
+  - equilibrium/time_slice/global_quantities/current_centre/z
+  - equilibrium/time_slice/global_quantities/ip
+  - equilibrium/time_slice/time
+  - pf_active/coil/current/data
+  - pulse_schedule/flux_control/i_plasma/reference/data
+  - pulse_schedule/pf_active/coil/current/reference/data
+  - pulse_schedule/pf_active/coil/current/reference/time
+  - pulse_schedule/pf_active/supply/voltage/reference/data
+  - pulse_schedule/pf_active/supply/voltage/reference/time
+  - pulse_schedule/position_control/elongation/reference/data
+  - pulse_schedule/position_control/elongation/reference/time
+  - pulse_schedule/position_control/gap/value/reference/data
+  - pulse_schedule/position_control/gap/value/reference/time
 
