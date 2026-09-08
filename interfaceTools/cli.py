@@ -19,7 +19,15 @@ def main():
     default="-",
 )
 @click.option("-s", "--silent", is_flag=True, help="If set, suppress any log messages")
-def validate(input_path: Path, silent: bool):
+@click.option(
+    "--show_suggestions",
+    is_flag=True,
+    help=(
+        "If set, attempt to provide suggestions for incorrect paths."
+        + " Significantly slows down the script."
+    ),
+)
+def validate(input_path: Path, silent: bool, show_suggestions: bool):
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to the Data Dictionary version mentioned in each YAML file.
@@ -51,7 +59,7 @@ def validate(input_path: Path, silent: bool):
     if input_path == Path("-") and sys.stdin.isatty():
         raise click.UsageError("No input given")
 
-    exit_code = validate_definitions(input_path, silent)
+    exit_code = validate_definitions(input_path, silent, show_suggestions)
     sys.exit(exit_code)
 
 
@@ -77,8 +85,6 @@ def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
     \b
     interface_path: Path to the YAML file containing the interface definition. The
         contents of a YAML file could also be read from stdin
-
-    silent: If set to True, suppress all log messages.
 
 
     ------------------------ Examples ------------------------

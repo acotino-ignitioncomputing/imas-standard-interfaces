@@ -1,12 +1,12 @@
 """Script for validating interface definitions against JSON Schema and IMAS Data
 Dictionary"""
 
+import difflib
 import logging
 from pathlib import Path
 
 import jsonschema
 from imas import IDSFactory, dd_zip, setup_logging, util
-from packaging.version import Version
 
 from .utilities import (
     split_ids_path,
@@ -120,7 +120,7 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     return validation_correct
 
 
-def check_ids_name(definition: dict) -> bool:
+def check_ids_name(definition: dict, show_suggestions: bool) -> bool:
     """Check that only valid IDS names appear in the definition.
 
     Args:
@@ -148,17 +148,49 @@ def check_ids_name(definition: dict) -> bool:
             )
             correct_ids_names = False
 
+            if show_suggestions:
+                logger.warning(
+                    f"{SPACING_2}Perhaps you meant:"
+                    + f"\n{SPACING_4}"
+                    + f"\n{SPACING_4}".join(
+                        difflib.get_close_matches(
+                            ids_name, ids_names_list, n=3, cutoff=0.6
+                        )
+                    )
+                )
+
     return correct_ids_names
 
 
-def check_ids_paths_in_dd(definition: dict) -> bool:
+def check_ids_path_in_dd_version(full_IDS_path: str, dd_version: str) -> bool:
+    """Checks if the provided IDS path is present in the provided version of the Data
+    Dictionary.
+
+    Args:
+        full_IDS_path: IDS path of the form IDS_name/IDS_node_path
+        dd_version: version of Data Dictionary to use
+
+    Returns:
+        True if full_IDS_path is present in Data Dictionary, False otherwise
+    """
+    # Extract IDS name and path
+    IDS_name, IDS_path = split_ids_path(full_IDS_path)
+
+    # Create empty IDS to extract valid paths
+    ids_instance = IDSFactory(dd_version).new(IDS_name)
+    valid_paths_list = util.find_paths(ids_instance, "")
+
+    return IDS_path in valid_paths_list
+
+
+def check_ids_paths_in_dd(definition: dict, show_suggestions: bool) -> bool:
     """Check if each IDS path is present in the provided version of the Data Dictionary.
 
     Args:
         definition: dictionary-representation of YAML file satisfying the schema
 
     Returns:
-        bool: whether any IDS path was invalid
+        False if any IDS path was invalid, True otherwise
     """
 
     dd_version = definition["dd_version_interface"]
@@ -169,35 +201,60 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     path_list = extract_paths(definition["paths"])
 
     for full_IDS_path in path_list:
-        # Extract IDS name and path
-        IDS_name, IDS_path = split_ids_path(full_IDS_path)
 
-        # Create empty IDS to extract valid paths
-        ids_instance = IDSFactory(dd_version).new(IDS_name)
-
-        valid_paths_list = util.find_paths(ids_instance, "")
-
-        if IDS_path not in valid_paths_list:
+        if not check_ids_path_in_dd_version(full_IDS_path, dd_version):
+            IDS_name, IDS_path = split_ids_path(full_IDS_path)
             logger.warning(
                 f"{SPACING_2}IDS path {IDS_path} is not in IDS {IDS_name} for "
                 + f"Data Dictionary version {dd_version}.\n"
             )
             all_paths_valid = False
 
+            if show_suggestions:
+                # First check if path appears in other DD versions
+                dd_versions_with_path = [
+                    vers
+                    for vers in VALID_DD_VERSIONS
+                    if check_ids_path_in_dd_version(full_IDS_path, vers)
+                ]
+                if dd_versions_with_path:
+                    logger.warning(
+                        f"{SPACING_2}It is present in version(s)"
+                        + f"\n{SPACING_4}"
+                        + f"\n{SPACING_4}".join(dd_versions_with_path)
+                        + f"\n{SPACING_4}"
+                    )
+                    continue
+
+                # Next, check for a typo in IDS_path
+                ids_instance = IDSFactory(dd_version).new(IDS_name)
+                valid_paths_list = util.find_paths(ids_instance, "")
+                alternative_paths = difflib.get_close_matches(
+                    IDS_path, valid_paths_list, n=3, cutoff=0.6
+                )
+                if alternative_paths:
+                    logger.warning(
+                        f"{SPACING_2}Perhaps you meant"
+                        + f"\n{SPACING_4}"
+                        + f"\n{SPACING_4}".join(alternative_paths)
+                        + f"\n{SPACING_4}"
+                    )
+
     return all_paths_valid
 
 
 def validate_definitions_dict(
-    definition_dict: dict, schema_dict: dict, silent: bool
+    definition_dict: dict, schema_dict: dict, silent: bool, show_suggestions: bool
 ) -> int:
     """Validate the dictionary representation of a YAML file with respect to the
     JSON Schema. Also check the correctness of the IDS names and paths with respect
     respect to Data Dictionary version mentioned in the YAML file.
 
     Args:
-        definition_dict: dictionary representation of a YAML file
-        schema_dict: dictionary representation of the JSON Schema
+        definition_dict: dictionary representation of a YAML file.
+        schema_dict: dictionary representation of the JSON Schema.
         silent: If set to True, surpress all log messages.
+        show_suggestions: if True, provide suggestions for the incorrect paths.
 
     Returns:
         0 if no issues were found, 1 otherwise
@@ -219,17 +276,17 @@ def validate_definitions_dict(
     if not validate_against_schema(definition_dict, schema_dict):
         return 1
     #  Check if IDS names are in Data Dictionary
-    if not check_ids_name(definition_dict):
+    if not check_ids_name(definition_dict, show_suggestions):
         return 1
 
     # Check if IDS paths are in Data Dictionary
-    if not check_ids_paths_in_dd(definition_dict):
+    if not check_ids_paths_in_dd(definition_dict, show_suggestions):
         return 1
 
     return 0
 
 
-def validate_definitions(input_path: Path, silent: bool) -> int:
+def validate_definitions(input_path: Path, silent: bool, show_suggestions: bool) -> int:
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
     with respect to Data Dictionary version mentioned in each YAML file.
@@ -237,7 +294,8 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
     Args:
         input_path:  absolute or relative path to YAML file or to folder containing YAML
             files at some depth-level.
-        silent: if True, then all log messages are suppressed
+        silent: if True, then all log messages are suppressed.
+        show_suggestions: if True, provide suggestions for the incorrect paths.
 
     Returns:
         int: representing exit code, where 0 is success and 1 is fail
@@ -283,7 +341,12 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
         file_path_name = file_path.name if file_path != Path("-") else "input stream"
         logger.info(f"\nValidating {file_path_name}...")
 
-        if validate_definitions_dict(definition_dict, schema_dict, silent) != 0:
+        if (
+            validate_definitions_dict(
+                definition_dict, schema_dict, silent, show_suggestions
+            )
+            != 0
+        ):
             incorrect_definitions.append(file_path.name)
             continue
 
