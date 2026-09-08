@@ -13,6 +13,8 @@ from .utilities import (
     extract_paths,
     get_schema_dict,
     load_interface_dict,
+    SPACING_2,
+    SPACING_4,
 )
 
 logger = logging.getLogger("validateLogger")
@@ -22,11 +24,10 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
-# Global parameters used for consistent amount of spacing, independent of user config
-SPACING_2 = "  "
-SPACING_4 = "    "
 
 VALID_DD_VERSIONS = dd_zip.dd_xml_versions()
+
+VALID_CONSTRAINTS = ["allowed_values", "value_range", "same_shape_as"]
 
 
 def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
@@ -36,10 +37,6 @@ def print_nice_error_message(error: jsonschema.exceptions.ValidationError):
     Args:
         error: Instance of `ValidationError` returned by a jsonschema validator
     """
-
-    json_path: str = error.json_path
-
-    logger.warning(f"{SPACING_2}Error at YAML path {json_path}\n")
 
     if (
         "type" in error.schema
@@ -115,7 +112,32 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
     validation_correct = True
     for error in sorted(found_errors, key=str):
         validation_correct = False
-        print_nice_error_message(error)
+
+        json_path: str = error.json_path
+
+        logger.warning(f"{SPACING_2}Error at YAML path {json_path}\n")
+
+        # In case error is raised by an anyOf-subschema, re-validate with that
+        # subschema to get more detailed error messages
+        if "anyOf" in error.schema:
+            if isinstance(error.instance, str) and "all" in error.instance:
+                tmp_schema = error.schema["anyOf"][1]
+
+                # Add 'subschema_for_constraint_IDS_path' since it is referenced in
+                # subschema error.schema["anyOf"][1].
+                tmp_schema["$defs"] = schema["$defs"]
+
+                validator_2 = jsonschema.Draft202012Validator(tmp_schema)
+            else:
+                validator_2 = jsonschema.Draft202012Validator(
+                    schema["$defs"]["subschema_for_constraint_IDS_path"]
+                )
+
+            found_errors_2 = validator_2.iter_errors(error.instance)
+            for error_2 in found_errors_2:
+                print_nice_error_message(error_2)
+        else:
+            print_nice_error_message(error)
 
     return validation_correct
 

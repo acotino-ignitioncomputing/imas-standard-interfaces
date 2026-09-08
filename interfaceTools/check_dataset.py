@@ -12,16 +12,14 @@ from .utilities import (
     extract_paths,
     get_schema_dict,
     load_interface_dict,
+    SPACING_2,
+    SPACING_4,
 )
 from .validate_definitions import validate_definitions_dict
 
 # TODO: Fix general logger with formatter
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-# Global parameters used for consistent amount of spacing, independent of user config
-SPACING_2 = "  "
-SPACING_4 = "    "
 
 
 def get_present_paths(dataset: DBEntry, dd_version: str) -> list[str]:

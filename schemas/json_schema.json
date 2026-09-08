@@ -155,6 +155,7 @@
                                     "properties": {
                                         "all": {
                                             "type": "array",
+                                            "minItems": 2,
                                             "items": {
                                                 "$ref": "#/$defs/subschema_for_constraint_IDS_path"
                                             }
