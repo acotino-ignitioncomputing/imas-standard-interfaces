@@ -6,7 +6,6 @@ interface_source_files:
 - src/ids/ids_to_helana.f90
 
 schema_version: "0.1"
-doi_url: placeholder_doi_url
 dd_version_interface: 3.42.0
 
 paths:

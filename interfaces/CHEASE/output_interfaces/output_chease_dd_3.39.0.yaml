@@ -6,7 +6,6 @@ interface_source_files:
 - src-f90/copy_itm_v4_10b_to_ids_v3.39.0-4.11.6-2020b_equilibrium.f90 (output)
 
 schema_version: "0.1"
-doi_url: placeholder_doi_url
 dd_version_interface: 3.39.0
 
 paths:

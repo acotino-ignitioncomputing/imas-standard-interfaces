@@ -6,7 +6,6 @@ interface_source_files:
 - src/nice_imas.cc
 
 schema_version: "0.1"
-doi_url: placeholder_doi_url
 dd_version_interface: 4.0.0
 
 paths:

@@ -6,7 +6,6 @@ interface_source_files:
 - src-f90/copy_ids_vDD3.5.3_PUAL3.3.8_to_itm_v4_10b_equilibrium.f90 (input)
 
 schema_version: "0.1"
-doi_url: placeholder_doi_url
 dd_version_interface: 3.39.0
 
 paths:

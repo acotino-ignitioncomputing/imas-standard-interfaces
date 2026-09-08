@@ -12,7 +12,6 @@
         "code_version",
         "interface_source_files",
         "schema_version",
-        "doi_url",
         "dd_version_interface",
         "paths"
     ],
@@ -92,10 +91,6 @@
             "description": "Version of the JSON schema that the interface definition follows. The major version digit must equal the first integer in the pattern",
             "type": "string",
             "pattern": "^0\\.[0-9]{1,}$"
-        },
-        "doi_url": {
-            "description": "DOI URL of the schema that the interface definition follows.",
-            "type": "string"
         },
         "dd_version_interface": {
             "description": "Version of the Data Dictionary that the interace targets.",

@@ -8,7 +8,6 @@ interface_source_files:
 - torax/_src/imas_tools/output/equilibrium.py
 
 schema_version: "0.1"
-doi_url: placeholder_doi_url
 dd_version_interface: 4.0.0
 
 paths:

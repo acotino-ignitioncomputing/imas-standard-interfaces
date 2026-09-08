@@ -7,7 +7,6 @@ interface_source_files:
 - imas/interface/params_imas.f90 (pulse_schedule input)
 
 schema_version: "0.1"
-doi_url: placeholder_doi_url
 dd_version_interface: 3.39.0
 
 paths:
