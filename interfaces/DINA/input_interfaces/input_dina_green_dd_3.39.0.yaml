@@ -1,20 +1,27 @@
+code_name: DINA
+executable_name: dina_green.a
+url: https://git.iter.org/projects/SCEN/repos/dina/browse
+code_version: develop (07a042802cb828710f6cc38f49883903243e7fef)
+interface_source_files:
+- imas/interface/dina_imas.f90 (input)
+- imas/interface/params_imas.f90 (pulse_schedule input)
+
 schema_version: "0.1"
-
-doi_url: placeholder_doi_url
-
-dd_version_range: [3.39.0, 3.39.0]
+dd_version_interface: 3.39.0
 
 paths:
-- equilibrium/time_slice/profiles_2d/grid/dim1
-- equilibrium/time_slice/profiles_2d/grid/dim2
-- magnetics/b_field_pol_probe/length
-- magnetics/b_field_pol_probe/poloidal_angle
-- magnetics/b_field_pol_probe/position/r
-- magnetics/b_field_pol_probe/position/z
-- magnetics/flux_loop/position/r
-- magnetics/flux_loop/position/z
-- pf_active/coil/element/geometry/geometry_type:
-    allowed_values: [2, 3, 5]
-- pf_active/coil/element/turns_with_sign
-- pf_passive/loop/element/geometry/geometry_type:
-    allowed_values: [2, 3]
+- all:
+  - equilibrium/time_slice/profiles_2d/grid/dim1
+  - equilibrium/time_slice/profiles_2d/grid/dim2
+  - magnetics/b_field_pol_probe/length
+  - magnetics/b_field_pol_probe/poloidal_angle
+  - magnetics/b_field_pol_probe/position/r
+  - magnetics/b_field_pol_probe/position/z
+  - magnetics/flux_loop/position/r
+  - magnetics/flux_loop/position/z
+  - pf_active/coil/element/geometry/geometry_type:
+      allowed_values: [2, 3, 5]
+  - pf_active/coil/element/turns_with_sign
+  - pf_passive/loop/element/geometry/geometry_type:
+      allowed_values: [2, 3]
+

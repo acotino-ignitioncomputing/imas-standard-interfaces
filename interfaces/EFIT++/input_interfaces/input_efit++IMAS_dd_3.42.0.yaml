@@ -1,42 +1,48 @@
+code_name: EFIT++
+executable_name: efit++IMAS.exe
+url: https://git.iter.org/projects/EQ/repos/efitpp/browse
+code_version: a6506130d15ed5831ec8894b4890a5e37b5e1022
+interface_source_files:
+- src/imas.cpp
+
 schema_version: "0.1"
-
-doi_url: placeholder_doi_url
-
-dd_version_range: [3.42.0, 3.42.0]
+dd_version_interface: 3.42.0
 
 paths:
-- magnetics/b_field_pol_probe/area
-- magnetics/b_field_pol_probe/field/data
-- magnetics/b_field_pol_probe/length
-- magnetics/b_field_pol_probe/name
-- magnetics/b_field_pol_probe/poloidal_angle
-- magnetics/b_field_pol_probe/position
-- magnetics/b_field_pol_probe/toroidal_angle
-- magnetics/b_field_pol_probe/turns
-- magnetics/diamagnetic_flux/data
-- magnetics/flux_loop/flux/data
-- magnetics/flux_loop/name
-- magnetics/flux_loop/position
-- magnetics/ids_properties/homogeneous_time:
-    allowed_values: [0,1]
-- magnetics/ip/data
-- pf_active/circuit/connections
-- pf_active/circuit/current/data
-- pf_active/coil/element/geometry/geometry_type:
-    allowed_values: [2, 3, 5, 6]
-- pf_active/coil/element/turns_with_sign
-- pf_active/coil/name
-- pf_active/ids_properties/homogeneous_time:
-    allowed_values: [0,1]
-- pf_active/supply/name
-- pf_passive/ids_properties/homogeneous_time:
-    allowed_values: [0,1]
-- pf_passive/loop/current
-- pf_passive/loop/element/geometry/geometry_type:
-    allowed_values: [2, 3, 5, 6]
-- pf_passive/loop/element/turns_with_sign
-- pf_passive/loop/name
-- tf/b_field_phi_vacuum_r/data
-- tf/ids_properties/homogeneous_time:
-    allowed_values: [0,1]
-- wall/description_2d/limiter/unit/outline
+- all:
+  - magnetics/b_field_pol_probe/area
+  - magnetics/b_field_pol_probe/field/data
+  - magnetics/b_field_pol_probe/length
+  - magnetics/b_field_pol_probe/name
+  - magnetics/b_field_pol_probe/poloidal_angle
+  - magnetics/b_field_pol_probe/position
+  - magnetics/b_field_pol_probe/toroidal_angle
+  - magnetics/b_field_pol_probe/turns
+  - magnetics/diamagnetic_flux/data
+  - magnetics/flux_loop/flux/data
+  - magnetics/flux_loop/name
+  - magnetics/flux_loop/position
+  - magnetics/ids_properties/homogeneous_time:
+      allowed_values: [0, 1]
+  - magnetics/ip/data
+  - pf_active/circuit/connections
+  - pf_active/circuit/current/data
+  - pf_active/coil/element/geometry/geometry_type:
+      allowed_values: [2, 3, 5, 6]
+  - pf_active/coil/element/turns_with_sign
+  - pf_active/coil/name
+  - pf_active/ids_properties/homogeneous_time:
+      allowed_values: [0, 1]
+  - pf_active/supply/name
+  - pf_passive/ids_properties/homogeneous_time:
+      allowed_values: [0, 1]
+  - pf_passive/loop/current
+  - pf_passive/loop/element/geometry/geometry_type:
+      allowed_values: [2, 3, 5, 6]
+  - pf_passive/loop/element/turns_with_sign
+  - pf_passive/loop/name
+  - tf/b_field_phi_vacuum_r/data
+  - tf/ids_properties/homogeneous_time:
+      allowed_values: [0, 1]
+  - wall/description_2d/limiter/unit/outline
+

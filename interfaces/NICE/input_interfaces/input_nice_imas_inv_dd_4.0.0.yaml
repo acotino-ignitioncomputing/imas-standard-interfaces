@@ -1,37 +1,40 @@
+code_name: NICE
+executable_name: nice_imas_inv
+url: https://gitlab.inria.fr/blfauger/nice
+code_version: master (6bb2eedada64f3a637e2da4e33b3b824b5e317a6)
+interface_source_files:
+- src/nice_imas.cc
+
 schema_version: "0.1"
-
-doi_url: placeholder_doi_url
-
-dd_version_range: [3.42.2, 4.0.0]
+dd_version_interface: 4.0.0
 
 paths:
-- equilibrium/ids_properties/version_put/data_dictionary
-- equilibrium/time_slice/boundary/outline
-- equilibrium/vacuum_toroidal_field
-- pf_active/coil/element/turns_with_sign
-- pf_active/coil/element/geometry/geometry_type:
-    allowed_values: [1,2]
-- pf_active/coil/resistance
-- pf_active/ids_properties/version_put/data_dictionary
-- pf_passive/ids_properties/version_put/data_dictionary
-- pf_passive/loop/element/geometry/geometry_type:
-    allowed_values: [1,2]
-- pf_passive/loop/resistance
-- wall/description_2d/limiter/unit/outline
-- wall/description_2d/mobile/unit/outline/r
-- wall/description_2d/mobile/unit/outline/z
-- wall/description_2d/vessel/unit/annular/centreline
-- wall/description_2d/vessel/unit/annular/resistivity
-- wall/description_2d/vessel/unit/annular/thickness
-- wall/ids_properties/version_put/data_dictionary
-
+- all:
+  - equilibrium/ids_properties/version_put/data_dictionary
+  - equilibrium/time_slice/boundary/outline
+  - equilibrium/vacuum_toroidal_field
+  - pf_active/coil/element/turns_with_sign
+  - pf_active/coil/element/geometry/geometry_type:
+      allowed_values: [1, 2]
+  - pf_active/coil/resistance
+  - pf_active/ids_properties/version_put/data_dictionary
+  - pf_passive/ids_properties/version_put/data_dictionary
+  - pf_passive/loop/element/geometry/geometry_type:
+      allowed_values: [1, 2]
+  - pf_passive/loop/resistance
+  - wall/description_2d/limiter/unit/outline
+  - wall/description_2d/mobile/unit/outline/r
+  - wall/description_2d/mobile/unit/outline/z
+  - wall/description_2d/vessel/unit/annular/centreline
+  - wall/description_2d/vessel/unit/annular/resistivity
+  - wall/description_2d/vessel/unit/annular/thickness
+  - wall/ids_properties/version_put/data_dictionary
 - all_or_none:
   - iron_core/ids_properties/version_put/data_dictionary
   - iron_core/segment/b_field
   - iron_core/segment/geometry/outline
   - iron_core/segment/permeability_relative
-
-- any_of:
+- any:
   - equilibrium/time_slice/profiles_1d/psi
   - equilibrium/time_slice/profiles_1d/dpressure_dpsi
   - equilibrium/time_slice/profiles_1d/f_df_dpsi
