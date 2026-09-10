@@ -6,6 +6,7 @@ import click
 from interfaceTools.check_dataset import dataset_checker
 from interfaceTools.validate_definitions import validate_definitions
 from interfaceTools.translate_definition import translate_definition
+from interfaceTools.compute_difference import compute_difference
 
 
 @click.group()
@@ -138,6 +139,7 @@ def translate(input_path: Path, new_dd_version: str, output: Path | None):
     input_path: absolute or relative path to YAML file. The contents of a YAML file
     could also be read from stdin.
     new_dd_version: target version of the Data Dictionary.
+    output: absolute or relative path to store the result in.
 
     ------------------------ Examples ------------------------
 
@@ -155,6 +157,67 @@ def translate(input_path: Path, new_dd_version: str, output: Path | None):
         raise click.UsageError("No input given")
 
     exit_code = translate_definition(input_path, new_dd_version, output)
+    sys.exit(exit_code)
+
+
+@main.command(name="difference")
+@click.argument(
+    "input_path_1",
+    type=click.Path(exists=True, allow_dash=True, path_type=Path),
+)
+@click.argument(
+    "input_path_2",
+    type=click.Path(exists=True, allow_dash=True, path_type=Path),
+)
+@click.option(
+    "-o",
+    "--output",
+    type=click.Path(path_type=Path),
+    default=None,
+    help="Write output to a file instead of stdout.",
+)
+@click.option(
+    "--ignore_optional_paths",
+    is_flag=True,
+    help=("If set, ignore the optional paths in input_path_2."),
+)
+def difference(
+    input_path_1: Path,
+    input_path_2: Path,
+    output: Path | None,
+    ignore_optional_paths: bool,
+):
+    """Checks which criteria in input_path_1 are not satisfied by input_path_2 and
+    prints a leftover interface of input_path_1 of all the unsatisfied criteria. This
+    result is saved in output_path if this path is provided.
+
+    For simplicity, path indexing is ignored.
+
+    \b
+    Args:
+    \b
+    input_path_1: absolute or relative path to YAML file.
+    input_path_2: absolute or relative path to YAML file.
+
+    ------------------------ Examples ------------------------
+
+    \b
+    To compute the difference
+        $imas-interfaces difference output_nice_imas_inv.yaml input_torax.yaml
+
+    \b
+    Ignore the optional paths
+        $imas-interfaces difference --ignore_optional_paths output.yaml input.yaml
+
+    \b
+    Save to file
+        $imas-interfaces difference -o output.yaml output_nice.yaml input_torax.yaml
+
+    """
+
+    exit_code = compute_difference(
+        input_path_1, input_path_2, output, ignore_optional_paths
+    )
     sys.exit(exit_code)
 
 

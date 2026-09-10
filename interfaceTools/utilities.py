@@ -64,18 +64,35 @@ def load_interface_dict(interface_file_path: Path) -> dict:
 
 
 ####################### Functions related to Data Dictionary ########################
-def strip_path_indexing(full_IDS_path: str) -> str:
+def strip_path_indexing(IDS_path: str | dict) -> str | dict:
     """Remove the path indexing as described in
     https://imas-data-dictionary.readthedocs.io/en/latest/IDS-path-syntax.html
 
     Args:
-        full_IDS_path: IDS path of the form IDS_name/IDS_node_path
+        full_IDS_path: An IDS path as described by the subschema
+            subschema_for_constraint_IDS_path in the JSON Schema. It has the form
+            IDS_name/IDS_node_path
 
     Returns:
         a string equal to full_IDS_path without the path indexing
     """
+    stripped_IDS_path: str | dict
 
-    return re.sub("\([0-9\-\:]{1,}\)", "", full_IDS_path)
+    if isinstance(IDS_path, str):
+        stripped_IDS_path = re.sub("\([0-9\-\:]{1,}\)", "", IDS_path)
+    elif isinstance(IDS_path, dict):
+        old_key = tuple(IDS_path.keys())[0]
+        new_key = re.sub("\([0-9\-\:]{1,}\)", "", old_key)
+        stripped_IDS_path = {}
+
+        stripped_IDS_path[new_key] = IDS_path[old_key]
+    else:
+        raise (
+            "In function strip_path_indexing:\n"
+            + f"{SPACING_2}Unexpected type '{type(IDS_path)} for input '{IDS_path}'"
+        )
+
+    return stripped_IDS_path
 
 
 def split_ids_path(full_IDS_path: str) -> tuple[str, str]:
