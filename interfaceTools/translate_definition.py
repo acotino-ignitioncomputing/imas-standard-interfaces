@@ -82,28 +82,31 @@ def translate_block(
     """
 
     non_transferable_paths = []
-    new_block = block.copy()
-
     block_name = tuple(block.keys())[0]
+
+    new_block = {block_name: []}
 
     # Define dictionary for containing valid paths for each IDS in new DD version
     new_valid_paths: dict[str, list] = {}
 
-    for position, entry in enumerate(block[block_name]):
+    for entry in block[block_name]:
         if isinstance(entry, dict) and "all" in entry:
             # entry is all-block. Update this block
             tmp_block, tmp_non_transf_paths = translate_block(
                 entry, current_dd_version, new_dd_version
             )
-            new_block[block_name][position] = tmp_block
+            new_block[block_name].append(tmp_block)
             non_transferable_paths += tmp_non_transf_paths
 
         else:
             # entry represents IDS path
+            constraints = {}
+
             if isinstance(entry, str):
                 full_IDS_path = entry
             else:
                 full_IDS_path = tuple(entry.keys())[0]
+                constraints = entry[full_IDS_path]
 
             IDS_name, IDS_path = split_ids_path(full_IDS_path)
 
@@ -112,8 +115,9 @@ def translate_block(
                 ids_instance = IDSFactory(new_dd_version).new(IDS_name)
                 new_valid_paths[IDS_name] = util.find_paths(ids_instance, "")
 
-            # Keep IDS_path if it is in new DD version
+            # Add IDS_path as is if it is in new DD version
             if IDS_path in new_valid_paths[IDS_name]:
+                new_block[block_name].append(entry)
                 continue
 
             # Attempt to translate
@@ -122,11 +126,14 @@ def translate_block(
             )
 
             if new_IDS_path:
+                new_full_IDS_path = f"{IDS_name}/{new_IDS_path}"
                 # Replace old IDS path with translated path
-                new_block[block_name][position] = f"{IDS_name}/{new_IDS_path}"
+                if constraints:
+                    path_with_constraints = {new_full_IDS_path: constraints}
+                    new_block[block_name].append(path_with_constraints)
+                else:
+                    new_block[block_name].append(new_full_IDS_path)
             else:
-                # Remove old IDS path
-                new_block[block_name].pop(index=position)
                 non_transferable_paths.append(full_IDS_path)
 
     return new_block, non_transferable_paths
