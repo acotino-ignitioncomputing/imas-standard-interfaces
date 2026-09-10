@@ -1,4 +1,4 @@
-# Standard Interfaces
+# IMAS Interfaces
 
 This repository provides standardized schemas and interfaces for scientific data
 formats used in IMAS (Integrated Modelling & Analysis Suite). Interface
