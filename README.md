@@ -49,6 +49,9 @@ Python package providing the `imas-interfaces` CLI and supporting modules:
   and the IMAS Data Dictionary.
 - `check_dataset.py` — checks whether an IMAS dataset complies with a given
   interface definition.
+- `compute_difference.py` - computes difference of two interfaces.
+- `translate_definition.py` - translares an interface definition to a differnt
+  version of the Data Dictionary.
 - `utilities.py` — shared helper functions.
 
 ## Installation
