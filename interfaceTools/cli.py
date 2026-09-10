@@ -108,7 +108,7 @@ def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
     sys.exit(error_code)
 
 
-@main.command(name="translate")
+@main.command(name="convert")
 @click.argument(
     "input_path",
     type=click.Path(exists=True, allow_dash=True, path_type=Path),
@@ -126,7 +126,7 @@ def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
     help="Write output to a file instead of stdout.",
 )
 def translate(input_path: Path, new_dd_version: str, output: Path | None):
-    """Translates the IDS paths of the provided YAML file to the provided version of the
+    """Converts the IDS paths of the provided YAML file to the provided version of the
     Data Dictionary and prints the results to screen.
 
     Notes:

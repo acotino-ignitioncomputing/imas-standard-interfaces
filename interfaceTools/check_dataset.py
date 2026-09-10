@@ -75,7 +75,12 @@ def dataset_checker(dataset_path: Path, interface_path: Path, silent: bool) -> i
     interface_dict = load_interface_dict(interface_path)
 
     # Ensure interfaces validate against schema
-    if validate_definitions_dict(interface_dict, schema_dict, silent=True) != 0:
+    if (
+        validate_definitions_dict(
+            interface_dict, schema_dict, silent=True, show_suggestions=False
+        )
+        != 0
+    ):
         logger.warning(
             f"Interface '{interface_path}' does not validate against schema."
         )
