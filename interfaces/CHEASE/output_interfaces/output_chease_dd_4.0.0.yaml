@@ -1,26 +1,11 @@
 code_name: CHEASE
-executable_name: chease_imas 
+executable_name: chease_imas
 url: https://gitlab.epfl.ch/spc/chease
 code_version: feature/dd4 (020b780b01126212d8fb364f0357afd42ce512e5)
 interface_source_files:
-- src-f90/copy_ids_v3.39.0-4.11.6-2020b_to_itm_v4_10b_equilibrium.f90
-- src-f90/copy_itm_v4_10b_to_ids_v3.39.0-4.11.6-2020b_equilibrium.f90
-
-schema_version: "0.1"
-dd_version_interface: 3.39.0
-
-notes:
-- Some notes regarding output_flags
--  0 No issues
-- -2 equilibrium/time_slice not present in input dataset
-- -3 equilibrium/time not present in input dataset
-- -4 mismatch in sizes of time arrays
-- -11 sizes of psi, rho_tor and rho_tor_norm are zero.
-- -12 equilibrium/time_slice/profiles_2d not present in input dataset
-- -13 equilibrium/time_slice/coordinate_system/grid/dim1 not present in input dataset
-- -14 equilibrium/time_slice/coordinate_system/grid/dim2 not present in input dataset
-- -21 no points in equilibrium/time_slice/boundary/outline or ../boundary/lcfs
-- -31 size of equilibrium/profiles_2d/dim1 or ../dim2 is zero 
+- src-f90/copy_itm_v4_10b_to_ids_vDD4-4.0.0_equilibrium.f90
+schema_version: '0.1'
+dd_version_interface: 4.0.0
 paths:
 - all:
   - equilibrium/code/name
@@ -28,10 +13,9 @@ paths:
   - equilibrium/code/parameters
   - equilibrium/code/version
   - equilibrium/ids_properties/homogeneous_time:
-      allowed_values: [1]
+      allowed_values:
+      - 1
   - equilibrium/time_slice/boundary/elongation
-  - equilibrium/time_slice/boundary/elongation_lower
-  - equilibrium/time_slice/boundary/elongation_upper
   - equilibrium/time_slice/boundary/geometric_axis/r
   - equilibrium/time_slice/boundary/geometric_axis/z
   - equilibrium/time_slice/boundary/minor_radius
@@ -52,14 +36,14 @@ paths:
   - equilibrium/time_slice/coordinate_system/tensor_contravariant
   - equilibrium/time_slice/coordinate_system/z
   - equilibrium/time_slice/global_quantities/area
-  - equilibrium/time_slice/global_quantities/beta_normal
+  - equilibrium/time_slice/global_quantities/beta_tor_norm
   - equilibrium/time_slice/global_quantities/beta_pol
   - equilibrium/time_slice/global_quantities/beta_tor
   - equilibrium/time_slice/global_quantities/energy_mhd
   - equilibrium/time_slice/global_quantities/ip
   - equilibrium/time_slice/global_quantities/length_pol
   - equilibrium/time_slice/global_quantities/li_3
-  - equilibrium/time_slice/global_quantities/magnetic_axis/b_field_tor
+  - equilibrium/time_slice/global_quantities/magnetic_axis/b_field_phi
   - equilibrium/time_slice/global_quantities/magnetic_axis/r
   - equilibrium/time_slice/global_quantities/magnetic_axis/z
   - equilibrium/time_slice/global_quantities/psi_axis
@@ -96,7 +80,7 @@ paths:
   - equilibrium/time_slice/profiles_1d/gm8
   - equilibrium/time_slice/profiles_1d/gm9
   - equilibrium/time_slice/profiles_1d/j_parallel
-  - equilibrium/time_slice/profiles_1d/j_tor
+  - equilibrium/time_slice/profiles_1d/j_phi
   - equilibrium/time_slice/profiles_1d/magnetic_shear
   - equilibrium/time_slice/profiles_1d/phi
   - equilibrium/time_slice/profiles_1d/pressure
@@ -113,7 +97,7 @@ paths:
   - equilibrium/time_slice/profiles_1d/triangularity_upper
   - equilibrium/time_slice/profiles_1d/volume
   - equilibrium/time_slice/profiles_2d/b_field_r
-  - equilibrium/time_slice/profiles_2d/b_field_tor
+  - equilibrium/time_slice/profiles_2d/b_field_phi
   - equilibrium/time_slice/profiles_2d/b_field_z
   - equilibrium/time_slice/profiles_2d/grid/dim1
   - equilibrium/time_slice/profiles_2d/grid/dim2
@@ -121,7 +105,7 @@ paths:
   - equilibrium/time_slice/profiles_2d/grid_type/index
   - equilibrium/time_slice/profiles_2d/grid_type/name
   - equilibrium/time_slice/profiles_2d/j_parallel
-  - equilibrium/time_slice/profiles_2d/j_tor
+  - equilibrium/time_slice/profiles_2d/j_phi
   - equilibrium/time_slice/profiles_2d/phi
   - equilibrium/time_slice/profiles_2d/psi
   - equilibrium/time_slice/profiles_2d/r
@@ -133,3 +117,5 @@ paths:
   - equilibrium/vacuum_toroidal_field/b0
   - equilibrium/vacuum_toroidal_field/r0
 
+# IDS paths that could not be transfered# equilibrium/time_slice/boundary/elongation_lower
+# equilibrium/time_slice/boundary/elongation_upper
