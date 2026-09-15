@@ -3,6 +3,7 @@ from pathlib import Path
 
 import click
 
+from interfaceTools.check_dataset import dataset_checker
 from interfaceTools.validate_definitions import validate_definitions
 
 
@@ -52,6 +53,51 @@ def validate(input_path: Path, silent: bool):
 
     exit_code = validate_definitions(input_path, silent)
     sys.exit(exit_code)
+
+
+@main.command(name="check_dataset")
+@click.argument(
+    "dataset_path",
+    type=click.Path(exists=False, allow_dash=False, path_type=Path),
+)
+@click.argument(
+    "interface_path",
+    type=click.Path(exists=True, allow_dash=True, path_type=Path),
+    default="-",
+)
+@click.option("-s", "--silent", is_flag=True, help="If set, suppress any log messages")
+def check_dataset(dataset_path: Path, interface_path: Path, silent: bool):
+    """Checks whether the provided IMAS dataset complies with the given IMAS interface.
+
+    \b
+    Args:
+    \b
+    dataset_path: URI to the dataset entry. Only netCDF and HDF5 backends
+        are supported.
+    \b
+    interface_path: Path to the YAML file containing the interface definition. The
+        contents of a YAML file could also be read from stdin
+
+    silent: If set to True, suppress all log messages.
+
+
+    ------------------------ Examples ------------------------
+
+    \b
+    Using a netCDF file
+        $imas-interfaces check_dataset iter-105027.nc example_efit++IMAS_input.yaml
+
+    \b
+    Using stdin
+        $cat example_efit++IMAS_input.yaml | imas-interfaces check_dataset iter.nc
+
+    """
+    # First check if standard input is indicated as 'interactive'
+    if interface_path == Path("-") and sys.stdin.isatty():
+        raise click.UsageError("No input given")
+
+    error_code = dataset_checker(dataset_path, interface_path, silent)
+    sys.exit(error_code)
 
 
 if __name__ == "__main__":

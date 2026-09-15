@@ -1,2 +1,7 @@
 # IDE files
 .vscode/
+
+# build folder
+build/
+
+*.egg-info/

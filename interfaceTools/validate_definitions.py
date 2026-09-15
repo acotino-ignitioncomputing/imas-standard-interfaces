@@ -1,15 +1,14 @@
 """Script for validating interface definitions against JSON Schema and IMAS Data
 Dictionary"""
 
-import json
 import logging
-import sys
 from pathlib import Path
 
 import jsonschema
-import yaml
 from imas import IDSFactory, dd_zip, setup_logging, util
 from packaging.version import Version
+
+from .utilities import extract_paths, get_schema_dict, load_interface_dict
 
 logger = logging.getLogger("validateLogger")
 handler = logging.StreamHandler()
@@ -106,38 +105,6 @@ def validate_against_schema(definition: dict, schema: dict) -> bool:
         print_nice_error_message(error)
 
     return validation_correct
-
-
-def extract_paths(paths: list[str | dict]) -> list[str]:
-    """Collect all IDS paths from a list of strings and dictionaries.
-
-    Args:
-        paths: list of strings and / or dictionaries
-
-    Returns:
-        list of IDS paths
-    """
-    path_list = []
-
-    for string_or_dict in paths:
-        # Extract paths from string(s) or dictionaries
-        if isinstance(string_or_dict, str):
-            path_list.append(string_or_dict)
-        elif isinstance(string_or_dict, dict):
-            key = list(string_or_dict.keys())[0]
-            if key not in ["all_or_none", "any_of", "all_of"]:
-                # Based on json schema, any other key of dictionary is an IDS path
-                path_list.append(key)
-            else:
-                path_list += extract_paths(string_or_dict[key])
-        else:
-            raise (
-                Exception(
-                    f"Invalid entry \n{SPACING_2}'{string_or_dict}'\n in "
-                    f"{string_or_dict}"
-                )
-            )
-    return sorted(path_list)
 
 
 def get_valid_dd_versions(definition: dict) -> list[str]:
@@ -243,6 +210,51 @@ def check_ids_paths_in_dd(definition: dict) -> bool:
     return all_paths_valid
 
 
+def validate_definitions_dict(definition_dict: dict, silent: bool) -> int:
+    """Validate the dictionary representation of a YAML file with respect to the
+    JSON Schema. Also check the correctness of the IDS names and paths with respect
+    respect to Data Dictionary version mentioned in the YAML file.
+
+    Args:
+        definition_dict: dictionary representation of a YAML file
+        silent: If set to True, surpress all log messages.
+
+    Returns:
+        0 if no issues were found, 1 otherwise
+    """
+
+    # Set log level to ERROR in silent-mode
+    if silent:
+        logger.setLevel(logging.ERROR)
+
+        # imas logger
+        setup_logging.logger.setLevel(logging.ERROR)
+    else:
+        logger.setLevel(logging.INFO)
+
+        # imas logger
+        setup_logging.logger.setLevel(logging.WARNING)
+
+    # Load schema
+    # TODO: ensure schema is loaded only once
+
+    schema_dict = get_schema_dict()
+
+    # Correctness with respect to JSON Schema
+    if not validate_against_schema(definition_dict, schema_dict):
+        return 1
+
+    #  Check if IDS names are in Data Dictionary
+    if not check_ids_name(definition_dict):
+        return 1
+
+    # Check if IDS paths are in Data Dictionary
+    if not check_ids_paths_in_dd(definition_dict):
+        return 1
+
+    return 0
+
+
 def validate_definitions(input_path: Path, silent: bool) -> int:
     """Validate the syntax of the provided YAML files with respect to the
     JSON Schema. Also checks the correctness of the IDS names and paths
@@ -268,11 +280,6 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
         # imas logger
         setup_logging.logger.setLevel(logging.WARNING)
 
-    # Load schema
-    schema_path = Path(__file__).parents[1] / "schemas" / "json_schema.json"
-    with open(schema_path) as file:
-        schema_dict = json.load(file)
-
     # Get list of YAML file(s)
     if input_path.is_dir():
         # Search for YAML files in subfolders of directory
@@ -294,32 +301,12 @@ def validate_definitions(input_path: Path, silent: bool) -> int:
     # Validate each YAML file and collect which were incorrect
     incorrect_definitions = []
     for file_path in list_of_files:
-        # Note: sys.stdin.isatty() checks if the standard input is interactive. If it is
-        # then reading this would freeze the script.
-        if file_path == Path("-") and not sys.stdin.isatty():
-            input_stream = sys.stdin.read()
-            definition_dict = yaml.safe_load(input_stream)
-        elif file_path != Path("-"):
-            with open(file_path) as file:
-                definition_dict = yaml.safe_load(file)
-        else:
-            raise Exception(f"Incorrect input argument input_path: {input_path.name}")
+        definition_dict = load_interface_dict(file_path)
 
         file_path_name = file_path.name if file_path != Path("-") else "input stream"
         logger.info(f"\nValidating {file_path_name}...")
 
-        # Correctness with respect to JSON Schema
-        if not validate_against_schema(definition_dict, schema_dict):
-            incorrect_definitions.append(file_path.name)
-            continue
-
-        #  Check if IDS names are in Data Dictionary
-        if not check_ids_name(definition_dict):
-            incorrect_definitions.append(file_path.name)
-            continue
-
-        # Check if IDS paths are in Data Dictionary
-        if not check_ids_paths_in_dd(definition_dict):
+        if validate_definitions_dict(definition_dict, silent) != 0:
             incorrect_definitions.append(file_path.name)
             continue
 
