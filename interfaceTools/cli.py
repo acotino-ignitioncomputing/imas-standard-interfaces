@@ -4,9 +4,9 @@ from pathlib import Path
 import click
 
 from interfaceTools.check_dataset import dataset_checker
-from interfaceTools.validate_definitions import validate_definitions
-from interfaceTools.translate_definition import translate_definition
 from interfaceTools.compute_difference import compute_difference
+from interfaceTools.translate_definition import translate_definition
+from interfaceTools.validate_definitions import validate_definitions
 
 
 @click.group()

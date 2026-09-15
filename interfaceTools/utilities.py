@@ -1,12 +1,12 @@
 """General utility functions"""
 
-import re
 import json
+import re
 import sys
 from pathlib import Path
 
 import yaml
-from imas import IDSFactory, util, dd_zip
+from imas import IDSFactory, dd_zip, util
 
 # Path to the JSON schema describing the format of the interface definitions
 SCHEMA_PATH = Path(__file__).parents[1] / "schemas" / "json_schema.json"

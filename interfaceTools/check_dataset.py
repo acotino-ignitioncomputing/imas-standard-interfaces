@@ -6,14 +6,14 @@ from pathlib import Path
 from imas import DBEntry, IDSFactory
 
 from .utilities import (
+    SPACING_2,
+    SPACING_4,
     check_all_or_none_criterium,
     check_any_criteria,
     check_mandatory_paths,
     extract_paths,
     get_schema_dict,
     load_interface_dict,
-    SPACING_2,
-    SPACING_4,
 )
 from .validate_definitions import validate_definitions_dict
 

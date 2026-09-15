@@ -9,13 +9,13 @@ import jsonschema
 from imas import IDSFactory, setup_logging, util
 
 from .utilities import (
+    SPACING_2,
+    SPACING_4,
     VALID_DD_VERSIONS,
-    split_ids_path,
     extract_paths,
     get_schema_dict,
     load_interface_dict,
-    SPACING_2,
-    SPACING_4,
+    split_ids_path,
 )
 
 logger = logging.getLogger("validateLogger")
@@ -222,7 +222,6 @@ def check_ids_paths_in_dd(definition: dict, show_suggestions: bool) -> bool:
     path_list = extract_paths(definition["paths"])
 
     for full_IDS_path in path_list:
-
         if not check_ids_path_in_dd_version(full_IDS_path, dd_version):
             IDS_name, IDS_path = split_ids_path(full_IDS_path)
             logger.warning(

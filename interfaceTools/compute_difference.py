@@ -2,15 +2,14 @@
 
 import logging
 from pathlib import Path
+
 import yaml
 
 from .utilities import (
-    strip_path_indexing,
     get_schema_dict,
     load_interface_dict,
-    SPACING_2,
+    strip_path_indexing,
 )
-
 from .validate_definitions import validate_definitions_dict
 
 # TODO: Fix general logger with formatter
@@ -127,7 +126,7 @@ def is_path_satisfied(
 
     # TODO: check for value_range
 
-    if (
+    if (  # noqa: SIM103
         "has_same_shape_as" in constraints
         and constraints["has_same_shape_as"]
         != corresponding_constraints["has_same_shape_as"]
@@ -299,28 +298,3 @@ def compute_difference(
         print(yaml_output)
 
     return 0
-
-
-# if __name__ == "__main__":
-
-#     from utilities import (
-#         strip_path_indexing,
-#         get_schema_dict,
-#         load_interface_dict,
-#         SPACING_2,
-#     )
-
-#     from validate_definitions import validate_definitions_dict
-
-#     abc1 = Path(
-#         "/home/alan/projects/imas-standard-interfaces/interfaceTools/test_example_efit++IMAS_input_1.yaml"
-#     )
-#     abc2 = Path(
-#         "/home/alan/projects/imas-standard-interfaces/interfaceTools/test_example_efit++IMAS_input_2.yaml"
-#     )
-
-#     output = Path(
-#         "/home/alan/projects/imas-standard-interfaces/interfaceTools/out.yaml"
-#     )
-
-#     compute_difference(abc1, abc2, output, False)

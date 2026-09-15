@@ -4,18 +4,17 @@ import difflib
 import logging
 from pathlib import Path
 
+import yaml
 from imas import IDSFactory, util
 from imas.ids_convert import dd_version_map_from_factories
-import yaml
 
 from .utilities import (
+    SPACING_2,
     VALID_DD_VERSIONS,
-    split_ids_path,
     get_schema_dict,
     load_interface_dict,
-    SPACING_2,
+    split_ids_path,
 )
-
 from .validate_definitions import validate_definitions_dict
 
 # TODO: Fix general logger with formatter
